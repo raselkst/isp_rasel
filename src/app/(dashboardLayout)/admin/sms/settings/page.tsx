@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <span className="font-semibold text-sm block">
-        {required && <span className="text-signal">*</span>}
+      <span className="font-semibold text-sm block text-signal">
+        {required && <span className="text-destructive">*</span>}
         {label}
       </span>
       {children}
@@ -46,7 +46,6 @@ interface Gateway {
   isActive: boolean;
 }
 
-// ডিফল্ট গেটওয়ে
 const initialGateways: Gateway[] = [
   {
     id: 1,
@@ -98,7 +97,6 @@ export default function SmsSettingsPage() {
   const [formData, setFormData] = useState<Gateway>(initialGateways[0]);
   const [editingId, setEditingId] = useState<number | null>(initialGateways[0].id);
 
-  // হ্যান্ডেল চেঞ্জ
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
@@ -109,7 +107,6 @@ export default function SmsSettingsPage() {
     }
   };
 
-  // কাস্টম প্যারামিটার হ্যান্ডলার
   const handleParamChange = (id: number, field: "key" | "value", value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -134,7 +131,6 @@ export default function SmsSettingsPage() {
     }));
   };
 
-  // নতুন গেটওয়ে
   const handleAddNew = () => {
     const newId = Math.max(...gateways.map((g) => g.id), 0) + 1;
     setFormData({ ...emptyGateway, id: newId });
@@ -142,14 +138,12 @@ export default function SmsSettingsPage() {
     alert("New gateway form ready. Fill in the details and click Save.");
   };
 
-  // এডিট
   const handleEdit = (gateway: Gateway) => {
     setFormData(gateway);
     setEditingId(gateway.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // সেভ
   const handleSave = () => {
     if (!formData.name.trim()) {
       alert("Gateway Name is required!");
@@ -161,13 +155,11 @@ export default function SmsSettingsPage() {
     }
 
     if (editingId) {
-      // আপডেট
       setGateways((prev) =>
         prev.map((g) => (g.id === editingId ? { ...formData, id: editingId } : g))
       );
       alert(`Gateway "${formData.name}" updated successfully!`);
     } else {
-      // নতুন
       const newId = Math.max(...gateways.map((g) => g.id), 0) + 1;
       setGateways((prev) => [...prev, { ...formData, id: newId }]);
       setEditingId(newId);
@@ -175,7 +167,6 @@ export default function SmsSettingsPage() {
     }
   };
 
-  // ডিলিট
   const handleDelete = (id: number) => {
     const gateway = gateways.find((g) => g.id === id);
     if (!gateway) return;
@@ -189,42 +180,41 @@ export default function SmsSettingsPage() {
     }
   };
 
-  // একটিভ টগল
   const handleToggleActive = (id: number) => {
     setGateways((prev) =>
       prev.map((g) => (g.id === id ? { ...g, isActive: !g.isActive } : g))
     );
   };
 
-  // ক্যান্সেল এডিট
   const handleCancel = () => {
     setFormData(emptyGateway);
     setEditingId(null);
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
+          {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
               SMS Settings
             </h1>
             <Button
               onClick={handleAddNew}
-              className="rounded-full gap-1.5 font-semibold bg-gradient-to-r from-signal to-violet-accent border-0"
+              className="rounded-full gap-1.5 font-semibold bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
             >
               <Plus className="h-4 w-4" /> Add Gateway
             </Button>
           </div>
 
           {/* Gateway Form */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-8">
-            <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center justify-between">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+            <div className="bg-signal text-white px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Settings2 className="w-5 h-5" />
                 <h2 className="font-heading font-bold text-lg">
@@ -244,9 +234,9 @@ export default function SmsSettingsPage() {
             <div className="p-6 sm:p-8 space-y-8">
               {/* Gateway Details */}
               <div>
-                <div className="flex items-center gap-2 border-b pb-3 mb-5">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-5">
                   <Link2 className="w-5 h-5 text-signal" />
-                  <h3 className="font-heading font-bold">Gateway Details</h3>
+                  <h3 className="font-heading font-bold text-signal">Gateway Details</h3>
                 </div>
                 <div className="space-y-5">
                   <Field label="Gateway Name" required>
@@ -255,7 +245,7 @@ export default function SmsSettingsPage() {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="e.g. BDbulkSMS"
-                      className="rounded-xl"
+                      className="rounded-xl border-slate-200 text-signal"
                     />
                   </Field>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -265,7 +255,7 @@ export default function SmsSettingsPage() {
                         value={formData.url}
                         onChange={handleChange}
                         placeholder="https://api.example.com/send"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                     <Field label="Request Method" required>
@@ -273,7 +263,7 @@ export default function SmsSettingsPage() {
                         name="method"
                         value={formData.method}
                         onChange={handleChange}
-                        className="w-full border rounded-xl px-4 py-2.5 bg-background text-sm focus:ring-2 focus:ring-signal outline-none"
+                        className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                       >
                         <option value="GET">GET</option>
                         <option value="POST">POST</option>
@@ -286,7 +276,7 @@ export default function SmsSettingsPage() {
                         value={formData.sendToParam}
                         onChange={handleChange}
                         placeholder="e.g. to"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                     <Field label="Message To Parameter" required>
@@ -295,7 +285,7 @@ export default function SmsSettingsPage() {
                         value={formData.messageToParam}
                         onChange={handleChange}
                         placeholder="e.g. message"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                   </div>
@@ -304,13 +294,13 @@ export default function SmsSettingsPage() {
 
               {/* Authentication */}
               <div>
-                <div className="flex items-center gap-2 border-b pb-3 mb-5">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-5">
                   <Shield className="w-5 h-5 text-signal" />
-                  <h3 className="font-heading font-bold">Authentication</h3>
+                  <h3 className="font-heading font-bold text-signal">Authentication</h3>
                 </div>
 
                 <div className="flex items-center gap-6 mb-5">
-                  <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer text-signal">
                     <input
                       type="checkbox"
                       name="authHeader"
@@ -320,7 +310,7 @@ export default function SmsSettingsPage() {
                     />
                     Header
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer text-signal">
                     <input
                       type="checkbox"
                       name="authUrl"
@@ -333,14 +323,14 @@ export default function SmsSettingsPage() {
                 </div>
 
                 {formData.authHeader && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 p-4 rounded-2xl bg-signal/5 border border-signal/20 mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 p-4 rounded-2xl bg-signal-tint border border-signal/20 mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
                     <Field label="Header Key">
                       <Input
                         name="headerKey"
                         value={formData.headerKey}
                         onChange={handleChange}
                         placeholder="e.g. Authorization"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                     <Field label="Header Value">
@@ -349,21 +339,21 @@ export default function SmsSettingsPage() {
                         value={formData.headerValue}
                         onChange={handleChange}
                         placeholder="e.g. Bearer YOUR_API_KEY"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                   </div>
                 )}
 
                 {formData.authUrl && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 p-4 rounded-2xl bg-violet-accent/5 border border-violet-accent/20 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 p-4 rounded-2xl bg-violet-accent-tint border border-violet-accent/20 animate-in fade-in slide-in-from-top-2 duration-300">
                     <Field label="URL Key">
                       <Input
                         name="urlKey"
                         value={formData.urlKey}
                         onChange={handleChange}
                         placeholder="e.g. api_key"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                     <Field label="URL Value">
@@ -372,7 +362,7 @@ export default function SmsSettingsPage() {
                         value={formData.urlValue}
                         onChange={handleChange}
                         placeholder="e.g. YOUR_KEY"
-                        className="rounded-xl"
+                        className="rounded-xl border-slate-200 text-signal"
                       />
                     </Field>
                   </div>
@@ -381,15 +371,15 @@ export default function SmsSettingsPage() {
 
               {/* Custom Parameters */}
               <div>
-                <div className="flex items-center justify-between border-b pb-3 mb-5">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
                   <div className="flex items-center gap-2">
                     <Key className="w-5 h-5 text-signal" />
-                    <h3 className="font-heading font-bold">Custom Parameters</h3>
+                    <h3 className="font-heading font-bold text-signal">Custom Parameters</h3>
                   </div>
                   <button
                     type="button"
                     onClick={addParam}
-                    className="text-xs font-semibold text-signal border border-signal/30 hover:bg-signal/5 px-3 py-1.5 rounded-full flex items-center gap-1"
+                    className="text-xs font-semibold text-signal border border-signal/30 hover:bg-signal-tint px-3 py-1.5 rounded-full flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> Add Parameter
                   </button>
@@ -403,7 +393,7 @@ export default function SmsSettingsPage() {
                           value={param.key}
                           onChange={(e) => handleParamChange(param.id, "key", e.target.value)}
                           placeholder="e.g. sender_id"
-                          className="rounded-xl"
+                          className="rounded-xl border-slate-200 text-signal"
                         />
                       </Field>
                       <Field label="Parameter Value">
@@ -411,7 +401,7 @@ export default function SmsSettingsPage() {
                           value={param.value}
                           onChange={(e) => handleParamChange(param.id, "value", e.target.value)}
                           placeholder="e.g. SMARTISP"
-                          className="rounded-xl"
+                          className="rounded-xl border-slate-200 text-signal"
                         />
                       </Field>
                       <button
@@ -428,10 +418,10 @@ export default function SmsSettingsPage() {
               </div>
 
               {/* Save Button */}
-              <div className="flex gap-3 pt-4 border-t">
+              <div className="flex gap-3 pt-4 border-t border-slate-100">
                 <Button
                   onClick={handleSave}
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent border-0"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   {editingId ? "Update Gateway" : "Save Gateway"}
@@ -439,7 +429,7 @@ export default function SmsSettingsPage() {
                 <Button
                   onClick={handleCancel}
                   variant="outline"
-                  className="rounded-xl font-semibold h-12 px-6"
+                  className="rounded-xl font-semibold h-12 px-6 border-slate-200 text-slate-600 hover:bg-slate-50"
                 >
                   Clear
                 </Button>
@@ -448,12 +438,12 @@ export default function SmsSettingsPage() {
           </div>
 
           {/* Gateways Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
-            <div className="flex items-center justify-between p-5 border-b">
-              <h2 className="font-heading font-bold text-lg flex items-center gap-2">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h2 className="font-heading font-bold text-lg flex items-center gap-2 text-signal">
                 <MessageSquare className="w-5 h-5 text-signal" /> Configured Gateways
               </h2>
-              <span className="bg-signal/10 text-signal text-xs font-semibold px-3 py-1 rounded-full border border-signal/20">
+              <span className="bg-signal-tint text-signal text-xs font-semibold px-3 py-1 rounded-full border border-signal/20">
                 {gateways.length} Gateway{gateways.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -462,7 +452,7 @@ export default function SmsSettingsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-muted/40 text-muted-foreground">
+                    <tr className="bg-slate-50 text-slate-500">
                       <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider">Active</th>
                       <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider">Gateway Name</th>
                       <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider">URL</th>
@@ -476,8 +466,8 @@ export default function SmsSettingsPage() {
                       <tr
                         key={g.id}
                         className={cn(
-                          "border-t hover:bg-muted/30 transition-colors",
-                          editingId === g.id && "bg-signal/5"
+                          "border-t border-slate-100 hover:bg-slate-50 transition-colors",
+                          editingId === g.id && "bg-signal-tint"
                         )}
                       >
                         <td className="px-6 py-4">
@@ -488,25 +478,25 @@ export default function SmsSettingsPage() {
                             className="rounded accent-signal w-4 h-4 cursor-pointer"
                           />
                         </td>
-                        <td className="px-6 py-4 font-semibold">{g.name}</td>
-                        <td className="px-6 py-4 font-mono text-xs text-muted-foreground max-w-xs truncate">
+                        <td className="px-6 py-4 font-semibold text-signal">{g.name}</td>
+                        <td className="px-6 py-4 font-mono text-xs text-slate-500 max-w-xs truncate">
                           {g.url}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="bg-violet-accent/10 text-violet-accent text-xs font-semibold px-2.5 py-1 rounded-md border border-violet-accent/20">
+                          <span className="bg-violet-accent-tint text-violet-accent text-xs font-semibold px-2.5 py-1 rounded-md border border-violet-accent/30">
                             {g.method}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <span
                             className={cn(
-                              "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold",
+                              "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border",
                               g.isActive
-                                ? "bg-emerald-500/15 text-emerald-600 border border-emerald-500/20"
-                                : "bg-red-500/15 text-red-600 border border-red-500/20"
+                                ? "bg-success-tint text-success border-success/30"
+                                : "bg-destructive/10 text-destructive border-destructive/30"
                             )}
                           >
-                            <span className={cn("w-1.5 h-1.5 rounded-full", g.isActive ? "bg-emerald-500" : "bg-red-500")} />
+                            <span className={cn("w-1.5 h-1.5 rounded-full", g.isActive ? "bg-success" : "bg-destructive")} />
                             {g.isActive ? "Active" : "Inactive"}
                           </span>
                         </td>
@@ -535,16 +525,16 @@ export default function SmsSettingsPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-16 px-6">
-                <div className="w-20 h-20 rounded-full bg-signal/10 flex items-center justify-center mb-4">
+                <div className="w-20 h-20 rounded-full bg-signal-tint flex items-center justify-center mb-4">
                   <MessageSquare className="w-10 h-10 text-signal" />
                 </div>
-                <h3 className="font-heading font-bold text-lg mb-1">No Gateways Configured</h3>
-                <p className="text-sm text-muted-foreground text-center max-w-xs mb-5">
+                <h3 className="font-heading font-bold text-lg mb-1 text-signal">No Gateways Configured</h3>
+                <p className="text-sm text-slate-500 text-center max-w-xs mb-5">
                   Add your first SMS gateway to start sending messages to your clients.
                 </p>
                 <Button
                   onClick={handleAddNew}
-                  className="rounded-full gap-1.5 font-semibold bg-gradient-to-r from-signal to-violet-accent border-0"
+                  className="rounded-full gap-1.5 font-semibold bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
                 >
                   <Plus className="h-4 w-4" /> Add First Gateway
                 </Button>
@@ -553,7 +543,7 @@ export default function SmsSettingsPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Configure multiple gateways for redundancy. Only

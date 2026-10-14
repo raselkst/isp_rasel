@@ -29,7 +29,6 @@ const datePresets = [
   { id: "custom", label: "Custom" },
 ];
 
-// SSR-safe সিড-ভিত্তিক ডেটা জেনারেটর
 function seededRandom(seed: number) {
   const x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
@@ -198,9 +197,9 @@ export default function CardReportByDatePage() {
   };
 
   const getValidityLabel = (rate: number) => {
-    if (rate >= 95) return { label: "Excellent", color: "text-emerald-600", bg: "bg-emerald-500/10" };
-    if (rate >= 85) return { label: "Good", color: "text-amber-600", bg: "bg-amber-500/10" };
-    return { label: "Poor", color: "text-red-600", bg: "bg-red-500/10" };
+    if (rate >= 95) return { label: "Excellent", color: "text-success", bg: "bg-success-tint" };
+    if (rate >= 85) return { label: "Good", color: "text-warning", bg: "bg-warning-tint" };
+    return { label: "Poor", color: "text-destructive", bg: "bg-destructive/10" };
   };
 
   const formatDate = (dateStr: string) => {
@@ -216,7 +215,7 @@ export default function CardReportByDatePage() {
     activePreset !== "7days";
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -225,7 +224,7 @@ export default function CardReportByDatePage() {
         <div className="px-4 sm:px-8 py-7">
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
               Card Report · Date Wise
             </h1>
             <div className="flex items-center gap-2">
@@ -233,13 +232,13 @@ export default function CardReportByDatePage() {
                 variant="outline"
                 onClick={handleRefresh}
                 disabled={isLoading}
-                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30"
+                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 hover:bg-signal/5"
               >
                 <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} /> Refresh
               </Button>
               <Button
                 onClick={handleExport}
-                className="rounded-full gap-1.5 font-semibold bg-gradient-to-r from-signal to-violet-accent border-0"
+                className="rounded-full gap-1.5 font-semibold bg-signal hover:bg-signal-hover text-white border-0 shadow-md"
               >
                 <Download className="h-4 w-4" /> Export CSV
               </Button>
@@ -248,7 +247,7 @@ export default function CardReportByDatePage() {
 
           {/* Date Presets */}
           <div className="flex flex-wrap items-center gap-2 mb-5">
-            <span className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1 mr-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-1 mr-2">
               <CalendarRange className="w-3.5 h-3.5" /> Quick Range:
             </span>
             {datePresets.map((p) => (
@@ -260,7 +259,7 @@ export default function CardReportByDatePage() {
                   "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                   activePreset === p.id
                     ? "bg-signal text-white border-signal shadow-md"
-                    : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                    : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                 )}
               >
                 {p.label}
@@ -269,46 +268,46 @@ export default function CardReportByDatePage() {
           </div>
 
           {/* Filter Panel */}
-          <div className="bg-card rounded-2xl border p-5 mb-5 flex flex-wrap items-end gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-5 flex flex-wrap items-end gap-4 shadow-sm">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-1">
                 <CalendarDays className="w-3 h-3" /> Date From
               </label>
               <Input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => { setDateFrom(e.target.value); setActivePreset("custom"); }}
-                className="rounded-xl w-48"
+                className="rounded-xl w-48 border-slate-200 text-signal"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-1">
                 <CalendarDays className="w-3 h-3" /> Date To
               </label>
               <Input
                 type="date"
                 value={dateTo}
                 onChange={(e) => { setDateTo(e.target.value); setActivePreset("custom"); }}
-                className="rounded-xl w-48"
+                className="rounded-xl w-48 border-slate-200 text-signal"
               />
             </div>
 
             <div className="flex-1 min-w-[200px] space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-1">
                 <Search className="w-3 h-3" /> Search
               </label>
               <Input
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 placeholder="Search by date or generated by..."
-                className="rounded-xl"
+                className="rounded-xl border-slate-200 text-signal"
               />
             </div>
 
             <Button
               onClick={handleApplyFilter}
-              className="rounded-xl font-semibold h-10 px-6 bg-gradient-to-r from-signal to-violet-accent border-0"
+              className="rounded-xl font-semibold h-10 px-6 bg-signal hover:bg-signal-hover text-white border-0 shadow-md"
             >
               <Filter className="h-4 w-4 mr-2" /> Apply Filter
             </Button>
@@ -317,17 +316,17 @@ export default function CardReportByDatePage() {
               <Button
                 onClick={handleResetFilters}
                 variant="outline"
-                className="rounded-xl font-semibold h-10 px-6 text-red-500 border-red-500/30 hover:bg-red-500/5"
+                className="rounded-xl font-semibold h-10 px-6 text-destructive border-destructive/30 hover:bg-destructive/5"
               >
                 <X className="h-4 w-4 mr-2" /> Reset
               </Button>
             )}
           </div>
 
-          {/* 🎯 Colorful Compact Stat Cards - এক লাইনে */}
+          {/* 🎯 Semantic Compact Stat Cards - এক লাইনে */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            {/* Total - Blue/Cyan */}
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-md">
+            {/* Total - Theme Primary */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-signal to-signal-light text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <CreditCard className="w-4 h-4" />
               </div>
@@ -338,8 +337,8 @@ export default function CardReportByDatePage() {
               <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            {/* Valid - Emerald/Teal */}
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
+            {/* Valid - Success */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-success to-success/80 text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
@@ -350,8 +349,8 @@ export default function CardReportByDatePage() {
               <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            {/* Invalid - Red/Rose */}
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-md">
+            {/* Invalid - Destructive */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-destructive to-destructive/80 text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <XCircle className="w-4 h-4" />
               </div>
@@ -362,8 +361,8 @@ export default function CardReportByDatePage() {
               <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            {/* Rate - Violet/Purple */}
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md">
+            {/* Rate - Violet Accent */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-violet-accent to-violet-accent/80 text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <TrendingUp className="w-4 h-4" />
               </div>
@@ -382,14 +381,14 @@ export default function CardReportByDatePage() {
           </div>
 
           {/* Table Card */}
-          <div className="bg-card rounded-2xl border overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-slate-100">
+              <div className="flex items-center gap-2 text-sm text-slate-500">
                 <span>Show</span>
                 <select
                   value={rowsPerPage}
                   onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                  className="border rounded-lg px-2 py-1 bg-background text-sm"
+                  className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-sm text-signal"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -398,7 +397,7 @@ export default function CardReportByDatePage() {
                 </select>
                 <span>entries</span>
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-slate-500">
                 Found <span className="font-semibold text-signal">{sortedReports.length}</span> day(s)
               </div>
             </div>
@@ -406,7 +405,7 @@ export default function CardReportByDatePage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[900px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     <th className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap w-16">#</th>
                     {columns.map((c) => (
                       <th
@@ -414,7 +413,7 @@ export default function CardReportByDatePage() {
                         onClick={() => handleSort(c.key)}
                         className={cn(
                           "text-left px-6 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer transition-colors select-none",
-                          sortKey === c.key ? "bg-signal/80" : "hover:bg-signal/90"
+                          sortKey === c.key ? "bg-white/10" : "hover:bg-white/10"
                         )}
                       >
                         <div className="flex items-center gap-1">
@@ -434,7 +433,7 @@ export default function CardReportByDatePage() {
                       <td colSpan={columns.length + 2} className="px-6 py-16 text-center">
                         <div className="flex flex-col items-center gap-3">
                           <RefreshCw className="w-8 h-8 text-signal animate-spin" />
-                          <p className="text-sm text-muted-foreground">Loading report...</p>
+                          <p className="text-sm text-slate-500">Loading report...</p>
                         </div>
                       </td>
                     </tr>
@@ -445,41 +444,41 @@ export default function CardReportByDatePage() {
                       return (
                         <tr
                           key={r.id}
-                          className="border-t hover:bg-muted/30 transition-colors"
+                          className="border-t border-slate-100 hover:bg-slate-50 transition-colors"
                         >
-                          <td className="px-6 py-4 font-medium text-muted-foreground">
+                          <td className="px-6 py-4 font-medium text-slate-500">
                             {startIndex + index + 1}
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-lg bg-signal/10 flex items-center justify-center">
+                              <div className="w-8 h-8 rounded-lg bg-signal-tint flex items-center justify-center">
                                 <CalendarDays className="w-4 h-4 text-signal" />
                               </div>
-                              <span className="font-semibold">{formatDate(r.date)}</span>
+                              <span className="font-semibold text-signal">{formatDate(r.date)}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-semibold">{r.total.toLocaleString()}</td>
+                          <td className="px-6 py-4 font-semibold text-signal">{r.total.toLocaleString()}</td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-1.5 text-emerald-600 font-semibold">
+                            <span className="inline-flex items-center gap-1.5 text-success font-semibold">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               {r.valid.toLocaleString()}
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-1.5 text-red-600 font-semibold">
+                            <span className="inline-flex items-center gap-1.5 text-destructive font-semibold">
                               <XCircle className="w-3.5 h-3.5" />
                               {r.invalid.toLocaleString()}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-xs">
-                            <span className="bg-violet-accent/10 text-violet-accent font-semibold px-2 py-1 rounded-md border border-violet-accent/20">
+                            <span className="bg-violet-accent-tint text-violet-accent font-semibold px-2 py-1 rounded-md border border-violet-accent/30">
                               {r.generatedBy}
                             </span>
                           </td>
                           <td className="px-6 py-4 w-52">
                             <div className="space-y-1.5">
                               <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-foreground">{rate.toFixed(1)}%</span>
+                                <span className="text-xs font-semibold text-signal">{rate.toFixed(1)}%</span>
                                 <span className={cn(
                                   "text-[10px] font-bold px-2 py-0.5 rounded-full",
                                   validityLabel.bg,
@@ -488,11 +487,11 @@ export default function CardReportByDatePage() {
                                   {validityLabel.label}
                                 </span>
                               </div>
-                              <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                              <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                                 <div
                                   className={cn(
                                     "h-full transition-all duration-500",
-                                    rate >= 95 ? "bg-emerald-500" : rate >= 85 ? "bg-amber-500" : "bg-red-500"
+                                    rate >= 95 ? "bg-success" : rate >= 85 ? "bg-warning" : "bg-destructive"
                                   )}
                                   style={{ width: `${rate}%` }}
                                 />
@@ -504,9 +503,9 @@ export default function CardReportByDatePage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={columns.length + 2} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length + 2} className="px-6 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No report available for selected range</p>
+                        <p className="font-semibold text-signal">No report available for selected range</p>
                         <p className="text-xs mt-1">Try changing the date range or filters</p>
                         {hasActiveFilters && (
                           <button
@@ -524,8 +523,8 @@ export default function CardReportByDatePage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t text-sm">
-              <div className="text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t border-slate-100 text-sm">
+              <div className="text-slate-500">
                 Showing {sortedReports.length > 0 ? startIndex + 1 : 0} to{" "}
                 {Math.min(startIndex + rowsPerPage, sortedReports.length)} of {sortedReports.length} entries
               </div>
@@ -535,7 +534,7 @@ export default function CardReportByDatePage() {
                   size="icon"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="rounded-full h-8 w-8"
+                  className="rounded-full h-8 w-8 border-slate-200"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
@@ -549,20 +548,20 @@ export default function CardReportByDatePage() {
                       onClick={() => setCurrentPage(page)}
                       className={cn(
                         "rounded-full h-8 w-8 text-xs font-semibold",
-                        currentPage === page && "bg-signal text-white"
+                        currentPage === page ? "bg-signal text-white" : "border-slate-200 text-signal"
                       )}
                     >
                       {page}
                     </Button>
                   );
                 })}
-                {totalPages > 5 && <span className="text-muted-foreground px-1">...</span>}
+                {totalPages > 5 && <span className="text-slate-500 px-1">...</span>}
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="rounded-full h-8 w-8"
+                  className="rounded-full h-8 w-8 border-slate-200"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>

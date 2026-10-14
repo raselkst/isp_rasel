@@ -15,11 +15,11 @@ import { cn } from "@/lib/utils";
 
 // ডামি অ্যাকাউন্ট ডেটা
 const accounts = [
-  { id: "cash", label: "Cash", balance: 40100, icon: Wallet, color: "text-amber-600" },
-  { id: "brac", label: "BRAC Bank", balance: 125400.5, icon: Building2, color: "text-blue-600" },
-  { id: "dbbl", label: "Dutch Bangla", balance: 285600.75, icon: Building2, color: "text-red-600" },
-  { id: "ibbl", label: "Islami Bank", balance: 42350.0, icon: Building2, color: "text-emerald-600" },
-  { id: "city", label: "City Bank", balance: 550000.0, icon: Building2, color: "text-purple-600" },
+  { id: "cash", label: "Cash", balance: 40100, icon: Wallet },
+  { id: "brac", label: "BRAC Bank", balance: 125400.5, icon: Building2 },
+  { id: "dbbl", label: "Dutch Bangla", balance: 285600.75, icon: Building2 },
+  { id: "ibbl", label: "Islami Bank", balance: 42350.0, icon: Building2 },
+  { id: "city", label: "City Bank", balance: 550000.0, icon: Building2 },
 ];
 
 // ডামি ট্রান্সফার ডেটা
@@ -46,7 +46,6 @@ export default function FundTransferPage() {
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ফিল্টার
   const filteredTransfers = useMemo(() => {
     return transfers.filter(
       (t) =>
@@ -56,12 +55,10 @@ export default function FundTransferPage() {
     );
   }, [transfers, searchTerm]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredTransfers.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedTransfers = filteredTransfers.slice(startIndex, startIndex + rowsPerPage);
 
-  // Stat Cards
   const stats = useMemo(() => {
     const totalAmount = transfers.reduce((s, t) => s + t.amount, 0);
     const cashIn = transfers.filter((t) => t.to === "cash").reduce((s, t) => s + t.amount, 0);
@@ -69,7 +66,6 @@ export default function FundTransferPage() {
     return { total: transfers.length, totalAmount, cashIn, cashOut };
   }, [transfers]);
 
-  // হেল্পার
   function getAccountLabel(id: string) {
     return accounts.find((a) => a.id === id)?.label || id;
   }
@@ -79,7 +75,6 @@ export default function FundTransferPage() {
   const formatCurrency = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // ফর্ম হ্যান্ডলার
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -87,7 +82,6 @@ export default function FundTransferPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ভ্যালিডেশন
   const validation = useMemo(() => {
     const amount = Number(formData.amount) || 0;
     const fromBalance = getAccountBalance(formData.from);
@@ -101,7 +95,6 @@ export default function FundTransferPage() {
     };
   }, [formData]);
 
-  // সেভ
   const handleSave = () => {
     if (!formData.purpose.trim()) return alert("Purpose is required!");
     if (!formData.amount || Number(formData.amount) <= 0) return alert("Valid amount is required!");
@@ -132,7 +125,6 @@ export default function FundTransferPage() {
       `Transfer Successful!\n\nFrom: ${getAccountLabel(formData.from)}\nTo: ${getAccountLabel(formData.to)}\nAmount: ৳${formatCurrency(amount)}\nPurpose: ${formData.purpose}`
     );
 
-    // রিসেট
     setFormData({
       amount: "",
       from: "cash",
@@ -143,7 +135,6 @@ export default function FundTransferPage() {
     setCurrentPage(1);
   };
 
-  // ডিলিট
   const handleDelete = (id: number) => {
     if (confirm("Delete this transfer record? This cannot be undone.")) {
       setTransfers((prev) => prev.filter((t) => t.id !== id));
@@ -151,14 +142,12 @@ export default function FundTransferPage() {
     }
   };
 
-  // ভিউ
   const handleView = (t: any) => {
     alert(
       `Transfer Details:\n\nDate: ${t.date}\nPurpose: ${t.purpose}\nAmount: ৳${formatCurrency(t.amount)}\nFrom: ${getAccountLabel(t.from)}\nTo: ${getAccountLabel(t.to)}\nStatus: ${t.status}`
     );
   };
 
-  // এক্সপোর্ট
   const exportToCSV = (filename: string) => {
     const headers = "Date,Purpose,Amount,From,To,Status";
     const rows = filteredTransfers.map(
@@ -197,63 +186,75 @@ export default function FundTransferPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
+          {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Fund Transfer
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Move money between cash and bank accounts securely.
               </p>
             </div>
-            <div className="flex items-center gap-2 bg-signal/10 text-signal px-4 py-2 rounded-full text-xs font-semibold border border-signal/20">
+            <div className="flex items-center gap-2 bg-signal-tint text-signal px-4 py-2 rounded-full text-xs font-semibold border border-signal/20">
               <ArrowDownUp className="w-3.5 h-3.5" />
               {stats.total} Transfers
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <ArrowDownUp className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Transfers</p>
+          {/* Compact Stat Cards — Theme Connected */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <ArrowDownUp className="w-4 h-4 text-signal" />
               </div>
-              <p className="font-heading text-2xl font-bold">{stats.total}</p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Transfers</p>
+                <p className="text-lg font-heading font-bold text-signal">{stats.total}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Amount</p>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-violet-accent-tint flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4 text-violet-accent" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.totalAmount)}</p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Amount</p>
+                <p className="text-lg font-heading font-bold text-violet-accent">৳{formatCurrency(stats.totalAmount)}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Cash In</p>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4 text-success" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.cashIn)}</p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Cash In</p>
+                <p className="text-lg font-heading font-bold text-success">৳{formatCurrency(stats.cashIn)}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingDown className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Cash Out</p>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                <TrendingDown className="w-4 h-4 text-destructive" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.cashOut)}</p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Cash Out</p>
+                <p className="text-lg font-heading font-bold text-destructive">৳{formatCurrency(stats.cashOut)}</p>
+              </div>
             </div>
           </div>
 
           {/* Transfer Form */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center gap-2">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+            <div className="bg-signal text-white px-6 py-4 flex items-center gap-2">
               <Send className="w-5 h-5" />
               <h2 className="font-heading font-bold text-lg">New Transfer</h2>
             </div>
@@ -266,19 +267,19 @@ export default function FundTransferPage() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   />
                 </Field>
                 <Field label="Amount" required>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">৳</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">৳</span>
                     <Input
                       name="amount"
                       type="number"
                       value={formData.amount}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="rounded-xl pl-8"
+                      className="rounded-xl pl-8 border-slate-200 text-signal"
                     />
                   </div>
                 </Field>
@@ -288,7 +289,7 @@ export default function FundTransferPage() {
                     value={formData.purpose}
                     onChange={handleChange}
                     placeholder="e.g. Office Rent Payment"
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
                 <div />
@@ -301,7 +302,7 @@ export default function FundTransferPage() {
                     name="from"
                     value={formData.from}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     {accounts.map((a) => (
                       <option key={a.id} value={a.id}>
@@ -309,15 +310,15 @@ export default function FundTransferPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Available: <span className="font-semibold text-emerald-600">
+                  <p className="text-xs text-slate-500 mt-1">
+                    Available: <span className="font-semibold text-success">
                       ৳{formatCurrency(validation.fromBalance)}
                     </span>
                   </p>
                 </Field>
 
                 <div className="flex justify-center pb-6">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-signal to-violet-accent text-white flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 rounded-full bg-signal text-white flex items-center justify-center shadow-lg">
                     <ArrowRight className="w-5 h-5" />
                   </div>
                 </div>
@@ -327,7 +328,7 @@ export default function FundTransferPage() {
                     name="to"
                     value={formData.to}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     {accounts.map((a) => (
                       <option key={a.id} value={a.id}>
@@ -335,8 +336,8 @@ export default function FundTransferPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Will receive: <span className="font-semibold text-blue-600">
+                  <p className="text-xs text-slate-500 mt-1">
+                    Will receive: <span className="font-semibold text-signal">
                       ৳{formatCurrency(validation.amount)}
                     </span>
                   </p>
@@ -349,26 +350,26 @@ export default function FundTransferPage() {
                   className={cn(
                     "flex items-start gap-3 p-4 rounded-2xl border animate-in fade-in slide-in-from-top-2 duration-300",
                     validation.isValid
-                      ? "bg-emerald-500/10 border-emerald-500/20"
-                      : "bg-red-500/10 border-red-500/20"
+                      ? "bg-success-tint border-success/30"
+                      : "bg-destructive/10 border-destructive/30"
                   )}
                 >
                   {validation.isValid ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
                   ) : (
-                    <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
                   )}
                   <div className="flex-1 text-sm">
                     {validation.isSameAccount ? (
-                      <p className="text-red-700 font-semibold">
+                      <p className="text-destructive font-semibold">
                         ❌ From and To accounts cannot be the same!
                       </p>
                     ) : validation.insufficientBalance ? (
-                      <p className="text-red-700 font-semibold">
+                      <p className="text-destructive font-semibold">
                         ❌ Insufficient balance! Available: ৳{formatCurrency(validation.fromBalance)}
                       </p>
                     ) : (
-                      <div className="text-emerald-700">
+                      <div className="text-success">
                         <p className="font-semibold">✓ Transfer is valid</p>
                         <p className="text-xs mt-0.5">
                           {getAccountLabel(formData.from)} balance after transfer:{" "}
@@ -388,7 +389,7 @@ export default function FundTransferPage() {
                     amount: "", from: "cash", to: "brac", purpose: "",
                     date: new Date().toISOString().split("T")[0],
                   })}
-                  className="rounded-xl font-semibold h-11 px-6"
+                  className="rounded-xl font-semibold h-11 px-6 border-slate-200 text-slate-600 hover:bg-slate-50"
                 >
                   Clear
                 </Button>
@@ -396,7 +397,7 @@ export default function FundTransferPage() {
                   type="button"
                   onClick={handleSave}
                   disabled={!validation.isValid && formData.amount !== ""}
-                  className="rounded-xl font-semibold h-11 px-8 bg-gradient-to-r from-signal to-violet-accent border-0 disabled:opacity-50"
+                  className="rounded-xl font-semibold h-11 px-8 bg-signal text-white hover:bg-signal-hover border-0 disabled:opacity-50 shadow-md"
                 >
                   <Send className="w-4 h-4 mr-2" /> Confirm Transfer
                 </Button>
@@ -416,11 +417,11 @@ export default function FundTransferPage() {
           />
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[900px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     {columns.map((c) => (
                       <th key={c} className="text-left px-5 py-4 font-semibold text-xs whitespace-nowrap">
                         {c}
@@ -431,20 +432,20 @@ export default function FundTransferPage() {
                 <tbody>
                   {paginatedTransfers.length > 0 ? (
                     paginatedTransfers.map((t) => (
-                      <tr key={t.id} className="border-t hover:bg-muted/30 transition-colors">
-                        <td className="px-5 py-4 text-xs text-muted-foreground whitespace-nowrap">{t.date}</td>
-                        <td className="px-5 py-4 font-semibold">{t.purpose}</td>
+                      <tr key={t.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td className="px-5 py-4 text-xs text-slate-500 whitespace-nowrap">{t.date}</td>
+                        <td className="px-5 py-4 font-semibold text-signal">{t.purpose}</td>
                         <td className="px-5 py-4 font-bold text-signal">
                           ৳{formatCurrency(t.amount)}
                         </td>
                         <td className="px-5 py-4">
-                          <span className="inline-flex items-center gap-1.5 bg-red-500/10 text-red-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-red-500/20">
+                          <span className="inline-flex items-center gap-1.5 bg-destructive/10 text-destructive text-xs font-semibold px-2.5 py-1 rounded-md border border-destructive/30">
                             <TrendingDown className="w-3 h-3" />
                             {getAccountLabel(t.from)}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-emerald-500/20">
+                          <span className="inline-flex items-center gap-1.5 bg-success-tint text-success text-xs font-semibold px-2.5 py-1 rounded-md border border-success/30">
                             <TrendingUp className="w-3 h-3" />
                             {getAccountLabel(t.to)}
                           </span>
@@ -454,11 +455,11 @@ export default function FundTransferPage() {
                             className={cn(
                               "inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border",
                               t.status === "Completed"
-                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                                : "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                                ? "bg-success-tint text-success border-success/30"
+                                : "bg-warning-tint text-warning border-warning/30"
                             )}
                           >
-                            <span className={cn("w-1.5 h-1.5 rounded-full", t.status === "Completed" ? "bg-emerald-500" : "bg-amber-500")} />
+                            <span className={cn("w-1.5 h-1.5 rounded-full", t.status === "Completed" ? "bg-success" : "bg-warning")} />
                             {t.status}
                           </span>
                         </td>
@@ -484,9 +485,9 @@ export default function FundTransferPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={columns.length} className="px-5 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length} className="px-5 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No transfer records found</p>
+                        <p className="font-semibold text-signal">No transfer records found</p>
                         <p className="text-xs mt-1">Try adjusting your search</p>
                       </td>
                     </tr>
@@ -507,7 +508,7 @@ export default function FundTransferPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Transfers are instant. The system validates that

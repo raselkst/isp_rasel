@@ -21,7 +21,6 @@ const columns = [
   { key: "messages", label: "Messages" },
 ];
 
-// ডামি লগ ডেটা
 const messagesPool = [
   "Logged in successfully",
   "Session started",
@@ -58,27 +57,29 @@ function generateLog(i: number) {
 
 const initialRows = Array.from({ length: 25 }).map((_, i) => generateLog(i));
 
+// 🎯 Theme-Connected Status Icon
 function StatusIcon({ status }: { status: string }) {
   switch (status) {
-    case "success": return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
-    case "warning": return <AlertTriangle className="w-4 h-4 text-amber-500" />;
-    case "error": return <XCircle className="w-4 h-4 text-red-500" />;
-    case "info": return <Info className="w-4 h-4 text-blue-500" />;
+    case "success": return <CheckCircle2 className="w-4 h-4 text-success" />;
+    case "warning": return <AlertTriangle className="w-4 h-4 text-warning" />;
+    case "error": return <XCircle className="w-4 h-4 text-destructive" />;
+    case "info": return <Info className="w-4 h-4 text-signal" />;
     default: return <Info className="w-4 h-4 text-slate-400" />;
   }
 }
 
+// 🎯 Theme-Connected Status Badge
 function StatusBadge({ status }: { status: string }) {
-  const styles = {
-    success: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-    warning: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    error: "bg-red-500/10 text-red-600 border-red-500/20",
-    info: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  const styles: Record<string, string> = {
+    success: "bg-success-tint text-success border-success/30",
+    warning: "bg-warning-tint text-warning border-warning/30",
+    error: "bg-destructive/10 text-destructive border-destructive/30",
+    info: "bg-signal-tint text-signal border-signal/30",
   };
   return (
     <span className={cn(
       "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase border",
-      styles[status as keyof typeof styles] || styles.info
+      styles[status] || styles.info
     )}>
       {status}
     </span>
@@ -120,7 +121,6 @@ export default function HotspotLogPage() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [isLive, setIsLive] = useState(false);
 
-  // Live মোড
   useEffect(() => {
     if (!isLive) return;
     const interval = setInterval(() => {
@@ -132,10 +132,8 @@ export default function HotspotLogPage() {
     return () => clearInterval(interval);
   }, [isLive]);
 
-  // সার্ভার লিস্ট
   const serverOptions = useMemo(() => Array.from(new Set(rows.map((r) => r.server))), [rows]);
 
-  // স্ট্যাট
   const stats = useMemo(() => ({
     total: rows.length,
     success: rows.filter((r) => r.status === "success").length,
@@ -143,7 +141,6 @@ export default function HotspotLogPage() {
     error: rows.filter((r) => r.status === "error").length,
   }), [rows]);
 
-  // ফিল্টার + সার্চ
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
       const matchesSearch =
@@ -157,7 +154,6 @@ export default function HotspotLogPage() {
     });
   }, [rows, searchTerm, statusFilter, serverFilter]);
 
-  // সর্ট
   const sortedRows = useMemo(() => {
     if (!sortKey) return filteredRows;
     return [...filteredRows].sort((a: any, b: any) => {
@@ -169,12 +165,10 @@ export default function HotspotLogPage() {
     });
   }, [filteredRows, sortKey, sortOrder]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(sortedRows.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedRows = sortedRows.slice(startIndex, startIndex + rowsPerPage);
 
-  // সিলেক্ট
   const allSelected =
     paginatedRows.length > 0 && paginatedRows.every((r) => selectedRows.includes(r.id));
   const toggleSelectAll = () => {
@@ -200,16 +194,12 @@ export default function HotspotLogPage() {
     setCurrentPage(1);
   };
 
-  // ============ ACTIONS ============
-
-  // Refresh
   const handleRefresh = () => {
     setRows(Array.from({ length: 25 }).map((_, i) => generateLog(i)));
     setCurrentPage(1);
     setSelectedRows([]);
   };
 
-  // Export CSV
   const handleExportCSV = () => {
     const dataToExport = selectedRows.length > 0
       ? sortedRows.filter((r) => selectedRows.includes(r.id))
@@ -229,7 +219,6 @@ export default function HotspotLogPage() {
     alert(`Exported ${dataToExport.length} log entries to CSV.`);
   };
 
-  // Copy
   const handleCopy = () => {
     const dataToCopy = selectedRows.length > 0
       ? sortedRows.filter((r) => selectedRows.includes(r.id))
@@ -240,12 +229,10 @@ export default function HotspotLogPage() {
     alert(`Copied ${dataToCopy.length} log entries to clipboard.`);
   };
 
-  // Print
   const handlePrint = () => {
     window.print();
   };
 
-  // PDF
   const handlePDF = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -267,11 +254,11 @@ export default function HotspotLogPage() {
           <title>Hotspot Log Report</title>
           <style>
             body { font-family: sans-serif; padding: 24px; color: #1e293b; }
-            h1 { font-size: 20px; margin-bottom: 4px; color: #0F8B8D; }
+            h1 { font-size: 20px; margin-bottom: 4px; color: #066F6F; }
             p { color: #64748b; font-size: 12px; margin-bottom: 16px; }
             table { width: 100%; border-collapse: collapse; font-size: 12px; }
             th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
-            th { background: #0F8B8D; color: white; font-weight: 600; }
+            th { background: #066F6F; color: white; font-weight: 600; }
             tr:nth-child(even) td { background: #f8fafc; }
           </style>
         </head>
@@ -291,12 +278,10 @@ export default function HotspotLogPage() {
     setTimeout(() => printWindow.print(), 500);
   };
 
-  // View Single
   const handleView = (r: any) => {
     alert(`Log Details:\n\nUser: ${r.user}\nIP: ${r.ip}\nTime: ${r.time}\nServer: ${r.server}\nMessage: ${r.messages}\nStatus: ${r.status}`);
   };
 
-  // Bulk Delete
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) {
       alert("Please select at least one log entry.");
@@ -310,7 +295,7 @@ export default function HotspotLogPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -320,74 +305,74 @@ export default function HotspotLogPage() {
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Hotspot Log Monitor
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Track all user activities and system events.
               </p>
             </div>
             {isLive && (
-              <span className="flex items-center gap-2 bg-emerald-500/10 text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold border border-emerald-500/20">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="flex items-center gap-2 bg-success-tint text-success px-3 py-1.5 rounded-full text-xs font-bold border border-success/30">
+                <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                 LIVE STREAMING
               </span>
             )}
           </div>
 
-          {/* Compact Stat Cards - কালারফুল ও এক লাইনে */}
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-  <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-violet-500 to-purple-600 shadow-md text-white">
-    <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
-      <Activity className="w-4 h-4" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0 flex-1">
-      <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Total</p>
-      <p className="text-lg font-heading font-bold">{stats.total}</p>
-    </div>
-    <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full border-2 border-white/10" />
-  </div>
+          {/* Compact Theme Stat Cards - এক লাইনে */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 shadow-md text-white bg-gradient-to-br from-signal to-signal-light">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Activity className="w-4 h-4" />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Total</p>
+                <p className="text-lg font-heading font-bold">{stats.total}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
+            </div>
 
-  <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md text-white">
-    <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
-      <CheckCircle2 className="w-4 h-4" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0 flex-1">
-      <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Success</p>
-      <p className="text-lg font-heading font-bold">{stats.success}</p>
-    </div>
-    <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full border-2 border-white/10" />
-  </div>
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 shadow-md text-white bg-gradient-to-br from-success to-success/80">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Success</p>
+                <p className="text-lg font-heading font-bold">{stats.success}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
+            </div>
 
-  <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-amber-500 to-orange-600 shadow-md text-white">
-    <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
-      <AlertTriangle className="w-4 h-4" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0 flex-1">
-      <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Warning</p>
-      <p className="text-lg font-heading font-bold">{stats.warning}</p>
-    </div>
-    <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full border-2 border-white/10" />
-  </div>
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 shadow-md text-white bg-gradient-to-br from-warning to-warning/80">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Warning</p>
+                <p className="text-lg font-heading font-bold">{stats.warning}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
+            </div>
 
-  <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-red-500 to-rose-600 shadow-md text-white">
-    <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
-      <XCircle className="w-4 h-4" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0 flex-1">
-      <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Errors</p>
-      <p className="text-lg font-heading font-bold">{stats.error}</p>
-    </div>
-    <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full border-2 border-white/10" />
-  </div>
-</div>
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 shadow-md text-white bg-gradient-to-br from-destructive to-destructive/80">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <XCircle className="w-4 h-4" />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Errors</p>
+                <p className="text-lg font-heading font-bold">{stats.error}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
+            </div>
+          </div>
 
           {/* Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-3">
-              <h2 className="font-heading text-xl font-bold">Log List</h2>
+              <h2 className="font-heading text-xl font-bold text-signal">Log List</h2>
               {selectedRows.length > 0 && (
-                <span className="bg-signal/10 text-signal text-xs font-semibold px-3 py-1 rounded-full border border-signal/20 flex items-center gap-1">
+                <span className="bg-signal-tint text-signal text-xs font-semibold px-3 py-1 rounded-full border border-signal/30 flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" />
                   {selectedRows.length} selected
                   <button onClick={() => setSelectedRows([])} className="ml-1 hover:bg-signal/20 rounded-full p-0.5">
@@ -399,12 +384,12 @@ export default function HotspotLogPage() {
 
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                   placeholder="Search logs..."
-                  className="pl-9 rounded-full w-64 h-9"
+                  className="pl-9 rounded-full w-64 h-9 border-slate-200"
                 />
               </div>
 
@@ -414,7 +399,9 @@ export default function HotspotLogPage() {
                 onClick={() => setIsLive(!isLive)}
                 className={cn(
                   "rounded-full gap-2 font-semibold h-9",
-                  isLive && "bg-emerald-600 hover:bg-emerald-500 text-white"
+                  isLive
+                    ? "bg-success hover:bg-success/90 text-white"
+                    : "border-slate-200 text-signal"
                 )}
               >
                 {isLive ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -425,7 +412,7 @@ export default function HotspotLogPage() {
                 variant="outline"
                 size="icon"
                 onClick={handleRefresh}
-                className="rounded-full h-9 w-9"
+                className="rounded-full h-9 w-9 border-slate-200 text-signal"
                 title="Refresh"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
@@ -444,12 +431,12 @@ export default function HotspotLogPage() {
                   onClick={() => setShowServerFilter(!showServerFilter)}
                 />
                 {showServerFilter && (
-                  <div className="absolute right-0 top-full mt-2 w-44 bg-card border rounded-xl shadow-lg z-30 overflow-hidden">
+                  <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-lg z-30 overflow-hidden">
                     <button
                       onClick={() => { setServerFilter("all"); setShowServerFilter(false); setCurrentPage(1); }}
                       className={cn(
-                        "w-full text-left px-4 py-2.5 text-sm hover:bg-muted transition-colors",
-                        serverFilter === "all" && "bg-signal/10 text-signal font-semibold"
+                        "w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 transition-colors",
+                        serverFilter === "all" && "bg-signal-tint text-signal font-semibold"
                       )}
                     >
                       All Servers
@@ -459,8 +446,8 @@ export default function HotspotLogPage() {
                         key={srv}
                         onClick={() => { setServerFilter(srv); setShowServerFilter(false); setCurrentPage(1); }}
                         className={cn(
-                          "w-full text-left px-4 py-2.5 text-sm hover:bg-muted transition-colors",
-                          serverFilter === srv && "bg-signal/10 text-signal font-semibold"
+                          "w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 transition-colors",
+                          serverFilter === srv && "bg-signal-tint text-signal font-semibold"
                         )}
                       >
                         {srv}
@@ -474,7 +461,7 @@ export default function HotspotLogPage() {
                 <Button
                   variant="outline"
                   onClick={handleResetFilters}
-                  className="rounded-full gap-1.5 font-semibold text-xs h-9 text-red-500 border-red-500/30 hover:bg-red-500/5"
+                  className="rounded-full gap-1.5 font-semibold text-xs h-9 text-destructive border-destructive/30 hover:bg-destructive/5"
                 >
                   <X className="h-3.5 w-3.5" /> Reset
                 </Button>
@@ -502,7 +489,7 @@ export default function HotspotLogPage() {
                   "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all capitalize",
                   statusFilter === s
                     ? "bg-signal text-white border-signal shadow-md"
-                    : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                    : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                 )}
               >
                 {s === "all" ? "All Logs" : s}
@@ -517,12 +504,12 @@ export default function HotspotLogPage() {
 
           {/* Rows per page */}
           <div className="flex justify-between items-center mb-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-slate-500">
               <span>Show</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border rounded-lg px-2 py-1 bg-background text-sm"
+                className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-sm text-signal"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -542,23 +529,23 @@ export default function HotspotLogPage() {
           </div>
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden overflow-x-auto">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden overflow-x-auto shadow-sm">
             <table className="w-full text-sm min-w-[1000px]">
               <thead>
-                <tr className="bg-signal text-signal-foreground">
+                <tr className="bg-signal text-white">
                   <th className="px-4 py-4 w-12">
                     <input
                       type="checkbox"
                       checked={allSelected}
                       onChange={toggleSelectAll}
-                      className="rounded cursor-pointer"
+                      className="rounded cursor-pointer accent-white"
                     />
                   </th>
                   {columns.map((c) => (
                     <th
                       key={c.key}
                       onClick={() => handleSort(c.key)}
-                      className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer hover:bg-signal/90 transition-colors select-none"
+                      className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors select-none"
                     >
                       <div className="flex items-center gap-1">
                         {c.label}
@@ -577,8 +564,8 @@ export default function HotspotLogPage() {
                       <tr
                         key={r.id}
                         className={cn(
-                          "border-t hover:bg-muted/30 transition-colors",
-                          isSelected && "bg-signal/5"
+                          "border-t border-slate-100 hover:bg-slate-50 transition-colors",
+                          isSelected && "bg-signal-tint"
                         )}
                       >
                         <td className="px-4 py-4">
@@ -586,7 +573,7 @@ export default function HotspotLogPage() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleSelect(r.id)}
-                            className="rounded cursor-pointer"
+                            className="rounded cursor-pointer accent-signal"
                           />
                         </td>
                         <td className="px-6 py-4">
@@ -595,26 +582,26 @@ export default function HotspotLogPage() {
                             <span className="font-semibold text-signal">{r.user}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-mono text-xs">{r.ip}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">{r.time}</td>
+                        <td className="px-6 py-4 font-mono text-xs text-slate-600">{r.ip}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-500">{r.time}</td>
                         <td className="px-6 py-4">
-                          <span className="bg-signal/10 text-signal text-xs font-semibold px-2 py-1 rounded-md border border-signal/20">
+                          <span className="bg-signal-tint text-signal text-xs font-semibold px-2 py-1 rounded-md border border-signal/30">
                             {r.server}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-sm">{r.messages}</span>
+                            <span className="text-sm text-slate-600">{r.messages}</span>
                             <StatusBadge status={r.status} />
                           </div>
                         </td>
                         <td className="px-5 py-4">
                           <button
                             onClick={() => handleView(r)}
-                            className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                            className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
                             title="View"
                           >
-                            <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+                            <Eye className="w-3.5 h-3.5 text-slate-500" />
                           </button>
                         </td>
                       </tr>
@@ -622,9 +609,9 @@ export default function HotspotLogPage() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={columns.length + 2} className="px-6 py-16 text-center text-muted-foreground">
+                    <td colSpan={columns.length + 2} className="px-6 py-16 text-center text-slate-500">
                       <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                      <p className="font-semibold">No log entries found</p>
+                      <p className="font-semibold text-signal">No log entries found</p>
                       <p className="text-xs mt-1">Try adjusting your search or filters</p>
                     </td>
                   </tr>
@@ -633,8 +620,8 @@ export default function HotspotLogPage() {
             </table>
 
             {/* Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t text-sm">
-              <div className="text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t border-slate-100 text-sm">
+              <div className="text-slate-500">
                 Showing {sortedRows.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + rowsPerPage, sortedRows.length)} of {sortedRows.length} entries
               </div>
               <div className="flex items-center gap-2">
@@ -643,7 +630,7 @@ export default function HotspotLogPage() {
                   size="icon"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="rounded-full h-8 w-8"
+                  className="rounded-full h-8 w-8 border-slate-200"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
@@ -655,19 +642,22 @@ export default function HotspotLogPage() {
                       variant={currentPage === page ? "default" : "outline"}
                       size="icon"
                       onClick={() => setCurrentPage(page)}
-                      className={cn("rounded-full h-8 w-8 text-xs font-semibold", currentPage === page && "bg-signal text-white")}
+                      className={cn(
+                        "rounded-full h-8 w-8 text-xs font-semibold",
+                        currentPage === page ? "bg-signal text-white" : "border-slate-200 text-signal"
+                      )}
                     >
                       {page}
                     </Button>
                   );
                 })}
-                {totalPages > 5 && <span className="text-muted-foreground px-1">...</span>}
+                {totalPages > 5 && <span className="text-slate-500 px-1">...</span>}
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="rounded-full h-8 w-8"
+                  className="rounded-full h-8 w-8 border-slate-200"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>

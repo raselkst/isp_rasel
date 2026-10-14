@@ -20,7 +20,6 @@ const columns = [
   { key: "actions", label: "Action" },
 ];
 
-// ডামি ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const initialRows = [
   { id: 1, code: "1001", name: "Service Income", type: "Income", description: "Income from ISP service" },
   { id: 2, code: "1002", name: "Recharge Income", type: "Income", description: "Income from recharges" },
@@ -53,7 +52,6 @@ export default function ChartOfAccountPage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
-  // ফিল্টার
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
       const matchesSearch =
@@ -65,7 +63,6 @@ export default function ChartOfAccountPage() {
     });
   }, [rows, searchTerm, typeFilter]);
 
-  // সর্টিং
   const sortedRows = useMemo(() => {
     if (!sortKey) return filteredRows;
     return [...filteredRows].sort((a: any, b: any) => {
@@ -77,12 +74,10 @@ export default function ChartOfAccountPage() {
     });
   }, [filteredRows, sortKey, sortOrder]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(sortedRows.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedRows = sortedRows.slice(startIndex, startIndex + rowsPerPage);
 
-  // সিলেক্ট অল
   const allSelected =
     paginatedRows.length > 0 && paginatedRows.every((r) => selectedRows.includes(r.id));
   const toggleSelectAll = () => {
@@ -96,7 +91,6 @@ export default function ChartOfAccountPage() {
     setSelectedRows((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
-  // Stat counts
   const stats = useMemo(() => {
     return {
       total: rows.length,
@@ -106,13 +100,11 @@ export default function ChartOfAccountPage() {
     };
   }, [rows]);
 
-  // Sort হ্যান্ডলার
   const handleSort = (key: string) => {
     if (sortKey === key) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     else { setSortKey(key); setSortOrder("asc"); }
   };
 
-  // Auto Code Generation
   const generateCode = (type: string) => {
     const prefixes: Record<string, string> = {
       Income: "1",
@@ -139,7 +131,6 @@ export default function ChartOfAccountPage() {
     }
   };
 
-  // Save
   const handleSave = () => {
     if (!formData.name.trim()) return alert("Account Name is required!");
     if (!formData.type) return alert("Account Type is required!");
@@ -207,7 +198,6 @@ export default function ChartOfAccountPage() {
     setEditingId(null);
   };
 
-  // Export Actions
   const exportToCSV = (filename: string) => {
     const headers = "Code,Name,Type,Description";
     const csvRows = sortedRows.map((r) =>
@@ -246,20 +236,20 @@ export default function ChartOfAccountPage() {
     alert("Print dialog opened. Save as PDF to export.");
   };
 
-  // Type ব্যাজ
+  // 🎯 Theme-connected Type Badge
   const getTypeBadge = (type: string) => {
     const map: Record<string, string> = {
-      Income: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-      Expense: "bg-red-500/10 text-red-600 border-red-500/20",
-      Asset: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-      Liability: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-      Equity: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+      Income: "bg-success-tint text-success border-success/30",
+      Expense: "bg-destructive/10 text-destructive border-destructive/30",
+      Asset: "bg-signal-tint text-signal border-signal/30",
+      Liability: "bg-warning-tint text-warning border-warning/30",
+      Equity: "bg-violet-accent-tint text-violet-accent border-violet-accent/30",
     };
-    return map[type] || "bg-slate-500/10 text-slate-600 border-slate-500/20";
+    return map[type] || "bg-slate-100 text-slate-600 border-slate-200";
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -269,22 +259,23 @@ export default function ChartOfAccountPage() {
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Chart of Accounts
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Manage all income, expense, asset, liability, and equity heads.
               </p>
             </div>
-            <div className="flex items-center gap-2 bg-signal/10 text-signal px-4 py-2 rounded-full text-xs font-semibold border border-signal/20">
+            <div className="flex items-center gap-2 bg-signal-tint text-signal px-4 py-2 rounded-full text-xs font-semibold border border-signal/20">
               <BookOpen className="w-3.5 h-3.5" />
               {stats.total} Total Accounts
             </div>
           </div>
 
-          {/* 🎯 Compact Colorful Stat Cards - এক লাইনে */}
+          {/* 🎯 Compact Stat Cards — Theme-Based Solid Colors */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-signal to-violet-accent text-white shadow-md">
+            {/* Total — Teal */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-signal text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Layers className="w-4 h-4" />
               </div>
@@ -295,7 +286,8 @@ export default function ChartOfAccountPage() {
               <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md">
+            {/* Income — Success */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-success text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <TrendingUp className="w-4 h-4" />
               </div>
@@ -306,7 +298,8 @@ export default function ChartOfAccountPage() {
               <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-md">
+            {/* Expense — Destructive */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-destructive text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <TrendingDown className="w-4 h-4" />
               </div>
@@ -317,7 +310,8 @@ export default function ChartOfAccountPage() {
               <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md">
+            {/* Others — Warning */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-warning text-white shadow-md">
               <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Wallet className="w-4 h-4" />
               </div>
@@ -330,8 +324,8 @@ export default function ChartOfAccountPage() {
           </div>
 
           {/* Add / Edit Form */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center justify-between">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+            <div className="bg-signal text-white px-6 py-4 flex items-center justify-between">
               <h2 className="font-heading font-bold text-lg flex items-center gap-2">
                 <Plus className="w-5 h-5" />
                 {editingId ? "Edit Account Head" : "Add Account Head"}
@@ -353,7 +347,7 @@ export default function ChartOfAccountPage() {
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="">Select Type</option>
                     {accountTypes.map((t) => (
@@ -367,7 +361,7 @@ export default function ChartOfAccountPage() {
                     value={formData.code}
                     onChange={handleChange}
                     placeholder="Auto-generated"
-                    className="rounded-xl bg-signal/5 border-signal/30 font-mono font-semibold"
+                    className="rounded-xl bg-signal-tint border-signal/30 font-mono font-semibold text-signal"
                   />
                   <p className="text-xs text-signal font-medium mt-1">
                     * Code auto-generates when you select a Type
@@ -379,7 +373,7 @@ export default function ChartOfAccountPage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. Service Income"
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
               </div>
@@ -390,7 +384,7 @@ export default function ChartOfAccountPage() {
                   value={formData.description}
                   onChange={handleChange}
                   placeholder="Optional description about this account head..."
-                  className="rounded-xl"
+                  className="rounded-xl border-slate-200 text-signal"
                 />
               </Field>
 
@@ -399,14 +393,14 @@ export default function ChartOfAccountPage() {
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  className="rounded-xl font-semibold h-11 px-6"
+                  className="rounded-xl font-semibold h-11 px-6 border-slate-200 text-slate-600 hover:bg-slate-50"
                 >
                   Clear
                 </Button>
                 <Button
                   type="button"
                   onClick={handleSave}
-                  className="rounded-xl font-semibold h-11 px-8 bg-gradient-to-r from-signal to-violet-accent border-0"
+                  className="rounded-xl font-semibold h-11 px-8 bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   {editingId ? "Update Head" : "Save Head"}
@@ -422,8 +416,8 @@ export default function ChartOfAccountPage() {
               className={cn(
                 "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                 typeFilter === "All"
-                  ? "bg-signal text-white border-signal"
-                  : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                  ? "bg-signal text-white border-signal shadow-md"
+                  : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
               )}
             >
               All ({stats.total})
@@ -437,8 +431,8 @@ export default function ChartOfAccountPage() {
                   className={cn(
                     "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                     typeFilter === t
-                      ? "bg-signal text-white border-signal"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      ? "bg-signal text-white border-signal shadow-md"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {t} ({count})
@@ -461,7 +455,7 @@ export default function ChartOfAccountPage() {
           {/* Selected Rows + Bulk Delete */}
           {selectedRows.length > 0 && (
             <div className="flex items-center gap-3 mb-3">
-              <span className="bg-signal/10 text-signal text-xs font-semibold px-3 py-1.5 rounded-full border border-signal/20 flex items-center gap-1">
+              <span className="bg-signal-tint text-signal text-xs font-semibold px-3 py-1.5 rounded-full border border-signal/20 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" />
                 {selectedRows.length} selected
                 <button onClick={() => setSelectedRows([])} className="ml-1 hover:bg-signal/20 rounded-full p-0.5">
@@ -480,17 +474,17 @@ export default function ChartOfAccountPage() {
           )}
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[700px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     <th className="px-4 py-4 w-12">
                       <input
                         type="checkbox"
                         checked={allSelected}
                         onChange={toggleSelectAll}
-                        className="rounded cursor-pointer"
+                        className="rounded cursor-pointer accent-white"
                       />
                     </th>
                     {columns.map((c) => (
@@ -499,7 +493,7 @@ export default function ChartOfAccountPage() {
                         onClick={() => c.key !== "actions" && handleSort(c.key)}
                         className={cn(
                           "text-left px-6 py-4 font-semibold text-xs whitespace-nowrap",
-                          c.key !== "actions" && "cursor-pointer hover:bg-signal/90 transition-colors select-none"
+                          c.key !== "actions" && "cursor-pointer hover:bg-white/10 transition-colors select-none"
                         )}
                       >
                         <div className="flex items-center gap-1">
@@ -520,8 +514,8 @@ export default function ChartOfAccountPage() {
                         <tr
                           key={r.id}
                           className={cn(
-                            "border-t transition-colors",
-                            editingId === r.id ? "bg-signal/5" : isSelected ? "bg-signal/5" : "hover:bg-muted/30"
+                            "border-t border-slate-100 transition-colors",
+                            editingId === r.id ? "bg-signal-tint" : isSelected ? "bg-signal-tint" : "hover:bg-slate-50"
                           )}
                         >
                           <td className="px-4 py-4">
@@ -529,7 +523,7 @@ export default function ChartOfAccountPage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelect(r.id)}
-                              className="rounded cursor-pointer"
+                              className="rounded cursor-pointer accent-signal"
                             />
                           </td>
                           <td className="px-6 py-4 font-mono font-bold text-signal">
@@ -537,9 +531,9 @@ export default function ChartOfAccountPage() {
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <p className="font-semibold">{r.name}</p>
+                              <p className="font-semibold text-signal">{r.name}</p>
                               {r.description && (
-                                <p className="text-xs text-muted-foreground mt-0.5">
+                                <p className="text-xs text-slate-500 mt-0.5">
                                   {r.description}
                                 </p>
                               )}
@@ -576,9 +570,9 @@ export default function ChartOfAccountPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={columns.length + 1} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length + 1} className="px-6 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No account heads found</p>
+                        <p className="font-semibold text-signal">No account heads found</p>
                         <p className="text-xs mt-1">Try adjusting your search or filters</p>
                       </td>
                     </tr>
@@ -599,7 +593,7 @@ export default function ChartOfAccountPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Each account head has a unique code with a

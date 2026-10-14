@@ -16,11 +16,9 @@ interface CardGeneratorExcelModalProps {
   onSubmit?: () => void;
 }
 
-// ডাইনামিক ড্রপডাউন ডেটা
 const users = ["Admin", "Reseller-A", "Reseller-B", "Al Jaami Tech"];
 const protocols = ["Hotspot", "PPPoE", "Static"];
 
-// ম্যাপিং ফিল্ড
 const mappingFields = [
   { key: "cardNo", label: "Card No", required: true },
   { key: "package", label: "Package", required: true },
@@ -29,7 +27,6 @@ const mappingFields = [
   { key: "expiry", label: "Expiry Date", required: false },
 ];
 
-// ডামি এক্সেল ডেটা (আপলোডের পর দেখানোর জন্য)
 const mockExcelData = {
   fileName: "cards-import-template.xlsx",
   fileSize: "12.4 KB",
@@ -46,8 +43,8 @@ const mockExcelData = {
 function Field({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
   return (
     <div className="space-y-2">
-      <span className="font-semibold text-sm block">
-        {label} {required && <span className="text-red-500">*</span>}
+      <span className="font-semibold text-sm block text-signal">
+        {label} {required && <span className="text-destructive">*</span>}
       </span>
       {children}
     </div>
@@ -89,7 +86,6 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
     }
   };
 
-  // ফাইল হ্যান্ডলার
   const handleFileSelect = (selectedFile: File) => {
     const validTypes = [
       "application/vnd.ms-excel",
@@ -124,7 +120,6 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // টেমপ্লেট ডাউনলোড
   const handleDownloadTemplate = () => {
     const headers = "Card No,Package,Protocol,Server,Expiry";
     const sampleRows = [
@@ -141,7 +136,6 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
     URL.revokeObjectURL(url);
   };
 
-  // ইমপোর্ট হ্যান্ডলার
   const handleImport = () => {
     if (!formData.user) {
       alert("Please select a User.");
@@ -167,13 +161,11 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
       if (current >= 100) {
         clearInterval(interval);
         setIsImporting(false);
-        // সফল ও ফেইলড রেজাল্ট
         setResult({ success: mockExcelData.rows.length, failed: 0 });
       }
     }, 100);
   };
 
-  // Reset
   const handleReset = () => {
     setFormData({
       user: "",
@@ -189,7 +181,6 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // ম্যাপিং আপডেট
   const handleMappingChange = (field: string, column: string) => {
     setMapping((prev) => ({ ...prev, [field]: column }));
   };
@@ -201,7 +192,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
       title="Card Generator (Excel Import)"
       hideSubmit
     >
-      {/* Dropzone / File Upload */}
+      {/* Dropzone */}
       {!file ? (
         <div
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -211,8 +202,8 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
           className={cn(
             "rounded-2xl border-2 border-dashed p-10 flex flex-col items-center gap-3 transition-all cursor-pointer",
             isDragging
-              ? "border-signal bg-signal/5 scale-[1.01]"
-              : "border-border bg-muted/20 hover:border-signal/50 hover:bg-signal/5"
+              ? "border-signal bg-signal-tint scale-[1.01]"
+              : "border-slate-300 bg-slate-50 hover:border-signal/50 hover:bg-signal-tint"
           )}
         >
           <input
@@ -222,14 +213,14 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
             onChange={handleFileInput}
             className="hidden"
           />
-          <div className="w-16 h-16 rounded-full bg-signal/10 flex items-center justify-center">
-            <Upload className={cn("w-8 h-8 transition-colors", isDragging ? "text-signal" : "text-signal/70")} />
+          <div className="w-16 h-16 rounded-full bg-signal-tint flex items-center justify-center">
+            <Upload className={cn("w-8 h-8 transition-colors", isDragging ? "text-signal" : "text-signal")} />
           </div>
           <div className="text-center">
-            <p className="font-heading font-bold text-foreground">
+            <p className="font-heading font-bold text-signal">
               {isDragging ? "Drop file here" : "Upload Excel File"}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Drag & drop or click to select (.xlsx, .xls, .csv)
             </p>
           </div>
@@ -237,30 +228,30 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
             type="button"
             variant="outline"
             size="sm"
-            className="rounded-full font-semibold text-signal border-signal/30 mt-2"
+            className="rounded-full font-semibold text-signal border-signal/30 mt-2 hover:bg-signal-tint"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" /> Select File
           </Button>
         </div>
       ) : (
         /* File Preview */
-        <div className="rounded-2xl border bg-muted/20 p-5 animate-in fade-in duration-300">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 animate-in fade-in duration-300">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-              <FileSpreadsheet className="w-6 h-6 text-emerald-600" />
+            <div className="w-12 h-12 rounded-xl bg-success-tint flex items-center justify-center shrink-0">
+              <FileSpreadsheet className="w-6 h-6 text-success" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm truncate">{file.name}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="font-semibold text-sm truncate text-signal">{file.name}</p>
+              <p className="text-xs text-slate-500">
                 {(file.size / 1024).toFixed(2)} KB · Ready to import
               </p>
             </div>
             <button
               onClick={handleRemoveFile}
-              className="p-2 rounded-lg hover:bg-red-500/10 transition-colors"
+              className="p-2 rounded-lg hover:bg-destructive/10 transition-colors"
               title="Remove file"
             >
-              <X className="w-4 h-4 text-red-500" />
+              <X className="w-4 h-4 text-destructive" />
             </button>
           </div>
 
@@ -270,7 +261,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
               variant="outline"
               size="sm"
               onClick={handleDownloadTemplate}
-              className="flex-1 rounded-full text-xs font-semibold"
+              className="flex-1 rounded-full text-xs font-semibold border-slate-200 text-signal"
             >
               <Download className="w-3.5 h-3.5 mr-1.5" /> Template
             </Button>
@@ -279,7 +270,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
               variant="outline"
               size="sm"
               onClick={() => setShowPreview(!showPreview)}
-              className="flex-1 rounded-full text-xs font-semibold text-signal border-signal/30"
+              className="flex-1 rounded-full text-xs font-semibold text-signal border-signal/30 hover:bg-signal-tint"
             >
               <Eye className="w-3.5 h-3.5 mr-1.5" />
               {showPreview ? "Hide" : "Preview"}
@@ -288,19 +279,19 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
         </div>
       )}
 
-      {/* Excel Preview Table */}
+      {/* Preview Table */}
       {showPreview && (
         <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-center gap-2">
             <Table className="w-4 h-4 text-signal" />
-            <p className="text-sm font-semibold">Data Preview</p>
-            <span className="text-xs text-muted-foreground">
+            <p className="text-sm font-semibold text-signal">Data Preview</p>
+            <span className="text-xs text-slate-500">
               ({mockExcelData.rows.length} rows)
             </span>
           </div>
-          <div className="max-h-56 overflow-y-auto rounded-2xl border bg-muted/20">
+          <div className="max-h-56 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-signal text-signal-foreground">
+              <thead className="sticky top-0 bg-signal text-white">
                 <tr>
                   <th className="px-3 py-2 text-left font-semibold">#</th>
                   {mockExcelData.columns.map((c) => (
@@ -310,13 +301,13 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
               </thead>
               <tbody>
                 {mockExcelData.rows.map((row, i) => (
-                  <tr key={i} className="border-t hover:bg-muted/30">
-                    <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
+                  <tr key={i} className="border-t border-slate-100 hover:bg-white">
+                    <td className="px-3 py-2 text-slate-500">{i + 1}</td>
                     <td className="px-3 py-2 font-mono font-semibold text-signal">{row.cardNo}</td>
-                    <td className="px-3 py-2">{row.package}</td>
-                    <td className="px-3 py-2">{row.protocol}</td>
-                    <td className="px-3 py-2">{row.server}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{row.expiry}</td>
+                    <td className="px-3 py-2 text-slate-600">{row.package}</td>
+                    <td className="px-3 py-2 text-slate-600">{row.protocol}</td>
+                    <td className="px-3 py-2 text-slate-600">{row.server}</td>
+                    <td className="px-3 py-2 text-slate-500">{row.expiry}</td>
                   </tr>
                 ))}
               </tbody>
@@ -327,20 +318,20 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
 
       {/* Column Mapping */}
       {file && showPreview && (
-        <div className="space-y-3 p-5 rounded-2xl bg-muted/30 border animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="space-y-3 p-5 rounded-2xl bg-slate-50 border border-slate-200 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-center gap-2 mb-2">
             <ArrowRight className="w-4 h-4 text-signal" />
-            <p className="text-sm font-semibold">Column Mapping</p>
+            <p className="text-sm font-semibold text-signal">Column Mapping</p>
           </div>
           {mappingFields.map((field) => (
             <div key={field.key} className="grid grid-cols-2 gap-3 items-center">
-              <label className="text-xs font-semibold text-muted-foreground">
-                {field.label} {field.required && <span className="text-red-500">*</span>}
+              <label className="text-xs font-semibold text-slate-500">
+                {field.label} {field.required && <span className="text-destructive">*</span>}
               </label>
               <select
                 value={mapping[field.key] || ""}
                 onChange={(e) => handleMappingChange(field.key, e.target.value)}
-                className="w-full border rounded-lg px-3 py-1.5 bg-background text-xs focus:ring-2 focus:ring-signal outline-none"
+                className="w-full border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-xs text-signal focus:ring-2 focus:ring-signal outline-none"
               >
                 <option value="">-- Select --</option>
                 {mockExcelData.columns.map((c) => (
@@ -359,7 +350,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
             name="user"
             value={formData.user}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Choose User</option>
             {users.map((u) => (
@@ -373,7 +364,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
             name="protocol"
             value={formData.protocol}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             {protocols.map((p) => (
               <option key={p} value={p}>{p}</option>
@@ -386,7 +377,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
             name="server"
             value={formData.server}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Choose Server</option>
             <option value="SERVER-2">SERVER-2</option>
@@ -396,17 +387,17 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
         </Field>
 
         <div className="flex items-end">
-          <label className="flex items-center gap-3 p-3 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors w-full">
+          <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors w-full">
             <input
               type="checkbox"
               name="overwriteDuplicates"
               checked={formData.overwriteDuplicates}
               onChange={handleChange}
-              className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+              className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
             />
             <div className="flex-1">
-              <p className="text-sm font-semibold">Overwrite Duplicates</p>
-              <p className="text-xs text-muted-foreground">Replace existing card numbers</p>
+              <p className="text-sm font-semibold text-signal">Overwrite Duplicates</p>
+              <p className="text-xs text-slate-500">Replace existing card numbers</p>
             </div>
           </label>
         </div>
@@ -417,7 +408,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
         <Button
           onClick={handleImport}
           disabled={isImporting || !file}
-          className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent border-0"
+          className="flex-1 rounded-xl font-semibold h-12 bg-signal hover:bg-signal-hover text-white border-0 shadow-md"
         >
           {isImporting ? (
             <>
@@ -432,7 +423,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
         <Button
           onClick={handleReset}
           variant="outline"
-          className="rounded-xl font-semibold h-12 px-6"
+          className="rounded-xl font-semibold h-12 px-6 border-slate-200 text-signal"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
@@ -442,12 +433,12 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
       {isImporting && (
         <div className="space-y-2 animate-in fade-in duration-300">
           <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="text-muted-foreground">Importing cards from Excel...</span>
+            <span className="text-slate-500">Importing cards from Excel...</span>
             <span className="text-signal">{progress}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-signal to-violet-accent transition-all duration-200"
+              className="h-full bg-signal transition-all duration-200"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -456,19 +447,19 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
 
       {/* Success Result */}
       {result && (
-        <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="rounded-2xl bg-success-tint border border-success/30 p-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-6 h-6 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="font-heading font-bold text-emerald-700">Import Completed!</p>
+              <p className="font-heading font-bold text-success">Import Completed!</p>
               <div className="grid grid-cols-2 gap-4 mt-3">
-                <div className="bg-background/60 rounded-xl p-3">
-                  <p className="text-[10px] text-emerald-700 font-semibold uppercase mb-1">Success</p>
-                  <p className="font-heading font-bold text-xl text-emerald-600">{result.success}</p>
+                <div className="bg-white/60 rounded-xl p-3">
+                  <p className="text-[10px] text-success font-semibold uppercase mb-1">Success</p>
+                  <p className="font-heading font-bold text-xl text-success">{result.success}</p>
                 </div>
-                <div className="bg-background/60 rounded-xl p-3">
-                  <p className="text-[10px] text-red-600 font-semibold uppercase mb-1">Failed</p>
-                  <p className="font-heading font-bold text-xl text-red-600">{result.failed}</p>
+                <div className="bg-white/60 rounded-xl p-3">
+                  <p className="text-[10px] text-destructive font-semibold uppercase mb-1">Failed</p>
+                  <p className="font-heading font-bold text-xl text-destructive">{result.failed}</p>
                 </div>
               </div>
               <div className="flex gap-2 mt-4">
@@ -477,7 +468,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
                   size="sm"
                   variant="outline"
                   onClick={handleDownloadTemplate}
-                  className="rounded-full text-xs font-semibold"
+                  className="rounded-full text-xs font-semibold border-slate-200 text-signal"
                 >
                   <Download className="w-3.5 h-3.5 mr-1.5" /> Download CSV
                 </Button>
@@ -486,7 +477,7 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
                   size="sm"
                   variant="outline"
                   onClick={handleReset}
-                  className="rounded-full text-xs font-semibold"
+                  className="rounded-full text-xs font-semibold border-slate-200 text-signal"
                 >
                   <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Import Again
                 </Button>
@@ -498,9 +489,9 @@ export function CardGeneratorExcelModal({ open, onClose, onSubmit }: CardGenerat
 
       {/* Info Note */}
       {!file && !isImporting && (
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-signal/5 border border-signal/20">
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-signal-tint border border-signal/30">
           <AlertCircle className="w-4 h-4 text-signal shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-slate-600 leading-relaxed">
             Upload an Excel (.xlsx/.xls) or CSV file containing card numbers, then map the columns to system fields. 
             Click <strong className="text-signal">Import & Generate Cards</strong> to bulk-create cards.
           </p>

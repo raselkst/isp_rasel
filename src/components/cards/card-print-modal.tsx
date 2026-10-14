@@ -44,8 +44,8 @@ const printModes = [
 function Field({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
   return (
     <div className="space-y-2">
-      <span className="font-semibold text-sm block">
-        {label} {required && <span className="text-red-500">*</span>}
+      <span className="font-semibold text-sm block text-signal">
+        {label} {required && <span className="text-destructive">*</span>}
       </span>
       {children}
     </div>
@@ -80,13 +80,9 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
   const [previewCards, setPreviewCards] = useState<typeof generateSampleCards extends (...args: any) => infer R ? R : never>([]);
   const [loaded, setLoaded] = useState(false);
 
-  // Protocol অনুযায়ী সার্ভার
   const availableServers = useMemo(() => serversByProtocol[formData.protocol] || [], [formData.protocol]);
-
-  // সিলেক্টেড ডিজাইন
   const selectedDesign = cardDesigns.find((d) => d.id === formData.cardDesign) || cardDesigns[1];
 
-  // হ্যান্ডলার
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
@@ -95,7 +91,6 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
     }));
   };
 
-  // Load Cards
   const handleLoadCards = () => {
     if (!formData.server) {
       alert("Please select a Server.");
@@ -117,7 +112,6 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
     }, 800);
   };
 
-  // Print
   const handlePrint = () => {
     if (previewCards.length === 0) {
       alert("Please load cards first.");
@@ -126,7 +120,6 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
     window.print();
   };
 
-  // Download CSV
   const handleDownload = () => {
     if (previewCards.length === 0) {
       alert("Please load cards first.");
@@ -144,7 +137,6 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
     URL.revokeObjectURL(url);
   };
 
-  // Copy All
   const handleCopyAll = () => {
     if (previewCards.length === 0) {
       alert("Please load cards first.");
@@ -155,7 +147,6 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
     alert(`Copied ${previewCards.length} card numbers to clipboard!`);
   };
 
-  // Reset
   const handleReset = () => {
     setFormData({
       user: "",
@@ -188,7 +179,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             name="user"
             value={formData.user}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal font-semibold focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Choose User</option>
             {users.map((u) => (
@@ -205,7 +196,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
               handleChange(e);
               setFormData((prev) => ({ ...prev, server: "" }));
             }}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal font-semibold focus:ring-2 focus:ring-signal outline-none"
           >
             {protocols.map((p) => (
               <option key={p} value={p}>{p}</option>
@@ -218,7 +209,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             name="server"
             value={formData.server}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal font-semibold focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Choose Server</option>
             {availableServers.map((s) => (
@@ -232,7 +223,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             name="package"
             value={formData.package}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal font-semibold focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Select Package</option>
             {packages.map((p) => (
@@ -246,7 +237,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             name="cardDesign"
             value={formData.cardDesign}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal font-semibold focus:ring-2 focus:ring-signal outline-none"
           >
             {cardDesigns.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
@@ -259,7 +250,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             name="cardType"
             value={formData.cardType}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal font-semibold focus:ring-2 focus:ring-signal outline-none"
           >
             {cardTypes.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -281,7 +272,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
                     "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-semibold transition-all",
                     isActive
                       ? "bg-signal text-white border-signal"
-                      : "bg-muted/40 text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                   )}
                 >
                   <Icon className="w-3.5 h-3.5" /> {mode.name}
@@ -299,7 +290,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             max={10}
             value={formData.copiesPerCard}
             onChange={handleChange}
-            className="rounded-xl"
+            className="rounded-xl border-slate-200 text-signal"
           />
         </Field>
 
@@ -309,7 +300,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             type="date"
             value={formData.dateFrom}
             onChange={handleChange}
-            className="rounded-xl"
+            className="rounded-xl border-slate-200 text-signal"
           />
         </Field>
       </div>
@@ -319,7 +310,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
         <Button
           onClick={handleLoadCards}
           disabled={isLoading}
-          className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent border-0"
+          className="flex-1 rounded-xl font-semibold h-12 bg-signal hover:bg-signal-hover text-white border-0 shadow-md"
         >
           {isLoading ? (
             <>
@@ -334,7 +325,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
         <Button
           onClick={handleReset}
           variant="outline"
-          className="rounded-xl font-semibold h-12 px-6"
+          className="rounded-xl font-semibold h-12 px-6 border-slate-200 text-slate-500 hover:bg-slate-50"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
@@ -344,7 +335,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-12 gap-3 animate-in fade-in duration-300">
           <Loader2 className="w-10 h-10 text-signal animate-spin" />
-          <p className="text-sm text-muted-foreground">Fetching cards...</p>
+          <p className="text-sm text-slate-500">Fetching cards...</p>
         </div>
       )}
 
@@ -352,14 +343,14 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
       {!isLoading && loaded && previewCards.length > 0 && (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Summary Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-success-tint border border-success/30">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              <CheckCircle2 className="w-5 h-5 text-success" />
               <div>
-                <p className="text-sm font-semibold text-emerald-700">
+                <p className="text-sm font-semibold text-success">
                   {previewCards.length} card(s) ready to print
                 </p>
-                <p className="text-xs text-emerald-600">
+                <p className="text-xs text-success/80">
                   {formData.cardType} · {formData.printMode} · {selectedDesign.size}
                 </p>
               </div>
@@ -367,14 +358,14 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
             <div className="flex gap-2">
               <button
                 onClick={handleCopyAll}
-                className="p-2 rounded-lg bg-background border hover:bg-muted transition-colors"
+                className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors text-signal"
                 title="Copy All"
               >
                 <Copy className="w-4 h-4" />
               </button>
               <button
                 onClick={handleDownload}
-                className="p-2 rounded-lg bg-background border hover:bg-muted transition-colors"
+                className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors text-signal"
                 title="Download CSV"
               >
                 <Download className="w-4 h-4" />
@@ -384,14 +375,14 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
 
           {/* Preview Grid */}
           <div className={cn(
-            "grid gap-4 p-4 rounded-2xl bg-muted/30 border",
+            "grid gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200",
             formData.printMode === "landscape" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           )}>
             {previewCards.map((card, i) => (
               <div
                 key={i}
                 className={cn(
-                  "rounded-2xl bg-gradient-to-br from-signal to-violet-accent text-white p-5 shadow-lg relative overflow-hidden transition-all hover:scale-[1.02]",
+                  "rounded-2xl bg-signal text-white p-5 shadow-lg relative overflow-hidden transition-all hover:scale-[1.02]",
                   selectedDesign.width,
                   "w-full"
                 )}
@@ -429,7 +420,7 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
           {/* Print Button */}
           <Button
             onClick={handlePrint}
-            className="w-full rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent border-0"
+            className="w-full rounded-xl font-semibold h-12 bg-signal hover:bg-signal-hover text-white border-0 shadow-md"
           >
             <Printer className="w-4 h-4 mr-2" /> Print {previewCards.length} Cards
           </Button>
@@ -438,9 +429,9 @@ export function CardPrintModal({ open, onClose, onSubmit }: CardPrintModalProps)
 
       {/* Info Note */}
       {!isLoading && !loaded && (
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-signal/5 border border-signal/20">
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-signal-tint border border-signal/30">
           <AlertCircle className="w-4 h-4 text-signal shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-slate-600 leading-relaxed">
             Select a Server, Package, and Card Design, then click <strong className="text-signal">Load Cards for Preview</strong>. 
             You'll see a live preview of how the cards will look. Then click <strong className="text-signal">Print</strong> or download as CSV.
           </p>

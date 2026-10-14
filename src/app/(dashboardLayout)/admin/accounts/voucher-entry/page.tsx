@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardTopbar } from "@/components/dashboard/dashboard-topbar";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// অ্যাকাউন্ট ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
+// 🎯 SSR-safe: শুধু ফাংশন দিয়ে জেনারেট করব, state-এ random রাখব না
+function generateVoucherNo() {
+  const year = new Date().getFullYear();
+  const random = Math.floor(Math.random() * 9000) + 1000;
+  return `VCH-${year}-${random}`;
+}
+
 const accounts = [
   { id: "cash", label: "Cash", code: "1001", type: "Asset", balance: 40100 },
   { id: "brac", label: "BRAC Bank", code: "1002", type: "Asset", balance: 125400.5 },
@@ -28,8 +34,8 @@ const accounts = [
 
 function Section({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) {
   return (
-    <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-6">
-      <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center gap-2">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+      <div className="bg-signal text-white px-6 py-4 flex items-center gap-2">
         <Icon className="w-5 h-5" />
         <h2 className="font-heading font-bold text-lg">{title}</h2>
       </div>
@@ -39,16 +45,25 @@ function Section({ title, icon: Icon, children }: { title: string; icon: any; ch
 }
 
 export default function VoucherEntryPage() {
+  // 🎯 State-এ voucherNo ও date খালি — useEffect-এ সেট করব (SSR-safe)
   const [formData, setFormData] = useState({
-    voucherNo: `VCH-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    voucherNo: "",
     fromAccount: "",
     toAccount: "",
     amount: "",
-    date: new Date().toISOString().slice(0, 16),
+    date: "",
     description: "",
   });
 
-  // ভ্যালিডেশন
+  // 🎯 Client-side এ মাউন্ট হওয়ার পর voucherNo ও date সেট করি
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      voucherNo: prev.voucherNo || generateVoucherNo(),
+      date: prev.date || new Date().toISOString().slice(0, 16),
+    }));
+  }, []);
+
   const validation = useMemo(() => {
     const amount = Number(formData.amount) || 0;
     return {
@@ -88,7 +103,7 @@ export default function VoucherEntryPage() {
 
   const handleReset = () => {
     setFormData({
-      voucherNo: `VCH-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      voucherNo: generateVoucherNo(),
       fromAccount: "",
       toAccount: "",
       amount: "",
@@ -104,7 +119,7 @@ export default function VoucherEntryPage() {
     accounts.find((a) => a.id === id)?.type || "";
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -113,15 +128,15 @@ export default function VoucherEntryPage() {
         <div className="px-4 sm:px-8 py-7 max-w-6xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Voucher Entry
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Record a double-entry accounting voucher for credit and debit transactions.
               </p>
             </div>
-            <div className="flex items-center gap-2 bg-signal/10 text-signal px-4 py-2 rounded-full text-xs font-semibold border border-signal/20">
-              <Hash className="w-3.5 h-3.5" /> {formData.voucherNo}
+            <div className="flex items-center gap-2 bg-signal-tint text-signal px-4 py-2 rounded-full text-xs font-semibold border border-signal/20">
+              <Hash className="w-3.5 h-3.5" /> {formData.voucherNo || "Generating..."}
             </div>
           </div>
 
@@ -130,13 +145,12 @@ export default function VoucherEntryPage() {
             <div>
               <Section title="Accounting Information" icon={FileText}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* From / Credit */}
                   <Field label="From / Credit (Source)" required>
                     <select
                       name="fromAccount"
                       value={formData.fromAccount}
                       onChange={handleChange}
-                      className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                     >
                       <option value="">Choose Credit account</option>
                       {accounts.map((a) => (
@@ -146,22 +160,21 @@ export default function VoucherEntryPage() {
                       ))}
                     </select>
                     {formData.fromAccount && (
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-slate-500 mt-1">
                         Current balance:{" "}
-                        <span className="font-semibold text-emerald-600">
+                        <span className="font-semibold text-success">
                           ৳{accounts.find((a) => a.id === formData.fromAccount)?.balance.toLocaleString()}
                         </span>
                       </p>
                     )}
                   </Field>
 
-                  {/* To / Debit */}
                   <Field label="To / Debit (Destination)" required>
                     <select
                       name="toAccount"
                       value={formData.toAccount}
                       onChange={handleChange}
-                      className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                     >
                       <option value="">Choose Debit account</option>
                       {accounts.map((a) => (
@@ -171,9 +184,9 @@ export default function VoucherEntryPage() {
                       ))}
                     </select>
                     {formData.toAccount && (
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-slate-500 mt-1">
                         Current balance:{" "}
-                        <span className="font-semibold text-blue-600">
+                        <span className="font-semibold text-signal">
                           ৳{accounts.find((a) => a.id === formData.toAccount)?.balance.toLocaleString()}
                         </span>
                       </p>
@@ -181,16 +194,15 @@ export default function VoucherEntryPage() {
                   </Field>
                 </div>
 
-                {/* Visual Arrow */}
                 {formData.fromAccount && formData.toAccount && (
-                  <div className="flex items-center justify-center gap-4 mt-6 p-4 rounded-2xl bg-signal-tint/40 border border-signal/20 animate-in fade-in duration-300">
-                    <span className="inline-flex items-center gap-1.5 bg-red-500/10 text-red-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-red-500/20">
+                  <div className="flex items-center justify-center gap-4 mt-6 p-4 rounded-2xl bg-signal-tint border border-signal/20 animate-in fade-in duration-300">
+                    <span className="inline-flex items-center gap-1.5 bg-destructive/10 text-destructive text-xs font-semibold px-3 py-1.5 rounded-full border border-destructive/30">
                       <TrendingDown className="w-3 h-3" /> {getAccountLabel(formData.fromAccount)}
                     </span>
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-signal to-violet-accent text-white flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-full bg-signal text-white flex items-center justify-center shadow-md">
                       <ArrowRight className="w-4 h-4" />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1.5 bg-success-tint text-success text-xs font-semibold px-3 py-1.5 rounded-full border border-success/30">
                       <TrendingUp className="w-3 h-3" /> {getAccountLabel(formData.toAccount)}
                     </span>
                   </div>
@@ -201,21 +213,20 @@ export default function VoucherEntryPage() {
                 <div className="space-y-6">
                   <Field label="Amount" required>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">৳</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">৳</span>
                       <Input
                         name="amount"
                         type="number"
                         value={formData.amount}
                         onChange={handleChange}
                         placeholder="0.00"
-                        className="rounded-xl pl-8 h-12 text-lg font-semibold"
+                        className="rounded-xl pl-8 h-12 text-lg font-semibold border-slate-200 text-signal"
                       />
                     </div>
                   </Field>
 
-                  {/* Quick Amounts */}
                   <div className="flex flex-wrap gap-2">
-                    <span className="text-xs text-muted-foreground font-semibold self-center mr-1">
+                    <span className="text-xs text-slate-500 font-semibold self-center mr-1">
                       Quick:
                     </span>
                     {[1000, 5000, 10000, 25000, 50000].map((amt) => (
@@ -227,7 +238,7 @@ export default function VoucherEntryPage() {
                           "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                           formData.amount === String(amt)
                             ? "bg-signal text-white border-signal shadow-md"
-                            : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                            : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                         )}
                       >
                         ৳{amt.toLocaleString()}
@@ -237,13 +248,13 @@ export default function VoucherEntryPage() {
 
                   <Field label="Transactions Date" required>
                     <div className="relative">
-                      <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                      <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                       <Input
                         name="date"
                         type="datetime-local"
                         value={formData.date}
                         onChange={handleChange}
-                        className="rounded-xl pr-10"
+                        className="rounded-xl pr-10 border-slate-200 text-signal"
                       />
                     </div>
                   </Field>
@@ -254,27 +265,26 @@ export default function VoucherEntryPage() {
                       value={formData.description}
                       onChange={handleChange}
                       placeholder="Describe the purpose of this voucher entry..."
-                      className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none resize-none"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none resize-none"
                       rows={4}
                     />
                   </Field>
                 </div>
               </Section>
 
-              {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleReset}
-                  className="rounded-full font-semibold h-11 px-6 order-2 sm:order-1"
+                  className="rounded-full font-semibold h-11 px-6 order-2 sm:order-1 border-slate-200 text-slate-600 hover:bg-slate-50"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" /> Reset
                 </Button>
                 <Button
                   type="button"
                   onClick={handleSubmit}
-                  className="rounded-full font-semibold h-11 px-8 bg-gradient-to-r from-signal to-violet-accent border-0 order-1 sm:order-2"
+                  className="rounded-full font-semibold h-11 px-8 bg-signal text-white hover:bg-signal-hover border-0 shadow-md order-1 sm:order-2"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" /> Submit Voucher
                 </Button>
@@ -283,7 +293,7 @@ export default function VoucherEntryPage() {
 
             {/* Live Preview */}
             <div className="space-y-5 lg:sticky lg:top-24 h-fit">
-              <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-6 text-white shadow-lg">
+              <div className="bg-signal rounded-2xl p-6 text-white shadow-lg">
                 <div className="flex items-center gap-2 mb-5">
                   <FileText className="w-5 h-5" />
                   <h3 className="font-heading font-bold">Voucher Preview</h3>
@@ -292,11 +302,13 @@ export default function VoucherEntryPage() {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="opacity-90">Voucher No</span>
-                    <span className="font-semibold font-mono text-xs">{formData.voucherNo}</span>
+                    <span className="font-semibold font-mono text-xs">
+                      {formData.voucherNo || "..."}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="opacity-90">Date</span>
-                    <span className="font-semibold text-xs">{formData.date}</span>
+                    <span className="font-semibold text-xs">{formData.date || "..."}</span>
                   </div>
 
                   <div className="border-t border-white/20 my-3" />
@@ -338,28 +350,26 @@ export default function VoucherEntryPage() {
                 </div>
               </div>
 
-              {/* Validation Alert */}
               {formData.fromAccount && formData.toAccount && validation.isSameAccount && (
-                <div className="flex items-start gap-3 p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
-                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <p className="text-xs text-red-700 font-semibold">
+                <div className="flex items-start gap-3 p-4 rounded-2xl bg-destructive/10 border border-destructive/30">
+                  <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                  <p className="text-xs text-destructive font-semibold">
                     From and To accounts cannot be the same!
                   </p>
                 </div>
               )}
 
               {validation.isComplete && !validation.isSameAccount && (
-                <div className="flex items-start gap-3 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <div className="text-xs text-emerald-700">
+                <div className="flex items-start gap-3 p-4 rounded-2xl bg-success-tint border border-success/30">
+                  <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                  <div className="text-xs text-success">
                     <p className="font-bold">Voucher is valid ✓</p>
                     <p className="mt-0.5">Ready to submit.</p>
                   </div>
                 </div>
               )}
 
-              {/* Info Card */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20">
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20">
                 <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
                 <div className="text-xs text-signal leading-relaxed">
                   <p className="font-bold mb-1">Double-Entry Rules:</p>

@@ -34,16 +34,14 @@ const monthlyData = [
   { month: "Dec", income: 245000, expense: 115000, profit: 130000 },
 ];
 
-// অ্যাকাউন্ট ডিস্ট্রিবিউশন
 const accountDistribution = [
   { name: "Income", value: 45, color: "#10B981" },
   { name: "Expense", value: 30, color: "#EF4444" },
-  { name: "Asset", value: 15, color: "#3B82F6" },
+  { name: "Asset", value: 15, color: "#066F6F" },
   { name: "Liability", value: 7, color: "#F59E0B" },
   { name: "Equity", value: 3, color: "#8B5CF6" },
 ];
 
-// Top Income Heads
 const topIncomeHeads = [
   { name: "Service Income", amount: 425000, percentage: 35 },
   { name: "Recharge Income", amount: 385000, percentage: 32 },
@@ -52,7 +50,6 @@ const topIncomeHeads = [
   { name: "Late Fee", amount: 95000, percentage: 8 },
 ];
 
-// Top Expense Heads
 const topExpenseHeads = [
   { name: "ISP Bill", amount: 285000, percentage: 32 },
   { name: "Salary", amount: 245000, percentage: 28 },
@@ -61,7 +58,6 @@ const topExpenseHeads = [
   { name: "Utility", amount: 88000, percentage: 10 },
 ];
 
-// Recent Transactions
 const recentTransactions = [
   { id: 1, date: "24-09-2025", type: "Income", name: "ZS Cable Network", amount: 6000, status: "Completed" },
   { id: 2, date: "24-09-2025", type: "Expense", name: "ISP Bill Payment", amount: -25000, status: "Completed" },
@@ -71,7 +67,6 @@ const recentTransactions = [
   { id: 6, date: "22-09-2025", type: "Income", name: "Online Payment", amount: 3299, status: "Completed" },
 ];
 
-// Bank Accounts
 const bankAccounts = [
   { bank: "BRAC Bank", account: "1501203456789", balance: 125400.5, type: "Current" },
   { bank: "Dutch Bangla", account: "1021456789123", balance: 285600.75, type: "Savings" },
@@ -79,18 +74,17 @@ const bankAccounts = [
   { bank: "City Bank", account: "1401234567890", balance: 550000.0, type: "Fixed" },
 ];
 
-// Quick Navigation
 const quickLinks = [
-  { name: "Income", href: "/admin/accounts/income", icon: TrendingUp, color: "emerald" },
-  { name: "Expense", href: "/admin/accounts/expense", icon: TrendingDown, color: "red" },
-  { name: "Profit & Loss", href: "/admin/accounts/profit-loss", icon: BarChart3, color: "violet" },
-  { name: "Chart of Account", href: "/admin/accounts/chart-of-account", icon: BookOpen, color: "blue" },
-  { name: "Bank Account", href: "/admin/accounts/bank-account", icon: Landmark, color: "amber" },
-  { name: "Fund Transfer", href: "/admin/accounts/fund-transfer", icon: ArrowDownUp, color: "cyan" },
-  { name: "Bill Entry", href: "/admin/accounts/bill-entry", icon: Receipt, color: "pink" },
-  { name: "Voucher Entry", href: "/admin/accounts/voucher-entry", icon: FileText, color: "purple" },
-  { name: "Cash Flow", href: "/admin/accounts/cash-flow", icon: Wallet, color: "teal" },
-  { name: "Cash Flow Details", href: "/admin/accounts/cash-flow-details", icon: PieIcon, color: "orange" },
+  { name: "Income", href: "/admin/accounts/income", icon: TrendingUp },
+  { name: "Expense", href: "/admin/accounts/expense", icon: TrendingDown },
+  { name: "Profit & Loss", href: "/admin/accounts/profit-loss", icon: BarChart3 },
+  { name: "Chart of Account", href: "/admin/accounts/chart-of-account", icon: BookOpen },
+  { name: "Bank Account", href: "/admin/accounts/bank-account", icon: Landmark },
+  { name: "Fund Transfer", href: "/admin/accounts/fund-transfer", icon: ArrowDownUp },
+  { name: "Bill Entry", href: "/admin/accounts/bill-entry", icon: Receipt },
+  { name: "Voucher Entry", href: "/admin/accounts/voucher-entry", icon: FileText },
+  { name: "Cash Flow", href: "/admin/accounts/cash-flow", icon: Wallet },
+  { name: "Cash Flow Details", href: "/admin/accounts/cash-flow-details", icon: PieIcon },
 ];
 
 export default function AccountsDashboardPage() {
@@ -100,7 +94,6 @@ export default function AccountsDashboardPage() {
     setMounted(true);
   }, []);
 
-  // টোটাল সামারি
   const summary = useMemo(() => {
     const totalIncome = monthlyData.reduce((s, m) => s + m.income, 0);
     const totalExpense = monthlyData.reduce((s, m) => s + m.expense, 0);
@@ -124,17 +117,17 @@ export default function AccountsDashboardPage() {
 
   if (!mounted) {
     return (
-      <div className="flex min-h-screen bg-muted/30">
+      <div className="flex min-h-screen bg-slate-50">
         <DashboardSidebar />
         <div className="flex-1 min-w-0">
           <DashboardTopbar />
           <div className="px-4 sm:px-8 py-7">
             <div className="animate-pulse space-y-4">
-              <div className="h-10 bg-muted rounded-xl w-1/3" />
+              <div className="h-10 bg-slate-200 rounded-xl w-1/3" />
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-muted rounded-2xl" />)}
+                {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-slate-200 rounded-2xl" />)}
               </div>
-              <div className="h-80 bg-muted rounded-2xl" />
+              <div className="h-80 bg-slate-200 rounded-2xl" />
             </div>
           </div>
         </div>
@@ -143,7 +136,7 @@ export default function AccountsDashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -153,131 +146,123 @@ export default function AccountsDashboardPage() {
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Accounts Dashboard
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Complete financial overview of your business — income, expense, profit, and accounts.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30"
+                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 hover:bg-signal-tint"
               >
                 <Download className="w-3.5 h-3.5" /> Export Report
               </Button>
               <Link href="/admin/accounts/income">
-                <Button className="rounded-full gap-1.5 font-semibold bg-gradient-to-r from-signal to-violet-accent border-0">
+                <Button className="rounded-full gap-1.5 font-semibold bg-signal text-white hover:bg-signal-hover border-0 shadow-md">
                   <PlusCircle className="w-3.5 h-3.5" /> Add Income
                 </Button>
               </Link>
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full border-4 border-white/10" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-semibold bg-white/20 px-2 py-1 rounded-full">
-                    +12.5%
-                  </span>
-                </div>
-                <p className="text-xs font-semibold opacity-90 uppercase">Total Income</p>
-                <p className="font-heading text-2xl font-bold">৳{formatCurrency(summary.totalIncome)}</p>
+          {/* 🎯 Compact Stat Cards — Theme Connected (এক লাইনে) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-success text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4" />
               </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Income</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(summary.totalIncome)}</p>
+              </div>
+              <span className="text-[10px] font-bold bg-white/25 px-1.5 py-0.5 rounded-md shrink-0">
+                +12.5%
+              </span>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full border-4 border-white/10" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                    <TrendingDown className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-semibold bg-white/20 px-2 py-1 rounded-full">
-                    +8.3%
-                  </span>
-                </div>
-                <p className="text-xs font-semibold opacity-90 uppercase">Total Expense</p>
-                <p className="font-heading text-2xl font-bold">৳{formatCurrency(summary.totalExpense)}</p>
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-destructive text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <TrendingDown className="w-4 h-4" />
               </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Expense</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(summary.totalExpense)}</p>
+              </div>
+              <span className="text-[10px] font-bold bg-white/25 px-1.5 py-0.5 rounded-md shrink-0">
+                +8.3%
+              </span>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full border-4 border-white/10" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-semibold bg-white/20 px-2 py-1 rounded-full">
-                    {summary.profitMargin.toFixed(1)}%
-                  </span>
-                </div>
-                <p className="text-xs font-semibold opacity-90 uppercase">Net Profit</p>
-                <p className="font-heading text-2xl font-bold">৳{formatCurrency(summary.netProfit)}</p>
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-signal text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4" />
               </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Net Profit</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(summary.netProfit)}</p>
+              </div>
+              <span className="text-[10px] font-bold bg-white/25 px-1.5 py-0.5 rounded-md shrink-0">
+                {summary.profitMargin.toFixed(1)}%
+              </span>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
 
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full border-4 border-white/10" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                    <Landmark className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-semibold bg-white/20 px-2 py-1 rounded-full">
-                    {bankAccounts.length} Banks
-                  </span>
-                </div>
-                <p className="text-xs font-semibold opacity-90 uppercase">Bank Balance</p>
-                <p className="font-heading text-2xl font-bold">৳{formatCurrency(summary.totalBankBalance)}</p>
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-violet-accent text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Landmark className="w-4 h-4" />
               </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Bank</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(summary.totalBankBalance)}</p>
+              </div>
+              <span className="text-[10px] font-bold bg-white/25 px-1.5 py-0.5 rounded-md shrink-0">
+                {bankAccounts.length}
+              </span>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
           </div>
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            {/* Income vs Expense Bar Chart */}
-            <div className="lg:col-span-2 bg-card rounded-2xl border shadow-sm p-6">
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-signal" />
-                  <h2 className="font-heading font-bold text-lg">Income vs Expense</h2>
+                  <h2 className="font-heading font-bold text-lg text-signal">Income vs Expense</h2>
                 </div>
                 <div className="flex items-center gap-4 text-xs font-semibold">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500" /> Income
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <span className="w-3 h-3 rounded-full bg-success" /> Income
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-red-500" /> Expense
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <span className="w-3 h-3 rounded-full bg-destructive" /> Expense
                   </span>
                 </div>
               </div>
               <div className="h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
-                    <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={11} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                    <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={11} stroke="#94a3b8" />
                     <YAxis
                       tickLine={false}
                       axisLine={false}
                       fontSize={11}
                       width={50}
+                      stroke="#94a3b8"
                       tickFormatter={(v) => `${v / 1000}k`}
                     />
                     <Tooltip
                       contentStyle={{
                         borderRadius: 12,
-                        border: "1px solid var(--border)",
+                        border: "1px solid #e2e8f0",
                         fontSize: 12,
-                        backgroundColor: "var(--card)",
+                        backgroundColor: "#ffffff",
                       }}
                       formatter={(v: any) => `৳${Number(v).toLocaleString()}`}
                     />
@@ -288,11 +273,10 @@ export default function AccountsDashboardPage() {
               </div>
             </div>
 
-            {/* Account Distribution Pie */}
-            <div className="bg-card rounded-2xl border shadow-sm p-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-5">
                 <PieIcon className="w-5 h-5 text-signal" />
-                <h2 className="font-heading font-bold text-lg">Account Types</h2>
+                <h2 className="font-heading font-bold text-lg text-signal">Account Types</h2>
               </div>
               <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -313,11 +297,11 @@ export default function AccountsDashboardPage() {
                     <Tooltip
                       contentStyle={{
                         borderRadius: 12,
-                        border: "1px solid var(--border)",
+                        border: "1px solid #e2e8f0",
                         fontSize: 12,
-                        backgroundColor: "var(--card)",
+                        backgroundColor: "#ffffff",
                       }}
-                      formatter={(v: any) => `${v}%`} 
+                      formatter={(v: any) => `${v}%`}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -325,11 +309,11 @@ export default function AccountsDashboardPage() {
               <div className="space-y-1.5 mt-2">
                 {accountDistribution.map((a) => (
                   <div key={a.name} className="flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 text-slate-600">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: a.color }} />
                       {a.name}
                     </span>
-                    <span className="font-semibold">{a.value}%</span>
+                    <span className="font-semibold text-signal">{a.value}%</span>
                   </div>
                 ))}
               </div>
@@ -337,35 +321,36 @@ export default function AccountsDashboardPage() {
           </div>
 
           {/* Profit Trend Line */}
-          <div className="bg-card rounded-2xl border shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-5">
               <Activity className="w-5 h-5 text-signal" />
-              <h2 className="font-heading font-bold text-lg">Profit Trend (12 Months)</h2>
+              <h2 className="font-heading font-bold text-lg text-signal">Profit Trend (12 Months)</h2>
             </div>
             <div className="h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={monthlyData}>
                   <defs>
                     <linearGradient id="profitGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#0F8B8D" />
-                      <stop offset="100%" stopColor="#8B5CF6" />
+                      <stop offset="0%" stopColor="#066F6F" />
+                      <stop offset="100%" stopColor="#0A8F8F" />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
-                  <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={11} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={11} stroke="#94a3b8" />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
                     fontSize={11}
                     width={50}
+                    stroke="#94a3b8"
                     tickFormatter={(v) => `${v / 1000}k`}
                   />
                   <Tooltip
                     contentStyle={{
                       borderRadius: 12,
-                      border: "1px solid var(--border)",
+                      border: "1px solid #e2e8f0",
                       fontSize: 12,
-                      backgroundColor: "var(--card)",
+                      backgroundColor: "#ffffff",
                     }}
                     formatter={(v: any) => `৳${Number(v).toLocaleString()}`}
                   />
@@ -374,7 +359,7 @@ export default function AccountsDashboardPage() {
                     dataKey="profit"
                     stroke="url(#profitGradient)"
                     strokeWidth={3}
-                    dot={{ fill: "#0F8B8D", r: 4 }}
+                    dot={{ fill: "#066F6F", r: 4 }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>
@@ -384,12 +369,11 @@ export default function AccountsDashboardPage() {
 
           {/* Top Heads Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-            {/* Top Income Heads */}
-            <div className="bg-card rounded-2xl border shadow-sm p-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-600" />
-                  <h2 className="font-heading font-bold text-lg">Top Income Heads</h2>
+                  <TrendingUp className="w-5 h-5 text-success" />
+                  <h2 className="font-heading font-bold text-lg text-signal">Top Income Heads</h2>
                 </div>
                 <Link href="/admin/accounts/income">
                   <button className="text-xs text-signal font-semibold flex items-center gap-1 hover:underline">
@@ -400,19 +384,19 @@ export default function AccountsDashboardPage() {
               <div className="space-y-3">
                 {topIncomeHeads.map((h, i) => (
                   <div key={h.name} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-success-tint text-success flex items-center justify-center text-xs font-bold shrink-0">
                       {i + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
-                        <p className="text-sm font-semibold truncate">{h.name}</p>
-                        <p className="text-xs font-bold text-emerald-600">
+                        <p className="text-sm font-semibold truncate text-signal">{h.name}</p>
+                        <p className="text-xs font-bold text-success">
                           ৳{formatCurrency(h.amount)}
                         </p>
                       </div>
-                      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+                          className="h-full bg-success rounded-full"
                           style={{ width: `${h.percentage}%` }}
                         />
                       </div>
@@ -422,12 +406,11 @@ export default function AccountsDashboardPage() {
               </div>
             </div>
 
-            {/* Top Expense Heads */}
-            <div className="bg-card rounded-2xl border shadow-sm p-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <TrendingDown className="w-5 h-5 text-red-600" />
-                  <h2 className="font-heading font-bold text-lg">Top Expense Heads</h2>
+                  <TrendingDown className="w-5 h-5 text-destructive" />
+                  <h2 className="font-heading font-bold text-lg text-signal">Top Expense Heads</h2>
                 </div>
                 <Link href="/admin/accounts/expense">
                   <button className="text-xs text-signal font-semibold flex items-center gap-1 hover:underline">
@@ -438,19 +421,19 @@ export default function AccountsDashboardPage() {
               <div className="space-y-3">
                 {topExpenseHeads.map((h, i) => (
                   <div key={h.name} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-red-500/10 text-red-600 flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-destructive/10 text-destructive flex items-center justify-center text-xs font-bold shrink-0">
                       {i + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
-                        <p className="text-sm font-semibold truncate">{h.name}</p>
-                        <p className="text-xs font-bold text-red-600">
+                        <p className="text-sm font-semibold truncate text-signal">{h.name}</p>
+                        <p className="text-xs font-bold text-destructive">
                           ৳{formatCurrency(h.amount)}
                         </p>
                       </div>
-                      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full"
+                          className="h-full bg-destructive rounded-full"
                           style={{ width: `${h.percentage}%` }}
                         />
                       </div>
@@ -463,12 +446,11 @@ export default function AccountsDashboardPage() {
 
           {/* Recent Transactions & Bank Accounts */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            {/* Recent Transactions */}
-            <div className="lg:col-span-2 bg-card rounded-2xl border shadow-sm p-6">
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-signal" />
-                  <h2 className="font-heading font-bold text-lg">Recent Transactions</h2>
+                  <h2 className="font-heading font-bold text-lg text-signal">Recent Transactions</h2>
                 </div>
                 <Link href="/admin/accounts/cash-flow">
                   <button className="text-xs text-signal font-semibold flex items-center gap-1 hover:underline">
@@ -480,14 +462,14 @@ export default function AccountsDashboardPage() {
                 {recentTransactions.map((t) => (
                   <div
                     key={t.id}
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-colors border border-transparent hover:border-border"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
                   >
                     <div
                       className={cn(
                         "w-9 h-9 rounded-full flex items-center justify-center shrink-0",
-                        t.type === "Income" && "bg-emerald-500/10 text-emerald-600",
-                        t.type === "Expense" && "bg-red-500/10 text-red-600",
-                        t.type === "Transfer" && "bg-blue-500/10 text-blue-600"
+                        t.type === "Income" && "bg-success-tint text-success",
+                        t.type === "Expense" && "bg-destructive/10 text-destructive",
+                        t.type === "Transfer" && "bg-signal-tint text-signal"
                       )}
                     >
                       {t.type === "Income" && <ArrowUpRight className="w-4 h-4" />}
@@ -495,8 +477,8 @@ export default function AccountsDashboardPage() {
                       {t.type === "Transfer" && <ArrowDownUp className="w-4 h-4" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm font-semibold truncate text-signal">{t.name}</p>
+                      <p className="text-xs text-slate-500">
                         {t.date} · {t.type}
                       </p>
                     </div>
@@ -504,7 +486,7 @@ export default function AccountsDashboardPage() {
                       <p
                         className={cn(
                           "text-sm font-bold",
-                          t.amount > 0 ? "text-emerald-600" : "text-red-600"
+                          t.amount > 0 ? "text-success" : "text-destructive"
                         )}
                       >
                         {t.amount > 0 ? "+" : ""}৳{formatCurrency(Math.abs(t.amount))}
@@ -513,8 +495,8 @@ export default function AccountsDashboardPage() {
                         className={cn(
                           "inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full",
                           t.status === "Completed"
-                            ? "bg-emerald-500/10 text-emerald-600"
-                            : "bg-amber-500/10 text-amber-600"
+                            ? "bg-success-tint text-success"
+                            : "bg-warning-tint text-warning"
                         )}
                       >
                         {t.status === "Completed" && <CheckCircle2 className="w-2.5 h-2.5" />}
@@ -526,12 +508,11 @@ export default function AccountsDashboardPage() {
               </div>
             </div>
 
-            {/* Bank Accounts */}
-            <div className="bg-card rounded-2xl border shadow-sm p-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Landmark className="w-5 h-5 text-signal" />
-                  <h2 className="font-heading font-bold text-lg">Bank Accounts</h2>
+                  <h2 className="font-heading font-bold text-lg text-signal">Bank Accounts</h2>
                 </div>
                 <Link href="/admin/accounts/bank-account">
                   <button className="text-xs text-signal font-semibold flex items-center gap-1 hover:underline">
@@ -543,17 +524,17 @@ export default function AccountsDashboardPage() {
                 {bankAccounts.map((b) => (
                   <div
                     key={b.bank}
-                    className="p-3 rounded-xl bg-gradient-to-br from-signal-tint/40 to-violet-accent-tint/40 border border-signal/10 hover:shadow-md transition-shadow"
+                    className="p-3 rounded-xl bg-signal-tint border border-signal/20 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Building2 className="w-3.5 h-3.5 text-signal" />
                       <p className="text-xs font-bold text-signal uppercase">{b.type}</p>
                     </div>
-                    <p className="text-sm font-bold">{b.bank}</p>
-                    <p className="text-[10px] text-muted-foreground font-mono mb-2">
+                    <p className="text-sm font-bold text-signal">{b.bank}</p>
+                    <p className="text-[10px] text-slate-500 font-mono mb-2">
                       {b.account}
                     </p>
-                    <p className="font-heading text-lg font-bold text-emerald-600">
+                    <p className="font-heading text-lg font-bold text-success">
                       ৳{formatCurrency(b.balance)}
                     </p>
                   </div>
@@ -563,21 +544,21 @@ export default function AccountsDashboardPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-card rounded-2xl border shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
             <div className="flex items-center gap-2 mb-5">
               <Layers className="w-5 h-5 text-signal" />
-              <h2 className="font-heading font-bold text-lg">Quick Actions</h2>
+              <h2 className="font-heading font-bold text-lg text-signal">Quick Actions</h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {quickLinks.map((link) => {
                 const Icon = link.icon;
                 return (
                   <Link key={link.name} href={link.href}>
-                    <div className="group flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-border hover:border-signal hover:shadow-md transition-all cursor-pointer text-center">
-                      <div className="w-11 h-11 rounded-full bg-signal/10 text-signal flex items-center justify-center group-hover:bg-signal group-hover:text-white transition-all">
+                    <div className="group flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-slate-200 hover:border-signal hover:shadow-md transition-all cursor-pointer text-center bg-white">
+                      <div className="w-11 h-11 rounded-full bg-signal-tint text-signal flex items-center justify-center group-hover:bg-signal group-hover:text-white transition-all">
                         <Icon className="w-5 h-5" />
                       </div>
-                      <span className="text-xs font-semibold">{link.name}</span>
+                      <span className="text-xs font-semibold text-signal">{link.name}</span>
                     </div>
                   </Link>
                 );
@@ -586,7 +567,7 @@ export default function AccountsDashboardPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Activity className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Live Dashboard:</span> All numbers on this page update in

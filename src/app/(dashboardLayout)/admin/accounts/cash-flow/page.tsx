@@ -24,7 +24,6 @@ const columns = [
   { key: "closing", label: "Closing Balance" },
 ];
 
-// ডামি ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const mockData = [
   { id: 1, name: "Bkash Merchants (01919626699)", type: "Mobile Banking", opening: 2980866.58, inflow: 22238.20, bbIn: 0, outflow: 0, bbOut: 0, expense: 0, closing: 3003104.78 },
   { id: 2, name: "Network Service Provider (NSP)", type: "Service", opening: 1298475.00, inflow: 24950.00, bbIn: 0, outflow: 29500.00, bbOut: 0, expense: 0, closing: 1293925.00 },
@@ -53,7 +52,6 @@ export default function CashFlowPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
-  // ফিল্টার
   const filteredData = useMemo(() => {
     return mockData.filter((r) =>
       r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,12 +59,10 @@ export default function CashFlowPage() {
     );
   }, [searchTerm]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + rowsPerPage);
 
-  // টোটাল ক্যালকুলেশন
   const totals = useMemo(() => {
     return filteredData.reduce(
       (acc, r) => ({
@@ -84,7 +80,6 @@ export default function CashFlowPage() {
 
   const netFlow = totals.inflow + totals.bbIn - totals.outflow - totals.bbOut - totals.expense;
 
-  // Quick Range হ্যান্ডলার
   const handleQuickRange = (rangeId: string) => {
     setActiveRange(rangeId);
     setIsLoading(true);
@@ -133,7 +128,6 @@ export default function CashFlowPage() {
     setTimeout(() => setIsLoading(false), 400);
   };
 
-  // Export Actions
   const exportToCSV = (filename: string) => {
     const headers = columns.map((c) => c.label).join(",");
     const csvRows = filteredData.map((r) =>
@@ -183,38 +177,40 @@ export default function CashFlowPage() {
     return Wallet;
   };
 
+  // 🎯 Theme-connected Type Badge
   const getTypeBadge = (type: string) => {
     const map: Record<string, string> = {
-      Bank: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-      Cash: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-      "Mobile Banking": "bg-pink-500/10 text-pink-600 border-pink-500/20",
-      Service: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+      Bank: "bg-signal-tint text-signal border-signal/30",
+      Cash: "bg-warning-tint text-warning border-warning/30",
+      "Mobile Banking": "bg-violet-accent-tint text-violet-accent border-violet-accent/30",
+      Service: "bg-success-tint text-success border-success/30",
     };
-    return map[type] || "bg-slate-500/10 text-slate-600 border-slate-500/20";
+    return map[type] || "bg-slate-100 text-slate-600 border-slate-200";
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
+          {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Cash Flow Dashboard
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Track all cash inflow, outflow, and closing balances across accounts.
               </p>
             </div>
             <div className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border",
               netFlow >= 0
-                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                : "bg-red-500/10 text-red-600 border-red-500/20"
+                ? "bg-success-tint text-success border-success/30"
+                : "bg-destructive/10 text-destructive border-destructive/30"
             )}>
               {netFlow >= 0 ? (
                 <TrendingUp className="w-3.5 h-3.5" />
@@ -225,62 +221,81 @@ export default function CashFlowPage() {
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Opening Balance</p>
+          {/* 🎯 Compact Stat Cards — Theme-Based Solid Colors */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {/* Opening — Teal */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-signal text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Wallet className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(totals.opening)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Opening</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.opening)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Total Inflow</p>
+
+            {/* Inflow — Success */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-success text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <ArrowUpRight className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(totals.inflow + totals.bbIn)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Inflow</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.inflow + totals.bbIn)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Total Outflow</p>
+
+            {/* Outflow — Destructive */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-destructive text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <ArrowDownRight className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(totals.outflow + totals.bbOut + totals.expense)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Outflow</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.outflow + totals.bbOut + totals.expense)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Closing Balance</p>
+
+            {/* Closing — Violet */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-violet-accent text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <DollarSign className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(totals.closing)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Closing</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.closing)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
           </div>
 
           {/* Date Range Filter */}
-          <div className="bg-card rounded-2xl border shadow-sm p-5 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
             <div className="flex flex-wrap items-center gap-4 mb-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-signal" />
-                <span className="font-semibold text-sm">From Date:</span>
+                <span className="font-semibold text-sm text-signal">From Date:</span>
               </div>
               <Input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => { setDateFrom(e.target.value); setActiveRange(""); }}
-                className="rounded-xl w-44"
+                className="rounded-xl w-44 border-slate-200 text-signal"
               />
-              <span className="font-semibold text-sm">To Date:</span>
+              <span className="font-semibold text-sm text-signal">To Date:</span>
               <Input
                 type="date"
                 value={dateTo}
                 onChange={(e) => { setDateTo(e.target.value); setActiveRange(""); }}
-                className="rounded-xl w-44"
+                className="rounded-xl w-44 border-slate-200 text-signal"
               />
               <Button
                 onClick={handleGo}
                 disabled={isLoading}
-                className="rounded-xl bg-gradient-to-r from-signal to-violet-accent border-0 px-6"
+                className="rounded-xl bg-signal text-white hover:bg-signal-hover border-0 px-6 shadow-md"
               >
                 {isLoading ? (
                   <>
@@ -301,7 +316,7 @@ export default function CashFlowPage() {
                     "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                     activeRange === r.id
                       ? "bg-signal text-white border-signal shadow-md"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {r.label}
@@ -311,23 +326,23 @@ export default function CashFlowPage() {
           </div>
 
           {/* Visual Flow Summary */}
-          <div className="bg-card rounded-2xl border shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-5">
               <PieChart className="w-5 h-5 text-signal" />
-              <h2 className="font-heading font-bold text-lg">Inflow vs Outflow</h2>
+              <h2 className="font-heading font-bold text-lg text-signal">Inflow vs Outflow</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <div className="flex justify-between text-xs font-semibold mb-2">
-                  <span className="text-emerald-600 flex items-center gap-1">
+                  <span className="text-success flex items-center gap-1">
                     <ArrowUpRight className="w-3 h-3" /> Total Inflow
                   </span>
-                  <span>৳{formatCurrency(totals.inflow + totals.bbIn)}</span>
+                  <span className="text-signal">৳{formatCurrency(totals.inflow + totals.bbIn)}</span>
                 </div>
-                <div className="h-3 rounded-full bg-muted overflow-hidden">
+                <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500"
+                    className="h-full bg-success rounded-full transition-all duration-500"
                     style={{
                       width: `${
                         totals.inflow + totals.bbIn + totals.outflow + totals.bbOut + totals.expense > 0
@@ -342,14 +357,14 @@ export default function CashFlowPage() {
               </div>
               <div>
                 <div className="flex justify-between text-xs font-semibold mb-2">
-                  <span className="text-red-600 flex items-center gap-1">
+                  <span className="text-destructive flex items-center gap-1">
                     <ArrowDownRight className="w-3 h-3" /> Total Outflow
                   </span>
-                  <span>৳{formatCurrency(totals.outflow + totals.bbOut + totals.expense)}</span>
+                  <span className="text-signal">৳{formatCurrency(totals.outflow + totals.bbOut + totals.expense)}</span>
                 </div>
-                <div className="h-3 rounded-full bg-muted overflow-hidden">
+                <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full transition-all duration-500"
+                    className="h-full bg-destructive rounded-full transition-all duration-500"
                     style={{
                       width: `${
                         totals.inflow + totals.bbIn + totals.outflow + totals.bbOut + totals.expense > 0
@@ -377,11 +392,11 @@ export default function CashFlowPage() {
           />
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[1300px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     <th className="text-left px-4 py-4 font-semibold text-xs whitespace-nowrap w-10"></th>
                     {columns.map((c) => (
                       <th key={c.key} className="text-right px-4 py-4 font-semibold text-xs whitespace-nowrap first:text-left">
@@ -393,9 +408,9 @@ export default function CashFlowPage() {
                 <tbody>
                   {isLoading ? (
                     <tr>
-                      <td colSpan={columns.length + 1} className="px-6 py-16 text-center text-muted-foreground">
-                        <RefreshCw className="w-8 h-8 mx-auto mb-3 opacity-40 animate-spin" />
-                        <p className="font-semibold">Loading cash flow data...</p>
+                      <td colSpan={columns.length + 1} className="px-6 py-16 text-center text-slate-500">
+                        <RefreshCw className="w-8 h-8 mx-auto mb-3 opacity-40 animate-spin text-signal" />
+                        <p className="font-semibold text-signal">Loading cash flow data...</p>
                       </td>
                     </tr>
                   ) : paginatedData.length > 0 ? (
@@ -406,8 +421,8 @@ export default function CashFlowPage() {
                         <React.Fragment key={r.id}>
                           <tr
                             className={cn(
-                              "border-t hover:bg-muted/30 transition-colors cursor-pointer",
-                              isExpanded && "bg-signal/5"
+                              "border-t border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer",
+                              isExpanded && "bg-signal-tint"
                             )}
                             onClick={() => setExpandedRow(isExpanded ? null : r.id)}
                           >
@@ -415,16 +430,16 @@ export default function CashFlowPage() {
                               {isExpanded ? (
                                 <ChevronUp className="w-4 h-4 text-signal" />
                               ) : (
-                                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                                <ChevronDown className="w-4 h-4 text-slate-400" />
                               )}
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-signal/10 text-signal flex items-center justify-center shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-signal-tint text-signal flex items-center justify-center shrink-0">
                                   <TypeIcon className="w-4 h-4" />
                                 </div>
                                 <div>
-                                  <p className="font-semibold text-sm">{r.name}</p>
+                                  <p className="font-semibold text-sm text-signal">{r.name}</p>
                                   <span className={cn(
                                     "inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded border mt-0.5",
                                     getTypeBadge(r.type)
@@ -434,22 +449,22 @@ export default function CashFlowPage() {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-right text-blue-600 font-semibold">
+                            <td className="px-4 py-4 text-right text-signal font-semibold">
                               ৳{formatCurrency(r.opening)}
                             </td>
-                            <td className="px-4 py-4 text-right text-emerald-600 font-semibold">
+                            <td className="px-4 py-4 text-right text-success font-semibold">
                               +৳{formatCurrency(r.inflow)}
                             </td>
-                            <td className="px-4 py-4 text-right text-emerald-600">
+                            <td className="px-4 py-4 text-right text-success">
                               {r.bbIn > 0 ? `+৳${formatCurrency(r.bbIn)}` : "—"}
                             </td>
-                            <td className="px-4 py-4 text-right text-red-600 font-semibold">
+                            <td className="px-4 py-4 text-right text-destructive font-semibold">
                               {r.outflow > 0 ? `-৳${formatCurrency(r.outflow)}` : "—"}
                             </td>
-                            <td className="px-4 py-4 text-right text-red-600">
+                            <td className="px-4 py-4 text-right text-destructive">
                               {r.bbOut > 0 ? `-৳${formatCurrency(r.bbOut)}` : "—"}
                             </td>
-                            <td className="px-4 py-4 text-right text-red-600">
+                            <td className="px-4 py-4 text-right text-destructive">
                               {r.expense > 0 ? `-৳${formatCurrency(r.expense)}` : "—"}
                             </td>
                             <td className="px-4 py-4 text-right font-bold text-signal">
@@ -458,37 +473,37 @@ export default function CashFlowPage() {
                           </tr>
 
                           {isExpanded && (
-                            <tr className="bg-muted/30 border-t">
+                            <tr className="bg-slate-50 border-t border-slate-100">
                               <td colSpan={columns.length + 1} className="px-6 py-4">
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                                  <div className="p-3 rounded-xl bg-card border">
-                                    <p className="text-muted-foreground font-semibold uppercase mb-1">Net Flow</p>
+                                  <div className="p-3 rounded-xl bg-white border border-slate-200">
+                                    <p className="text-slate-500 font-semibold uppercase mb-1">Net Flow</p>
                                     <p className={cn(
                                       "font-bold text-sm",
                                       r.inflow + r.bbIn - r.outflow - r.bbOut - r.expense >= 0
-                                        ? "text-emerald-600"
-                                        : "text-red-600"
+                                        ? "text-success"
+                                        : "text-destructive"
                                     )}>
                                       ৳{formatCurrency(r.inflow + r.bbIn - r.outflow - r.bbOut - r.expense)}
                                     </p>
                                   </div>
-                                  <div className="p-3 rounded-xl bg-card border">
-                                    <p className="text-muted-foreground font-semibold uppercase mb-1">Total In</p>
-                                    <p className="font-bold text-sm text-emerald-600">
+                                  <div className="p-3 rounded-xl bg-white border border-slate-200">
+                                    <p className="text-slate-500 font-semibold uppercase mb-1">Total In</p>
+                                    <p className="font-bold text-sm text-success">
                                       ৳{formatCurrency(r.inflow + r.bbIn)}
                                     </p>
                                   </div>
-                                  <div className="p-3 rounded-xl bg-card border">
-                                    <p className="text-muted-foreground font-semibold uppercase mb-1">Total Out</p>
-                                    <p className="font-bold text-sm text-red-600">
+                                  <div className="p-3 rounded-xl bg-white border border-slate-200">
+                                    <p className="text-slate-500 font-semibold uppercase mb-1">Total Out</p>
+                                    <p className="font-bold text-sm text-destructive">
                                       ৳{formatCurrency(r.outflow + r.bbOut + r.expense)}
                                     </p>
                                   </div>
-                                  <div className="p-3 rounded-xl bg-card border">
-                                    <p className="text-muted-foreground font-semibold uppercase mb-1">Growth</p>
+                                  <div className="p-3 rounded-xl bg-white border border-slate-200">
+                                    <p className="text-slate-500 font-semibold uppercase mb-1">Growth</p>
                                     <p className={cn(
                                       "font-bold text-sm",
-                                      r.closing >= r.opening ? "text-emerald-600" : "text-red-600"
+                                      r.closing >= r.opening ? "text-success" : "text-destructive"
                                     )}>
                                       {r.opening > 0 ? (((r.closing - r.opening) / r.opening) * 100).toFixed(1) : "0"}%
                                     </p>
@@ -502,35 +517,35 @@ export default function CashFlowPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={columns.length + 1} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length + 1} className="px-6 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No cash flow records found</p>
+                        <p className="font-semibold text-signal">No cash flow records found</p>
                         <p className="text-xs mt-1">Try adjusting your date range or search</p>
                       </td>
                     </tr>
                   )}
                 </tbody>
                 {!isLoading && paginatedData.length > 0 && (
-                  <tfoot className="bg-muted/50 font-bold border-t-2 border-border">
+                  <tfoot className="bg-slate-50 font-bold border-t-2 border-slate-200">
                     <tr>
                       <td></td>
-                      <td className="px-4 py-4">Total ({filteredData.length})</td>
-                      <td className="px-4 py-4 text-right text-blue-600">
+                      <td className="px-4 py-4 text-signal">Total ({filteredData.length})</td>
+                      <td className="px-4 py-4 text-right text-signal">
                         ৳{formatCurrency(totals.opening)}
                       </td>
-                      <td className="px-4 py-4 text-right text-emerald-600">
+                      <td className="px-4 py-4 text-right text-success">
                         +৳{formatCurrency(totals.inflow)}
                       </td>
-                      <td className="px-4 py-4 text-right text-emerald-600">
+                      <td className="px-4 py-4 text-right text-success">
                         {totals.bbIn > 0 ? `+৳${formatCurrency(totals.bbIn)}` : "—"}
                       </td>
-                      <td className="px-4 py-4 text-right text-red-600">
+                      <td className="px-4 py-4 text-right text-destructive">
                         {totals.outflow > 0 ? `-৳${formatCurrency(totals.outflow)}` : "—"}
                       </td>
-                      <td className="px-4 py-4 text-right text-red-600">
+                      <td className="px-4 py-4 text-right text-destructive">
                         {totals.bbOut > 0 ? `-৳${formatCurrency(totals.bbOut)}` : "—"}
                       </td>
-                      <td className="px-4 py-4 text-right text-red-600">
+                      <td className="px-4 py-4 text-right text-destructive">
                         {totals.expense > 0 ? `-৳${formatCurrency(totals.expense)}` : "—"}
                       </td>
                       <td className="px-4 py-4 text-right text-signal">
@@ -554,7 +569,7 @@ export default function CashFlowPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Click on any row to see detailed breakdown including Net Flow,

@@ -14,10 +14,9 @@ import { cn } from "@/lib/utils";
 
 const columns = ["SL", "Name", "Head", "Payment Method", "Date", "Amount", "Action"];
 
-// ডামি ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const initialRows = [
   { id: 1, name: "ZS Cable Network (ZSCN)", head: "ISP Bill", method: "Cash", date: "24-02-2025", amount: 25000.0, remarks: "Fiber lease payment", fileName: "" },
-  { id: 2, name: "Poli Network Pop", head: "Maintenance", method: "bKash", date: "22-02-2025", head2: "", amount: 8500.0, remarks: "Equipment repair", fileName: "" },
+  { id: 2, name: "Poli Network Pop", head: "Maintenance", method: "bKash", date: "22-02-2025", amount: 8500.0, remarks: "Equipment repair", fileName: "" },
   { id: 3, name: "AR Internet", head: "Rent", method: "Bank Transfer", date: "20-02-2025", amount: 15000.0, remarks: "Office rent", fileName: "" },
   { id: 4, name: "Online Network", head: "Salary", method: "Cash", date: "18-02-2025", amount: 45000.0, remarks: "Staff salary", fileName: "" },
   { id: 5, name: "Akas Cable Network", head: "Utility", method: "Nagad", date: "15-02-2025", amount: 3200.0, remarks: "Electricity bill", fileName: "" },
@@ -40,12 +39,10 @@ export default function ExpensePage() {
   });
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  // টুলবার ও পেজিনেশন স্টেট
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ফিল্টার
   const filteredRows = useMemo(() => {
     return rows.filter(
       (r) =>
@@ -55,12 +52,10 @@ export default function ExpensePage() {
     );
   }, [rows, searchTerm]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedRows = filteredRows.slice(startIndex, startIndex + rowsPerPage);
 
-  // টোটাল
   const totalExpense = useMemo(
     () => filteredRows.reduce((sum, r) => sum + r.amount, 0),
     [filteredRows]
@@ -74,7 +69,6 @@ export default function ExpensePage() {
     [rows]
   );
 
-  // হ্যান্ডেল চেঞ্জ
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -82,7 +76,6 @@ export default function ExpensePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ফাইল হ্যান্ডেল
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -90,7 +83,6 @@ export default function ExpensePage() {
     }
   };
 
-  // সেভ
   const handleSave = () => {
     if (!formData.name.trim()) return alert("Name is required!");
     if (!formData.head) return alert("Expense Head is required!");
@@ -115,7 +107,6 @@ export default function ExpensePage() {
       alert("Expense added successfully!");
     }
 
-    // রিসেট
     setFormData({
       name: "",
       head: "",
@@ -129,7 +120,6 @@ export default function ExpensePage() {
     setCurrentPage(1);
   };
 
-  // এডিট
   const handleEdit = (row: any) => {
     setFormData({
       name: row.name,
@@ -144,7 +134,6 @@ export default function ExpensePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ডিলিট
   const handleDelete = (id: number) => {
     if (confirm("Are you sure you want to delete this expense record?")) {
       setRows((prev) => prev.filter((r) => r.id !== id));
@@ -153,7 +142,6 @@ export default function ExpensePage() {
     }
   };
 
-  // ক্যান্সেল
   const handleCancel = () => {
     setFormData({
       name: "",
@@ -166,8 +154,6 @@ export default function ExpensePage() {
     });
     setEditingId(null);
   };
-
-  // ============ EXPORT ACTIONS ============
 
   const exportToCSV = (data: any[], filename: string) => {
     const headers = columns.filter((c) => c !== "Action").join(",");
@@ -207,71 +193,80 @@ export default function ExpensePage() {
     alert("Print dialog opened. Save as PDF to export.");
   };
 
-  // Head Badge Color
+  // 🎯 Head Badge — Theme Connected (সব Teal টিন্টে)
   const getHeadBadge = (head: string) => {
     const map: Record<string, string> = {
-      "ISP Bill": "bg-red-500/10 text-red-600 border-red-500/20",
-      "Maintenance": "bg-amber-500/10 text-amber-600 border-amber-500/20",
-      "Rent": "bg-purple-500/10 text-purple-600 border-purple-500/20",
-      "Salary": "bg-blue-500/10 text-blue-600 border-blue-500/20",
-      "Utility": "bg-cyan-500/10 text-cyan-600 border-cyan-500/20",
-      "Transport": "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-      "Office Supplies": "bg-pink-500/10 text-pink-600 border-pink-500/20",
-      "Marketing": "bg-orange-500/10 text-orange-600 border-orange-500/20",
+      "ISP Bill": "bg-destructive/10 text-destructive border-destructive/30",
+      "Maintenance": "bg-warning-tint text-warning border-warning/30",
+      "Rent": "bg-violet-accent-tint text-violet-accent border-violet-accent/30",
+      "Salary": "bg-signal-tint text-signal border-signal/30",
+      "Utility": "bg-signal-tint text-signal border-signal/30",
+      "Transport": "bg-success-tint text-success border-success/30",
+      "Office Supplies": "bg-violet-accent-tint text-violet-accent border-violet-accent/30",
+      "Marketing": "bg-warning-tint text-warning border-warning/30",
     };
-    return map[head] || "bg-slate-500/10 text-slate-600 border-slate-500/20";
+    return map[head] || "bg-slate-100 text-slate-600 border-slate-200";
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
+          {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
               Expense Management
             </h1>
-            <div className="flex items-center gap-2 bg-red-500/10 text-red-600 px-4 py-2 rounded-full text-xs font-semibold border border-red-500/20">
+            <div className="flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-xs font-semibold border border-destructive/30">
               <Receipt className="w-3.5 h-3.5" />
               Total: ৳{totalExpense.toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Expense</p>
+          {/* 🎯 Compact Stat Cards — Theme Connected (এক লাইনে) */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4 text-destructive" />
               </div>
-              <p className="font-heading text-2xl font-bold">
-                ৳{totalExpense.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-              </p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Total</p>
+                <p className="text-lg font-heading font-bold text-destructive">
+                  ৳{totalExpense.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Wallet className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Records</p>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <Wallet className="w-4 h-4 text-signal" />
               </div>
-              <p className="font-heading text-2xl font-bold">{rows.length}</p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Records</p>
+                <p className="text-lg font-heading font-bold text-signal">{rows.length}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">This Month</p>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <Calendar className="w-4 h-4 text-warning" />
               </div>
-              <p className="font-heading text-2xl font-bold">
-                ৳{thisMonthExpense.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-              </p>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">This Month</p>
+                <p className="text-lg font-heading font-bold text-warning">
+                  ৳{thisMonthExpense.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Add / Edit Form */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-red-500 to-amber-500 text-white px-6 py-4 flex items-center justify-between">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+            <div className="bg-signal text-white px-6 py-4 flex items-center justify-between">
               <h2 className="font-heading font-bold text-lg flex items-center gap-2">
                 <TrendingDown className="w-5 h-5" />
                 {editingId ? "Edit Expense" : "Add Expense"}
@@ -294,7 +289,7 @@ export default function ExpensePage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. ZS Cable Network"
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
                 <Field label="Expense Head" required>
@@ -302,7 +297,7 @@ export default function ExpensePage() {
                     name="head"
                     value={formData.head}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="">Select Head</option>
                     {expenseHeads.map((h) => (
@@ -315,7 +310,7 @@ export default function ExpensePage() {
                     name="method"
                     value={formData.method}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="">Select Method</option>
                     {paymentMethods.map((m) => (
@@ -332,19 +327,19 @@ export default function ExpensePage() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   />
                 </Field>
                 <Field label="Amount" required>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">৳</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">৳</span>
                     <Input
                       name="amount"
                       type="number"
                       value={formData.amount}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="rounded-xl pl-8"
+                      className="rounded-xl pl-8 border-slate-200 text-signal"
                     />
                   </div>
                 </Field>
@@ -359,10 +354,10 @@ export default function ExpensePage() {
                     />
                     <label
                       htmlFor="expense-file"
-                      className="flex items-center gap-2 w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm cursor-pointer hover:bg-muted/60 transition-colors"
+                      className="flex items-center gap-2 w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm cursor-pointer hover:bg-slate-50 transition-colors"
                     >
                       <Upload className="w-4 h-4 text-signal" />
-                      <span className={cn("truncate", formData.fileName ? "text-foreground font-semibold" : "text-muted-foreground")}>
+                      <span className={cn("truncate", formData.fileName ? "text-signal font-semibold" : "text-slate-500")}>
                         {formData.fileName || "Choose file..."}
                       </span>
                     </label>
@@ -380,7 +375,7 @@ export default function ExpensePage() {
                     value={formData.remarks}
                     onChange={handleChange}
                     placeholder="Optional note..."
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
                 <div className="flex gap-3">
@@ -388,14 +383,14 @@ export default function ExpensePage() {
                     type="button"
                     variant="outline"
                     onClick={handleCancel}
-                    className="rounded-xl font-semibold h-11 px-6"
+                    className="rounded-xl font-semibold h-11 px-6 border-slate-200 text-slate-600 hover:bg-slate-50"
                   >
                     Clear
                   </Button>
                   <Button
                     type="button"
                     onClick={handleSave}
-                    className="rounded-xl font-semibold h-11 px-8 bg-gradient-to-r from-red-500 to-amber-500 border-0"
+                    className="rounded-xl font-semibold h-11 px-8 bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
                   >
                     <Save className="w-4 h-4 mr-2" />
                     {editingId ? "Update Expense" : "Save Expense"}
@@ -416,11 +411,11 @@ export default function ExpensePage() {
             onPDF={handlePDF}
           />
 
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[900px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     {columns.map((c) => (
                       <th key={c} className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap">
                         {c}
@@ -434,12 +429,12 @@ export default function ExpensePage() {
                       <tr
                         key={r.id}
                         className={cn(
-                          "border-t transition-colors",
-                          editingId === r.id ? "bg-signal/5" : "hover:bg-muted/30"
+                          "border-t border-slate-100 transition-colors",
+                          editingId === r.id ? "bg-signal-tint" : "hover:bg-slate-50"
                         )}
                       >
-                        <td className="px-6 py-4 font-medium">{startIndex + i + 1}</td>
-                        <td className="px-6 py-4 font-semibold">{r.name}</td>
+                        <td className="px-6 py-4 font-medium text-slate-500">{startIndex + i + 1}</td>
+                        <td className="px-6 py-4 font-semibold text-signal">{r.name}</td>
                         <td className="px-6 py-4">
                           <span className={cn(
                             "text-xs font-semibold px-2.5 py-1 rounded-md border",
@@ -449,12 +444,12 @@ export default function ExpensePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="bg-violet-accent/10 text-violet-accent text-xs font-semibold px-2.5 py-1 rounded-md border border-violet-accent/20">
+                          <span className="bg-violet-accent-tint text-violet-accent text-xs font-semibold px-2.5 py-1 rounded-md border border-violet-accent/30">
                             {r.method}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">{r.date}</td>
-                        <td className="px-6 py-4 font-bold text-red-600">
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-500">{r.date}</td>
+                        <td className="px-6 py-4 font-bold text-destructive">
                           ৳{r.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-6 py-4">
@@ -479,9 +474,9 @@ export default function ExpensePage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={columns.length} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length} className="px-6 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No expense records found</p>
+                        <p className="font-semibold text-signal">No expense records found</p>
                         <p className="text-xs mt-1">Try adjusting your search or add a new expense</p>
                       </td>
                     </tr>
@@ -502,7 +497,7 @@ export default function ExpensePage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Categorize expenses properly (ISP Bill, Salary,

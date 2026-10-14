@@ -14,7 +14,6 @@ import { cn } from "@/lib/utils";
 
 const columns = ["Bank Name", "Account Name", "Account No", "Type", "Opening Balance", "Current Balance", "Note", "Action"];
 
-// ডামি ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const initialRows = [
   { id: 1, bankName: "BRAC Bank", accountName: "SmartISP Operations", accountNo: "1501203456789", accountType: "Current", opening: 50000, current: 125400.5, note: "Main operational account" },
   { id: 2, bankName: "Dutch Bangla Bank", accountName: "SmartISP Savings", accountNo: "1021456789123", accountType: "Savings", opening: 100000, current: 285600.75, note: "Emergency fund" },
@@ -41,7 +40,6 @@ export default function BankAccountPage() {
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ফিল্টার
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
       const matchesSearch =
@@ -54,12 +52,10 @@ export default function BankAccountPage() {
     });
   }, [rows, searchTerm, typeFilter]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedRows = filteredRows.slice(startIndex, startIndex + rowsPerPage);
 
-  // Stat Cards
   const stats = useMemo(() => {
     const totalBalance = rows.reduce((sum, r) => sum + r.current, 0);
     const totalOpening = rows.reduce((sum, r) => sum + r.opening, 0);
@@ -71,13 +67,11 @@ export default function BankAccountPage() {
     };
   }, [rows]);
 
-  // হ্যান্ডেল চেঞ্জ
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Save
   const handleSave = () => {
     if (!formData.bankName.trim()) return alert("Bank Name is required!");
     if (!formData.accountName.trim()) return alert("Account Name is required!");
@@ -85,7 +79,6 @@ export default function BankAccountPage() {
     if (!formData.accountType) return alert("Account Type is required!");
     if (!formData.opening || Number(formData.opening) < 0) return alert("Valid opening balance is required!");
 
-    // ডুপ্লিকেট Account No চেক
     const duplicate = rows.find(
       (r) => r.accountNo === formData.accountNo && r.id !== editingId
     );
@@ -97,7 +90,6 @@ export default function BankAccountPage() {
     const opening = Number(formData.opening);
 
     if (editingId) {
-      // এডিট - current ব্যালেন্স অপরিবর্তিত রাখা হবে
       setRows((prev) =>
         prev.map((r) =>
           r.id === editingId
@@ -107,7 +99,6 @@ export default function BankAccountPage() {
       );
       alert(`Bank account "${formData.bankName}" updated successfully!`);
     } else {
-      // নতুন - current = opening
       const newId = Math.max(...rows.map((r) => r.id), 0) + 1;
       setRows((prev) => [
         { id: newId, ...formData, opening, current: opening, note: formData.note },
@@ -120,7 +111,6 @@ export default function BankAccountPage() {
     setCurrentPage(1);
   };
 
-  // এডিট
   const handleEdit = (row: any) => {
     setFormData({
       bankName: row.bankName,
@@ -134,7 +124,6 @@ export default function BankAccountPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ডিলিট
   const handleDelete = (id: number) => {
     const row = rows.find((r) => r.id === id);
     if (!row) return;
@@ -145,7 +134,6 @@ export default function BankAccountPage() {
     }
   };
 
-  // রিফ্রেশ কারেন্ট ব্যালেন্স (মক)
   const handleRefresh = (id: number) => {
     const row = rows.find((r) => r.id === id);
     if (!row) return;
@@ -160,7 +148,6 @@ export default function BankAccountPage() {
     }
   };
 
-  // ক্যান্সেল
   const handleCancel = () => {
     setFormData({
       bankName: "",
@@ -173,7 +160,6 @@ export default function BankAccountPage() {
     setEditingId(null);
   };
 
-  // Export Actions
   const exportToCSV = (filename: string) => {
     const headers = "Bank Name,Account Name,Account No,Type,Opening Balance,Current Balance,Note";
     const csvRows = filteredRows.map((r) =>
@@ -212,82 +198,101 @@ export default function BankAccountPage() {
     alert("Print dialog opened. Save as PDF to export.");
   };
 
-  // ফরম্যাটিং
   const formatCurrency = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // Type Badge
+  // 🎯 Theme-connected Type Badge
   const getTypeBadge = (type: string) => {
     const map: Record<string, string> = {
-      Savings: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-      Current: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-      "Fixed Deposit": "bg-purple-500/10 text-purple-600 border-purple-500/20",
-      Salary: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+      Savings: "bg-success-tint text-success border-success/30",
+      Current: "bg-signal-tint text-signal border-signal/30",
+      "Fixed Deposit": "bg-violet-accent-tint text-violet-accent border-violet-accent/30",
+      Salary: "bg-warning-tint text-warning border-warning/30",
     };
-    return map[type] || "bg-slate-500/10 text-slate-600 border-slate-500/20";
+    return map[type] || "bg-slate-100 text-slate-600 border-slate-200";
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
+          {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Bank Accounts
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Manage all your bank accounts in one place.
               </p>
             </div>
-            <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-600 px-4 py-2 rounded-full text-xs font-semibold border border-emerald-500/20">
+            <div className="flex items-center gap-2 bg-success-tint text-success px-4 py-2 rounded-full text-xs font-semibold border border-success/30">
               <Wallet className="w-3.5 h-3.5" />
               Total: ৳{formatCurrency(stats.totalBalance)}
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Landmark className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Banks</p>
+          {/* 🎯 Compact Stat Cards — Theme-Based Colorful Backgrounds */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {/* Total Banks — Teal Theme */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-signal text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Landmark className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">{stats.totalBanks}</p>
-            </div>
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Balance</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Banks</p>
+                <p className="text-lg font-heading font-bold">{stats.totalBanks}</p>
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.totalBalance)}</p>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Building2 className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Accounts</p>
+
+            {/* Total Balance — Success Theme */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-success text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">{stats.totalAccounts}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Balance</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(stats.totalBalance)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
+
+            {/* Total Accounts — Violet Theme */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-violet-accent text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Building2 className="w-4 h-4" />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Accounts</p>
+                <p className="text-lg font-heading font-bold">{stats.totalAccounts}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
+            </div>
+
+            {/* Net Growth — Warning or Destructive Theme */}
             <div className={cn(
-              "rounded-2xl p-5 text-white shadow-lg bg-gradient-to-br",
-              stats.growth >= 0 ? "from-amber-500 to-amber-600" : "from-red-500 to-red-600"
+              "relative overflow-hidden rounded-xl p-3 flex items-center gap-3 text-white shadow-md",
+              stats.growth >= 0 ? "bg-warning" : "bg-destructive"
             )}>
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Net Growth</p>
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.growth)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Growth</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(stats.growth)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
           </div>
 
           {/* Add / Edit Form */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center justify-between">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+            <div className="bg-signal text-white px-6 py-4 flex items-center justify-between">
               <h2 className="font-heading font-bold text-lg flex items-center gap-2">
                 <Plus className="w-5 h-5" />
                 {editingId ? "Edit Bank Account" : "Add Bank Account"}
@@ -310,7 +315,7 @@ export default function BankAccountPage() {
                     value={formData.bankName}
                     onChange={handleChange}
                     placeholder="e.g. BRAC Bank"
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
                 <Field label="Account Name" required>
@@ -319,7 +324,7 @@ export default function BankAccountPage() {
                     value={formData.accountName}
                     onChange={handleChange}
                     placeholder="e.g. SmartISP Operations"
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
                 <Field label="Account Number" required>
@@ -328,7 +333,7 @@ export default function BankAccountPage() {
                     value={formData.accountNo}
                     onChange={handleChange}
                     placeholder="e.g. 1501203456789"
-                    className="rounded-xl font-mono"
+                    className="rounded-xl border-slate-200 font-mono text-signal"
                   />
                 </Field>
               </div>
@@ -339,7 +344,7 @@ export default function BankAccountPage() {
                     name="accountType"
                     value={formData.accountType}
                     onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="">Select Type</option>
                     {accountTypes.map((t) => (
@@ -349,14 +354,14 @@ export default function BankAccountPage() {
                 </Field>
                 <Field label="Opening Balance" required>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">৳</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">৳</span>
                     <Input
                       name="opening"
                       type="number"
                       value={formData.opening}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="rounded-xl pl-8"
+                      className="rounded-xl pl-8 border-slate-200 text-signal"
                     />
                   </div>
                 </Field>
@@ -366,7 +371,7 @@ export default function BankAccountPage() {
                     value={formData.note}
                     onChange={handleChange}
                     placeholder="Optional note..."
-                    className="rounded-xl"
+                    className="rounded-xl border-slate-200 text-signal"
                   />
                 </Field>
               </div>
@@ -376,14 +381,14 @@ export default function BankAccountPage() {
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  className="rounded-xl font-semibold h-11 px-6"
+                  className="rounded-xl font-semibold h-11 px-6 border-slate-200 text-slate-600 hover:bg-slate-50"
                 >
                   Clear
                 </Button>
                 <Button
                   type="button"
                   onClick={handleSave}
-                  className="rounded-xl font-semibold h-11 px-8 bg-gradient-to-r from-signal to-violet-accent border-0"
+                  className="rounded-xl font-semibold h-11 px-8 bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   {editingId ? "Update Account" : "Save Account"}
@@ -399,8 +404,8 @@ export default function BankAccountPage() {
               className={cn(
                 "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                 typeFilter === "All"
-                  ? "bg-signal text-white border-signal"
-                  : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                  ? "bg-signal text-white border-signal shadow-md"
+                  : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
               )}
             >
               All ({rows.length})
@@ -414,8 +419,8 @@ export default function BankAccountPage() {
                   className={cn(
                     "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                     typeFilter === t
-                      ? "bg-signal text-white border-signal"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      ? "bg-signal text-white border-signal shadow-md"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {t} ({count})
@@ -436,11 +441,11 @@ export default function BankAccountPage() {
           />
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[1100px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     {columns.map((c) => (
                       <th key={c} className="text-left px-5 py-4 font-semibold text-xs whitespace-nowrap">
                         {c}
@@ -454,13 +459,13 @@ export default function BankAccountPage() {
                       <tr
                         key={r.id}
                         className={cn(
-                          "border-t transition-colors",
-                          editingId === r.id ? "bg-signal/5" : "hover:bg-muted/30"
+                          "border-t border-slate-100 transition-colors",
+                          editingId === r.id ? "bg-signal-tint" : "hover:bg-slate-50"
                         )}
                       >
-                        <td className="px-5 py-4 font-semibold">{r.bankName}</td>
-                        <td className="px-5 py-4 text-muted-foreground">{r.accountName}</td>
-                        <td className="px-5 py-4 font-mono text-xs">{r.accountNo}</td>
+                        <td className="px-5 py-4 font-semibold text-signal">{r.bankName}</td>
+                        <td className="px-5 py-4 text-slate-500">{r.accountName}</td>
+                        <td className="px-5 py-4 font-mono text-xs text-slate-600">{r.accountNo}</td>
                         <td className="px-5 py-4">
                           <span className={cn(
                             "inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border",
@@ -469,20 +474,20 @@ export default function BankAccountPage() {
                             {r.accountType}
                           </span>
                         </td>
-                        <td className="px-5 py-4 text-right font-medium">
+                        <td className="px-5 py-4 text-right font-medium text-slate-600">
                           ৳{formatCurrency(r.opening)}
                         </td>
-                        <td className="px-5 py-4 text-right font-bold text-emerald-600">
+                        <td className="px-5 py-4 text-right font-bold text-success">
                           ৳{formatCurrency(r.current)}
                         </td>
-                        <td className="px-5 py-4 text-xs text-muted-foreground max-w-[200px] truncate">
+                        <td className="px-5 py-4 text-xs text-slate-500 max-w-[200px] truncate">
                           {r.note || "—"}
                         </td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleRefresh(r.id)}
-                              className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center hover:bg-emerald-500/20 transition-colors"
+                              className="w-8 h-8 rounded-full bg-success-tint text-success flex items-center justify-center hover:bg-success/20 transition-colors"
                               title="Refresh Balance"
                             >
                               <RefreshCw className="h-3.5 w-3.5" />
@@ -507,9 +512,9 @@ export default function BankAccountPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={columns.length} className="px-5 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length} className="px-5 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No bank accounts found</p>
+                        <p className="font-semibold text-signal">No bank accounts found</p>
                         <p className="text-xs mt-1">Try adjusting your search or filters</p>
                       </td>
                     </tr>
@@ -530,7 +535,7 @@ export default function BankAccountPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Click the refresh icon <RefreshCw className="w-3 h-3 inline" /> next

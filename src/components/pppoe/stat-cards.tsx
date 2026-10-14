@@ -4,81 +4,44 @@ import { UserRound, Signal, SignalZero, Ban, TrendingUp, TrendingDown } from "lu
 import { cn } from "@/lib/utils";
 
 const stats = [
-  {
-    label: "Total Users",
-    value: "700",
-    change: "+12 this week",
-    trend: "up",
-    icon: UserRound,
-    gradient: "from-violet-accent to-signal",
-    textColor: "text-white",
-  },
-  {
-    label: "Online Users",
-    value: "500",
-    change: "71% of total",
-    trend: "up",
-    icon: Signal,
-    gradient: "from-emerald-500 to-emerald-600",
-    textColor: "text-white",
-  },
-  {
-    label: "Offline Users",
-    value: "200",
-    change: "28% of total",
-    trend: "down",
-    icon: SignalZero,
-    gradient: "from-amber-500 to-amber-600",
-    textColor: "text-white",
-  },
-  {
-    label: "Blocked Users",
-    value: "10",
-    change: "1% of total",
-    trend: "down",
-    icon: Ban,
-    gradient: "from-red-500 to-red-600",
-    textColor: "text-white",
-  },
+  { label: "Total", value: "700", change: "+12", trend: "up", icon: UserRound,
+    gradientClass: "bg-gradient-to-br from-signal to-signal-light" },       // Primary
+  { label: "Online", value: "500", change: "71%", trend: "up", icon: Signal,
+    gradientClass: "bg-gradient-to-br from-success to-success/80" },        // Success
+  { label: "Offline", value: "200", change: "28%", trend: "down", icon: SignalZero,
+    gradientClass: "bg-gradient-to-br from-warning to-warning/80" },        // Warning
+  { label: "Blocked", value: "10", change: "1%", trend: "down", icon: Ban,
+    gradientClass: "bg-gradient-to-br from-destructive to-destructive/80" },// Danger
 ];
 
 export function PppoeStatCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      {stats.map((s, index) => (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      {stats.map((s) => (
         <div
           key={s.label}
           className={cn(
-            "relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
-            s.gradient,
-            s.textColor
+            "relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-gradient-to-br shadow-md text-white",
+            s.gradientClass
           )}
-          style={{ animationDelay: `${index * 100}ms` }}
         >
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center">
-                <s.icon className="h-5 w-5" />
-              </div>
-              <div
-                className={cn(
-                  "flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full",
-                  s.trend === "up" ? "bg-white/20" : "bg-black/10"
-                )}
-              >
-                {s.trend === "up" ? (
-                  <TrendingUp className="w-3 h-3" />
-                ) : (
-                  <TrendingDown className="w-3 h-3" />
-                )}
-                {s.change}
-              </div>
-            </div>
-            <p className="text-sm font-semibold opacity-90">{s.label}</p>
-            <p className="text-3xl font-heading font-bold">{s.value}</p>
+          <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+            <s.icon className="w-4 h-4" />
           </div>
-          <div className="absolute -right-4 -bottom-4 w-28 h-28 rounded-full border-4 border-white/10" />
-          <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full border-4 border-white/5" />
+          <div className="flex items-baseline gap-2 min-w-0 flex-1">
+            <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">{s.label}</p>
+            <p className="text-lg font-heading font-bold">{s.value}</p>
+          </div>
+          <span
+            className={cn(
+              "flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md shrink-0",
+              s.trend === "up" ? "bg-white/25" : "bg-black/20"
+            )}
+          >
+            {s.trend === "up" ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
+            {s.change}
+          </span>
+          <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
         </div>
       ))}
     </div>

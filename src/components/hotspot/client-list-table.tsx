@@ -75,7 +75,6 @@ export function HotspotClientListTable() {
   const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "warning">("all");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
-  // ফিল্টার + সার্চ
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
       const matchesSearch =
@@ -88,7 +87,6 @@ export function HotspotClientListTable() {
     });
   }, [rows, searchTerm, statusFilter]);
 
-  // সর্টিং
   const sortedRows = useMemo(() => {
     if (!sortKey) return filteredRows;
     return [...filteredRows].sort((a: any, b: any) => {
@@ -100,12 +98,10 @@ export function HotspotClientListTable() {
     });
   }, [filteredRows, sortKey, sortOrder]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(sortedRows.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedRows = sortedRows.slice(startIndex, startIndex + rowsPerPage);
 
-  // সিলেক্ট অল
   const allSelected =
     paginatedRows.length > 0 && paginatedRows.every((r) => selectedRows.includes(r.id));
   const toggleSelectAll = () => {
@@ -128,14 +124,13 @@ export function HotspotClientListTable() {
 
   const getStatusDot = (status: string) => {
     switch (status) {
-      case "online": return "bg-emerald-500";
-      case "warning": return "bg-amber-500";
-      case "offline": return "bg-red-500";
+      case "online": return "bg-success";
+      case "warning": return "bg-warning";
+      case "offline": return "bg-destructive";
       default: return "bg-slate-400";
     }
   };
 
-  // ============ ACTIONS ============
   const handleActivate = () => {
     if (selectedRows.length === 0) { alert("Please select at least one user to activate."); return; }
     setRows((prev) => prev.map((r) => (selectedRows.includes(r.id) ? { ...r, status: "online", uptime: "Just now" } : r)));
@@ -206,9 +201,9 @@ export function HotspotClientListTable() {
       {/* Header with Search & Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
         <div className="flex items-center gap-3">
-          <h2 className="font-heading text-xl font-bold">Client List</h2>
+          <h2 className="font-heading text-xl font-bold text-signal">Client List</h2>
           {selectedRows.length > 0 && (
-            <span className="bg-signal/10 text-signal text-xs font-semibold px-3 py-1 rounded-full border border-signal/20 flex items-center gap-1">
+            <span className="bg-signal-tint text-signal text-xs font-semibold px-3 py-1 rounded-full border border-signal/30 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" />
               {selectedRows.length} selected
               <button onClick={() => setSelectedRows([])} className="ml-1 hover:bg-signal/20 rounded-full p-0.5">
@@ -219,12 +214,12 @@ export function HotspotClientListTable() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
               placeholder="Search..."
-              className="pl-9 rounded-full w-56 h-9"
+              className="pl-9 rounded-full w-56 h-9 border-slate-200"
             />
           </div>
           <ToolbarButton icon={Link2} label="Activate" onClick={handleActivate} />
@@ -241,14 +236,14 @@ export function HotspotClientListTable() {
               onClick={() => setShowFilterDropdown((s) => !s)}
             />
             {showFilterDropdown && (
-              <div className="absolute right-0 top-full mt-2 w-44 bg-card border rounded-xl shadow-lg z-30 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-lg z-30 overflow-hidden">
                 {(["all", "online", "offline", "warning"] as const).map((status) => (
                   <button
                     key={status}
                     onClick={() => handleFilterSelect(status)}
                     className={cn(
-                      "w-full text-left px-4 py-2.5 text-sm hover:bg-muted transition-colors capitalize flex items-center gap-2",
-                      statusFilter === status && "bg-signal/10 text-signal font-semibold"
+                      "w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 transition-colors capitalize flex items-center gap-2",
+                      statusFilter === status && "bg-signal-tint text-signal font-semibold"
                     )}
                   >
                     <span className={cn("w-2 h-2 rounded-full", getStatusDot(status === "all" ? "default" : status))} />
@@ -263,12 +258,12 @@ export function HotspotClientListTable() {
 
       {/* Rows per page */}
       <div className="flex justify-between items-center mb-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-sm text-slate-500">
           <span>Show</span>
           <select
             value={rowsPerPage}
             onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-            className="border rounded-lg px-2 py-1 bg-background text-sm"
+            className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-sm text-signal"
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
@@ -284,18 +279,18 @@ export function HotspotClientListTable() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-2xl border overflow-hidden overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden overflow-x-auto shadow-sm">
         <table className="w-full text-sm min-w-[1400px]">
           <thead>
-            <tr className="bg-signal text-signal-foreground">
+            <tr className="bg-signal text-white">
               <th className="px-5 py-4 w-12">
-                <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} className="rounded cursor-pointer" />
+                <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} className="rounded cursor-pointer accent-white" />
               </th>
               {columns.map((c) => (
                 <th
                   key={c.key}
                   onClick={() => handleSort(c.key)}
-                  className="text-left px-5 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer hover:bg-signal/90 transition-colors select-none"
+                  className="text-left px-5 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors select-none"
                 >
                   <div className="flex items-center gap-1">
                     {c.label}
@@ -311,47 +306,47 @@ export function HotspotClientListTable() {
               paginatedRows.map((r) => {
                 const isSelected = selectedRows.includes(r.id);
                 return (
-                  <tr key={r.id} className={cn("border-t transition-colors", isSelected ? "bg-signal/5" : "hover:bg-muted/30")}>
+                  <tr key={r.id} className={cn("border-t border-slate-100 transition-colors", isSelected ? "bg-signal-tint" : "hover:bg-slate-50")}>
                     <td className="px-5 py-4">
-                      <input type="checkbox" checked={isSelected} onChange={() => toggleSelectRow(r.id)} className="rounded cursor-pointer" />
+                      <input type="checkbox" checked={isSelected} onChange={() => toggleSelectRow(r.id)} className="rounded cursor-pointer accent-signal" />
                     </td>
-                    <td className="px-5 py-4 font-medium">{r.invoice}</td>
+                    <td className="px-5 py-4 font-medium text-signal">{r.invoice}</td>
                     <td className="px-5 py-4">
                       <span className="inline-flex items-center gap-1.5 text-signal font-semibold">
                         <span className={cn("w-1.5 h-1.5 rounded-full", getStatusDot(r.status))} />
                         {r.cid}
                       </span>
                     </td>
-                    <td className="px-5 py-4 font-medium">{r.name}</td>
-                    <td className="px-5 py-4">{r.mobile}</td>
+                    <td className="px-5 py-4 font-medium text-signal">{r.name}</td>
+                    <td className="px-5 py-4 text-slate-600">{r.mobile}</td>
                     <td className="px-5 py-4">
-                      <span className="bg-signal/10 text-signal text-xs font-semibold px-2 py-1 rounded-md border border-signal/20">
+                      <span className="bg-signal-tint text-signal text-xs font-semibold px-2 py-1 rounded-md border border-signal/30">
                         {r.pkg}
                       </span>
                     </td>
-                    <td className="px-5 py-4">{r.rDays}</td>
+                    <td className="px-5 py-4 text-slate-600">{r.rDays}</td>
                     <td className="px-5 py-4">
                       {r.uptime !== "Null" ? (
-                        <span className="text-emerald-600 font-semibold">{r.uptime}</span>
+                        <span className="text-success font-semibold">{r.uptime}</span>
                       ) : (
-                        <span className="text-muted-foreground">Null</span>
+                        <span className="text-slate-400">Null</span>
                       )}
                     </td>
-                    <td className="px-5 py-4 font-mono text-xs">{r.ip}</td>
-                    <td className="px-5 py-4 font-mono text-xs">{r.mac}</td>
-                    <td className="px-5 py-4 text-emerald-600 font-semibold">{r.up}</td>
-                    <td className="px-5 py-4 text-blue-600 font-semibold">{r.down}</td>
-                    <td className="px-5 py-4 whitespace-nowrap text-xs text-muted-foreground">{r.lastOffline}</td>
+                    <td className="px-5 py-4 font-mono text-xs text-slate-600">{r.ip}</td>
+                    <td className="px-5 py-4 font-mono text-xs text-slate-600">{r.mac}</td>
+                    <td className="px-5 py-4 text-success font-semibold">{r.up}</td>
+                    <td className="px-5 py-4 text-signal font-semibold">{r.down}</td>
+                    <td className="px-5 py-4 whitespace-nowrap text-xs text-slate-500">{r.lastOffline}</td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1">
-                        <button onClick={() => handleView(r)} className="p-1.5 rounded-lg hover:bg-muted transition-colors" title="View">
-                          <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+                        <button onClick={() => handleView(r)} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="View">
+                          <Eye className="w-3.5 h-3.5 text-slate-500" />
                         </button>
-                        <button onClick={() => handleEdit(r)} className="p-1.5 rounded-lg hover:bg-muted transition-colors" title="Edit">
-                          <Edit className="w-3.5 h-3.5 text-muted-foreground" />
+                        <button onClick={() => handleEdit(r)} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="Edit">
+                          <Edit className="w-3.5 h-3.5 text-slate-500" />
                         </button>
-                        <button onClick={() => handleDelete(r)} className="p-1.5 rounded-lg hover:bg-muted transition-colors" title="Delete">
-                          <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                        <button onClick={() => handleDelete(r)} className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors" title="Delete">
+                          <Trash2 className="w-3.5 h-3.5 text-destructive" />
                         </button>
                       </div>
                     </td>
@@ -360,9 +355,9 @@ export function HotspotClientListTable() {
               })
             ) : (
               <tr>
-                <td colSpan={columns.length + 2} className="px-5 py-16 text-center text-muted-foreground">
+                <td colSpan={columns.length + 2} className="px-5 py-16 text-center text-slate-500">
                   <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                  <p className="font-semibold">No users found</p>
+                  <p className="font-semibold text-signal">No users found</p>
                   <p className="text-xs mt-1">Try adjusting your search or filters</p>
                 </td>
               </tr>
@@ -371,12 +366,12 @@ export function HotspotClientListTable() {
         </table>
 
         {/* Pagination */}
-        <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t text-sm">
-          <div className="text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t border-slate-100 text-sm">
+          <div className="text-slate-500">
             Showing {sortedRows.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + rowsPerPage, sortedRows.length)} of {sortedRows.length} entries
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="rounded-full h-8 w-8">
+            <Button variant="outline" size="icon" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="rounded-full h-8 w-8 border-slate-200">
               <ChevronLeft className="w-4 h-4" />
             </Button>
             {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
@@ -387,14 +382,17 @@ export function HotspotClientListTable() {
                   variant={currentPage === page ? "default" : "outline"}
                   size="icon"
                   onClick={() => setCurrentPage(page)}
-                  className={cn("rounded-full h-8 w-8 text-xs font-semibold", currentPage === page && "bg-signal text-white")}
+                  className={cn(
+                    "rounded-full h-8 w-8 text-xs font-semibold",
+                    currentPage === page ? "bg-signal text-white" : "border-slate-200 text-signal"
+                  )}
                 >
                   {page}
                 </Button>
               );
             })}
-            {totalPages > 5 && <span className="text-muted-foreground px-1">...</span>}
-            <Button variant="outline" size="icon" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="rounded-full h-8 w-8">
+            {totalPages > 5 && <span className="text-slate-500 px-1">...</span>}
+            <Button variant="outline" size="icon" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="rounded-full h-8 w-8 border-slate-200">
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>

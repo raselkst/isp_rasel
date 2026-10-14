@@ -37,8 +37,8 @@ const packages = [
 function Field({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
   return (
     <div className="space-y-2">
-      <span className="font-semibold text-sm block">
-        {label} {required && <span className="text-red-500">*</span>}
+      <span className="font-semibold text-sm block text-signal">
+        {label} {required && <span className="text-destructive">*</span>}
       </span>
       {children}
     </div>
@@ -59,16 +59,10 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
   const [progress, setProgress] = useState(0);
   const [generatedCards, setGeneratedCards] = useState<{ cardNo: string; refNo: string; package: string }[]>([]);
 
-  // Protocol অনুযায়ী সার্ভার
   const availableServers = useMemo(() => serversByProtocol[formData.protocol] || [], [formData.protocol]);
-
-  // সিলেক্টেড প্যাকেজ
   const selectedPackage = packages.find((p) => p.id === formData.packageId);
-
-  // মোট মূল্য
   const totalPrice = selectedPackage ? selectedPackage.price * formData.quantity : 0;
 
-  // হ্যান্ডলার
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
@@ -77,9 +71,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
     }));
   };
 
-  // জেনারেশন হ্যান্ডলার
   const handleGenerate = () => {
-    // ভ্যালিডেশন
     if (!formData.user) {
       alert("Please select a User.");
       return;
@@ -101,7 +93,6 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
     setProgress(0);
     setGeneratedCards([]);
 
-    // প্রোগ্রেস সিমুলেশন
     let current = 0;
     const interval = setInterval(() => {
       current += 10;
@@ -109,7 +100,6 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
       if (current >= 100) {
         clearInterval(interval);
 
-        // কার্ড জেনারেট
         const newCards = Array.from({ length: formData.quantity }).map((_, i) => {
           const random = Math.floor(100000 + Math.random() * 900000);
           return {
@@ -125,7 +115,6 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
     }, 100);
   };
 
-  // Reset
   const handleReset = () => {
     setFormData({
       user: "",
@@ -139,14 +128,12 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
     setProgress(0);
   };
 
-  // Copy All
   const handleCopyAll = () => {
     const all = generatedCards.map((c) => c.cardNo).join("\n");
     navigator.clipboard.writeText(all);
     alert(`Copied ${generatedCards.length} card numbers to clipboard!`);
   };
 
-  // Download CSV
   const handleDownload = () => {
     const headers = "Card No,Ref No,Package";
     const rows = generatedCards.map((c) => `"${c.cardNo}","${c.refNo}","${c.package}"`).join("\n");
@@ -160,7 +147,6 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
     URL.revokeObjectURL(url);
   };
 
-  // Print
   const handlePrint = () => {
     window.print();
   };
@@ -173,7 +159,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
       hideSubmit
     >
       {/* Live Preview Card */}
-      <div className="rounded-2xl bg-gradient-to-br from-signal to-violet-accent p-5 text-white shadow-lg relative overflow-hidden">
+      <div className="rounded-2xl bg-signal p-5 text-white shadow-lg relative overflow-hidden">
         <div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full border-4 border-white/10" />
         <div className="absolute -right-12 -bottom-12 w-44 h-44 rounded-full border-4 border-white/5" />
         <div className="relative z-10">
@@ -201,7 +187,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             name="user"
             value={formData.user}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-slate-50 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Choose User</option>
             {users.map((u) => (
@@ -216,9 +202,9 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             value={formData.protocol}
             onChange={(e) => {
               handleChange(e);
-              setFormData((prev) => ({ ...prev, server: "" })); // সার্ভার রিসেট
+              setFormData((prev) => ({ ...prev, server: "" }));
             }}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-slate-50 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             {protocols.map((p) => (
               <option key={p} value={p}>{p}</option>
@@ -231,7 +217,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             name="server"
             value={formData.server}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-slate-50 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Choose Server</option>
             {availableServers.map((s) => (
@@ -245,7 +231,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             name="packageId"
             value={formData.packageId}
             onChange={handleChange}
-            className="w-full border rounded-xl px-4 py-2.5 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none"
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-slate-50 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
           >
             <option value="">Select Package</option>
             {packages.map((p) => (
@@ -262,7 +248,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             max={1000}
             value={formData.quantity}
             onChange={handleChange}
-            className="rounded-xl"
+            className="rounded-xl text-signal"
           />
         </Field>
 
@@ -272,32 +258,32 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             value={formData.prefix}
             onChange={handleChange}
             placeholder="CARD-"
-            className="rounded-xl"
+            className="rounded-xl text-signal"
           />
         </Field>
       </div>
 
       {/* Package Details Card */}
       {selectedPackage && (
-        <div className="rounded-2xl bg-muted/30 border border-border p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
           <div>
-            <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Validity</p>
-            <p className="font-semibold text-sm flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-amber-500" /> {selectedPackage.validity}
+            <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Validity</p>
+            <p className="font-semibold text-sm flex items-center gap-1 text-signal">
+              <Zap className="w-3.5 h-3.5 text-warning" /> {selectedPackage.validity}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Data</p>
-            <p className="font-semibold text-sm flex items-center gap-1">
+            <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Data</p>
+            <p className="font-semibold text-sm flex items-center gap-1 text-signal">
               <Wifi className="w-3.5 h-3.5 text-signal" /> {selectedPackage.data}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Unit Price</p>
-            <p className="font-semibold text-sm">৳{selectedPackage.price}</p>
+            <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Unit Price</p>
+            <p className="font-semibold text-sm text-signal">৳{selectedPackage.price}</p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Total Price</p>
+            <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Total Price</p>
             <p className="font-bold text-sm text-signal">৳{totalPrice.toLocaleString()}</p>
           </div>
         </div>
@@ -308,7 +294,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
         <Button
           onClick={handleGenerate}
           disabled={isGenerating}
-          className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent border-0"
+          className="flex-1 rounded-xl font-semibold h-12 bg-signal hover:bg-signal-hover text-white border-0 shadow-md"
         >
           {isGenerating ? (
             <>
@@ -323,7 +309,7 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
         <Button
           onClick={handleReset}
           variant="outline"
-          className="rounded-xl font-semibold h-12 px-6"
+          className="rounded-xl font-semibold h-12 px-6 border-slate-200 text-signal hover:bg-slate-50"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
@@ -333,12 +319,12 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
       {isGenerating && (
         <div className="space-y-2 animate-in fade-in duration-300">
           <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="text-muted-foreground">Generating cards...</span>
+            <span className="text-slate-500">Generating cards...</span>
             <span className="text-signal">{progress}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-signal to-violet-accent transition-all duration-200"
+              className="h-full bg-signal transition-all duration-200"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -348,14 +334,14 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
       {/* Generated Cards Preview */}
       {generatedCards.length > 0 && (
         <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-success-tint border border-success/30">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              <CheckCircle2 className="w-5 h-5 text-success" />
               <div>
-                <p className="text-sm font-semibold text-emerald-700">
+                <p className="text-sm font-semibold text-success">
                   {generatedCards.length} card(s) generated successfully!
                 </p>
-                <p className="text-xs text-emerald-600">
+                <p className="text-xs text-success">
                   Package: {selectedPackage?.name}
                 </p>
               </div>
@@ -363,21 +349,21 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
             <div className="flex gap-2">
               <button
                 onClick={handleCopyAll}
-                className="p-2 rounded-lg bg-background border hover:bg-muted transition-colors"
+                className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors text-signal"
                 title="Copy All"
               >
                 <Copy className="w-4 h-4" />
               </button>
               <button
                 onClick={handleDownload}
-                className="p-2 rounded-lg bg-background border hover:bg-muted transition-colors"
+                className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors text-signal"
                 title="Download CSV"
               >
                 <Download className="w-4 h-4" />
               </button>
               <button
                 onClick={handlePrint}
-                className="p-2 rounded-lg bg-background border hover:bg-muted transition-colors"
+                className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors text-signal"
                 title="Print"
               >
                 <Printer className="w-4 h-4" />
@@ -386,9 +372,9 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
           </div>
 
           {/* Preview List */}
-          <div className="max-h-64 overflow-y-auto rounded-2xl border bg-muted/20">
+          <div className="max-h-64 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-signal text-signal-foreground">
+              <thead className="sticky top-0 bg-signal text-white">
                 <tr>
                   <th className="px-3 py-2 text-left font-semibold">#</th>
                   <th className="px-3 py-2 text-left font-semibold">Card No</th>
@@ -398,17 +384,17 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
               </thead>
               <tbody>
                 {generatedCards.slice(0, 100).map((c, i) => (
-                  <tr key={i} className="border-t hover:bg-muted/30">
-                    <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
+                  <tr key={i} className="border-t border-slate-100 hover:bg-white">
+                    <td className="px-3 py-2 text-slate-500">{i + 1}</td>
                     <td className="px-3 py-2 font-mono font-semibold text-signal">{c.cardNo}</td>
-                    <td className="px-3 py-2 font-mono text-muted-foreground">{c.refNo}</td>
-                    <td className="px-3 py-2">{c.package}</td>
+                    <td className="px-3 py-2 font-mono text-slate-500">{c.refNo}</td>
+                    <td className="px-3 py-2 text-signal">{c.package}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             {generatedCards.length > 100 && (
-              <p className="text-center text-xs text-muted-foreground py-2 border-t">
+              <p className="text-center text-xs text-slate-500 py-2 border-t border-slate-200">
                 Showing first 100 of {generatedCards.length} cards
               </p>
             )}
@@ -418,10 +404,11 @@ export function CardGeneratorModal({ open, onClose, onSubmit }: CardGeneratorMod
 
       {/* Info Note */}
       {!isGenerating && generatedCards.length === 0 && (
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-signal/5 border border-signal/20">
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-signal-tint border border-signal/30">
           <AlertCircle className="w-4 h-4 text-signal shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Select a User, Protocol, Server, Package, and Quantity, then click <strong className="text-signal">Generate Cards</strong>. 
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Select a User, Protocol, Server, Package, and Quantity, then click{" "}
+            <strong className="text-signal">Generate Cards</strong>.
             Cards will be created with unique numbers and can be downloaded as CSV or copied to clipboard.
           </p>
         </div>

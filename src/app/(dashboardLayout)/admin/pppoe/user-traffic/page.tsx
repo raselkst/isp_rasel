@@ -61,13 +61,11 @@ export default function UserTrafficPage() {
   const [activeIndex, setActiveIndex] = useState(3);
   const [dataPoints, setDataPoints] = useState<number[]>([]);
 
-  // ডেটা জেনারেশন
   useEffect(() => {
     setDataPoints(generateData(activeServer, activeUser, timeRange));
     setActiveIndex(3);
   }, [activeServer, activeUser, timeRange]);
 
-  // লাইভ মোড - প্রতি ২ সেকেন্ডে ডেটা আপডেট
   useEffect(() => {
     if (!isLive) return;
     const interval = setInterval(() => {
@@ -78,9 +76,8 @@ export default function UserTrafficPage() {
     return () => clearInterval(interval);
   }, [isLive]);
 
-  // ক্যালকুলেশন
   const maxV = useMemo(() => Math.max(...dataPoints, 400), [dataPoints]);
-  
+
   const calculations = useMemo(() => {
     if (dataPoints.length === 0) return { tx: 0, rx: 0, total: 0, peak: 0, avg: 0 };
     const total = dataPoints.reduce((a, b) => a + b, 0);
@@ -97,7 +94,6 @@ export default function UserTrafficPage() {
     };
   }, [dataPoints]);
 
-  // Path জেনারেশন
   const { linePath, areaPath } = useMemo(() => {
     if (dataPoints.length === 0) return { linePath: "", areaPath: "" };
     const line = dataPoints
@@ -116,7 +112,6 @@ export default function UserTrafficPage() {
     ? toXY(activeIndex, dataPoints[activeIndex], dataPoints, maxV)
     : [0, 0];
 
-  // Export CSV
   const handleExport = () => {
     const headers = "Month,Traffic (Mbps)";
     const rows = months
@@ -138,76 +133,72 @@ export default function UserTrafficPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
-          <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent mb-6">
+          <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal mb-6">
             User Traffic Analytics
           </h1>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-card rounded-2xl border p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <ArrowUpCircle className="w-4 h-4 text-emerald-600" />
-                </div>
-                <p className="text-xs text-muted-foreground font-semibold uppercase">Upload (TX)</p>
+          {/* Compact Stat Cards — Theme Connected */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0">
+                <ArrowUpCircle className="w-4 h-4 text-success" />
               </div>
-              <p className="font-heading text-2xl font-bold text-emerald-600">
-                {calculations.tx} <span className="text-sm">Mbps</span>
-              </p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">TX</p>
+                <p className="text-lg font-heading font-bold text-success">{calculations.tx}</p>
+                <p className="text-[10px] text-slate-500">Mbps</p>
+              </div>
             </div>
-            <div className="bg-card rounded-2xl border p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <ArrowDownCircle className="w-4 h-4 text-blue-600" />
-                </div>
-                <p className="text-xs text-muted-foreground font-semibold uppercase">Download (RX)</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <ArrowDownCircle className="w-4 h-4 text-signal" />
               </div>
-              <p className="font-heading text-2xl font-bold text-blue-600">
-                {calculations.rx} <span className="text-sm">Mbps</span>
-              </p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">RX</p>
+                <p className="text-lg font-heading font-bold text-signal">{calculations.rx}</p>
+                <p className="text-[10px] text-slate-500">Mbps</p>
+              </div>
             </div>
-            <div className="bg-card rounded-2xl border p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-violet-600" />
-                </div>
-                <p className="text-xs text-muted-foreground font-semibold uppercase">Peak Usage</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-violet-accent-tint flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4 text-violet-accent" />
               </div>
-              <p className="font-heading text-2xl font-bold text-violet-600">
-                {calculations.peak} <span className="text-sm">Mbps</span>
-              </p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Peak</p>
+                <p className="text-lg font-heading font-bold text-violet-accent">{calculations.peak}</p>
+                <p className="text-[10px] text-slate-500">Mbps</p>
+              </div>
             </div>
-            <div className="bg-card rounded-2xl border p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center">
-                  <Activity className="w-4 h-4 text-amber-600" />
-                </div>
-                <p className="text-xs text-muted-foreground font-semibold uppercase">Avg Speed</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <Activity className="w-4 h-4 text-warning" />
               </div>
-              <p className="font-heading text-2xl font-bold text-amber-600">
-                {calculations.avg} <span className="text-sm">Mbps</span>
-              </p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Avg</p>
+                <p className="text-lg font-heading font-bold text-warning">{calculations.avg}</p>
+                <p className="text-[10px] text-slate-500">Mbps</p>
+              </div>
             </div>
           </div>
 
-          <div className="bg-card rounded-2xl border p-6 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
             {/* Header Controls */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <h2 className="font-heading text-xl font-bold">Traffic Overview</h2>
+              <h2 className="font-heading text-xl font-bold text-signal">Traffic Overview</h2>
               <div className="flex flex-wrap items-center gap-3">
                 
                 {/* Server Select */}
                 <select
                   value={activeServer}
                   onChange={(e) => setActiveServer(e.target.value)}
-                  className="border rounded-xl px-4 py-2.5 bg-background text-sm font-semibold focus:ring-2 focus:ring-signal outline-none"
+                  className="border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal outline-none"
                 >
                   {servers.map((s) => (
                     <option key={s.id} value={s.id}>{s.name}</option>
@@ -218,7 +209,7 @@ export default function UserTrafficPage() {
                 <select
                   value={activeUser}
                   onChange={(e) => setActiveUser(e.target.value)}
-                  className="border rounded-xl px-4 py-2.5 bg-background text-sm font-semibold focus:ring-2 focus:ring-signal outline-none"
+                  className="border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal outline-none"
                 >
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>{u.name}</option>
@@ -230,7 +221,7 @@ export default function UserTrafficPage() {
                   variant="outline"
                   size="icon"
                   onClick={handleRefresh}
-                  className="rounded-xl h-10 w-10"
+                  className="rounded-xl h-10 w-10 border-slate-200 text-signal"
                   title="Refresh Data"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -242,7 +233,9 @@ export default function UserTrafficPage() {
                   onClick={() => setIsLive(!isLive)}
                   className={cn(
                     "rounded-xl gap-2 font-semibold",
-                    isLive && "bg-emerald-600 hover:bg-emerald-500 text-white"
+                    isLive
+                      ? "bg-success hover:bg-success/90 text-white"
+                      : "border-slate-200 text-signal"
                   )}
                 >
                   {isLive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -270,7 +263,7 @@ export default function UserTrafficPage() {
                     "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                     timeRange === r.id
                       ? "bg-signal text-white border-signal shadow-md"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                   )}
                 >
                   {r.label}
@@ -280,13 +273,13 @@ export default function UserTrafficPage() {
 
             {/* Legend */}
             <div className="flex items-center gap-6 mb-4 text-sm font-semibold">
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 text-signal">
                 <span className="w-2.5 h-2.5 rounded-full bg-destructive" /> TX {calculations.tx} Mbps
               </span>
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 text-signal">
                 <span className="w-2.5 h-2.5 rounded-full bg-signal" /> RX {calculations.rx} Mbps
               </span>
-              <span className="flex items-center gap-2 ml-auto text-xs text-muted-foreground">
+              <span className="flex items-center gap-2 ml-auto text-xs text-slate-500">
                 <Wifi className="w-3.5 h-3.5" /> {servers.find((s) => s.id === activeServer)?.name} · {users.find((u) => u.id === activeUser)?.name}
               </span>
             </div>
@@ -296,7 +289,7 @@ export default function UserTrafficPage() {
               <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-[340px]">
                 <defs>
                   <linearGradient id="trafficFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--violet-accent)" stopOpacity="0.3" />
+                    <stop offset="0%" stopColor="var(--signal)" stopOpacity="0.3" />
                     <stop offset="100%" stopColor="var(--signal)" stopOpacity="0.03" />
                   </linearGradient>
                 </defs>
@@ -309,8 +302,7 @@ export default function UserTrafficPage() {
                     x2={W - PAD}
                     y1={PAD + (row * (H - PAD * 2)) / 4}
                     y2={PAD + (row * (H - PAD * 2)) / 4}
-                    stroke="currentColor"
-                    className="text-border"
+                    stroke="#e2e8f0"
                     strokeWidth="1"
                   />
                 ))}
@@ -324,7 +316,7 @@ export default function UserTrafficPage() {
                       x={PAD - 10}
                       y={PAD + (row * (H - PAD * 2)) / 4 + 4}
                       textAnchor="end"
-                      className="fill-muted-foreground"
+                      fill="#64748b"
                       fontSize="12"
                     >
                       {value}
@@ -339,7 +331,7 @@ export default function UserTrafficPage() {
                 <path
                   d={linePath}
                   fill="none"
-                  stroke="var(--violet-accent)"
+                  stroke="var(--signal)"
                   strokeWidth="3"
                   strokeDasharray="10 8"
                   strokeLinecap="round"
@@ -352,14 +344,14 @@ export default function UserTrafficPage() {
                   return (
                     <g key={i}>
                       {isActive && (
-                        <circle cx={x} cy={y} r={14} fill="var(--violet-accent)" opacity="0.2" />
+                        <circle cx={x} cy={y} r={14} fill="var(--signal)" opacity="0.2" />
                       )}
                       <circle
                         cx={x}
                         cy={y}
                         r={isActive ? 8 : 5}
-                        fill="var(--card)"
-                        stroke="var(--violet-accent)"
+                        fill="#ffffff"
+                        stroke="var(--signal)"
                         strokeWidth="3"
                         className="cursor-pointer transition-all"
                         onMouseEnter={() => setActiveIndex(i)}
@@ -374,7 +366,7 @@ export default function UserTrafficPage() {
                   x2={ax}
                   y1={ay}
                   y2={H - PAD}
-                  stroke="var(--violet-accent)"
+                  stroke="var(--signal)"
                   strokeWidth="2"
                   strokeDasharray="4 4"
                 />
@@ -382,24 +374,24 @@ export default function UserTrafficPage() {
 
               {/* Tooltip */}
               <div
-                className="absolute bg-card border rounded-xl shadow-lg px-4 py-3 text-sm pointer-events-none transition-all duration-200"
+                className="absolute bg-white border border-slate-200 rounded-xl shadow-lg px-4 py-3 text-sm pointer-events-none transition-all duration-200"
                 style={{
                   left: `${(ax / W) * 100}%`,
                   top: `${(ay / H) * 100}%`,
                   transform: "translate(12px, -50%)",
                 }}
               >
-                <p className="font-semibold text-foreground">
-                  {months[activeIndex]} <span className="text-signal">2025</span>
+                <p className="font-semibold text-signal">
+                  {months[activeIndex]} <span>2025</span>
                 </p>
-                <p className="font-semibold text-xs mt-1">
+                <p className="font-semibold text-xs mt-1 text-slate-500">
                   Traffic: <span className="text-destructive">{dataPoints[activeIndex]?.toFixed(2)} Mbps</span>
                 </p>
               </div>
             </div>
 
             {/* X-Axis Labels */}
-            <div className="flex justify-between text-xs text-muted-foreground mt-3 px-6">
+            <div className="flex justify-between text-xs text-slate-500 mt-3 px-6">
               {months.map((m) => (
                 <span key={m} className="truncate">{m.slice(0, 3)}</span>
               ))}

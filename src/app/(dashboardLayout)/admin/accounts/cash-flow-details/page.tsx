@@ -27,7 +27,7 @@ const quickRanges = [
   { id: "year", label: "This Year" },
 ];
 
-// সেকশন টেবিল কম্পোনেন্ট
+// 🎯 Section Table — Theme Connected
 function SectionTable({
   title,
   icon: Icon,
@@ -50,8 +50,8 @@ function SectionTable({
   const hasData = filteredRows.length > 0;
 
   return (
-    <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-6">
-      <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center gap-2">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+      <div className="bg-signal text-white px-6 py-4 flex items-center gap-2">
         <Icon className="w-5 h-5" />
         <h2 className="font-heading font-bold text-lg">{title}</h2>
       </div>
@@ -59,7 +59,7 @@ function SectionTable({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-muted/40 text-muted-foreground border-b">
+            <tr className="bg-slate-50 text-slate-500 border-b border-slate-100">
               {columns.map((c) => (
                 <th
                   key={c}
@@ -78,22 +78,22 @@ function SectionTable({
               filteredRows.map((r, i) => (
                 <tr
                   key={i}
-                  className="border-t hover:bg-muted/30 transition-colors"
+                  className="border-t border-slate-100 hover:bg-slate-50 transition-colors"
                 >
                   {r.map((cell, j) => (
                     <td
                       key={j}
                       className={cn(
                         "px-6 py-4",
-                        j === 0 ? "text-left font-medium" : "text-right"
+                        j === 0 ? "text-left font-medium text-signal" : "text-right text-slate-600"
                       )}
                     >
                       {cell.startsWith("-") ? (
-                        <span className="text-red-600 font-semibold">{cell}</span>
+                        <span className="text-destructive font-semibold">{cell}</span>
                       ) : cell.startsWith("+") ? (
-                        <span className="text-emerald-600 font-semibold">{cell}</span>
+                        <span className="text-success font-semibold">{cell}</span>
                       ) : cell === "0" || cell === "0.00" || cell === ".00" ? (
-                        <span className="text-muted-foreground">{cell}</span>
+                        <span className="text-slate-400">{cell}</span>
                       ) : (
                         cell
                       )}
@@ -103,14 +103,14 @@ function SectionTable({
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="px-6 py-8 text-center text-muted-foreground">
+                <td colSpan={columns.length} className="px-6 py-8 text-center text-slate-500">
                   <AlertCircle className="w-6 h-6 mx-auto mb-2 opacity-40" />
                   <p className="text-xs">No matching records</p>
                 </td>
               </tr>
             )}
             {totalRow && totalRow.length > 0 && hasData && (
-              <tr className="border-t-2 border-border bg-muted/50 font-bold">
+              <tr className="border-t-2 border-signal/20 bg-signal-tint font-bold">
                 {totalRow.map((cell, j) => (
                   <td
                     key={j}
@@ -140,12 +140,10 @@ export default function CashFlowDetailsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Hydration fix - শুধু ক্লায়েন্টে রেন্ডার
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // সেকশন ডেটা (POP অনুযায়ী পরিবর্তিত হতে পারে)
   const homeUserData = useMemo(() => ({
     columns: ["Action Type", "Transaction Count", "User Count", "Bill Amount", "Received Amount"],
     rows: [
@@ -180,7 +178,6 @@ export default function CashFlowDetailsPage() {
     total: ["Total", "71", "+4,796.10"],
   }), [pop]);
 
-  // Cash Flow Summary
   const cashFlowSummary = useMemo(() => {
     const opening = 4235203.88;
     const inflow = 7770.00;
@@ -198,7 +195,6 @@ export default function CashFlowDetailsPage() {
     ];
   }, [pop]);
 
-  // Stat Cards
   const stats = useMemo(() => ({
     totalTransactions: 180,
     totalBill: 116620,
@@ -298,18 +294,17 @@ export default function CashFlowDetailsPage() {
   const formatCurrency = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // Hydration এরর এড়াতে mounted না হওয়া পর্যন্ত প্লেসহোল্ডার
   if (!mounted) {
     return (
-      <div className="flex min-h-screen bg-muted/30">
+      <div className="flex min-h-screen bg-slate-50">
         <DashboardSidebar />
         <div className="flex-1 min-w-0">
           <DashboardTopbar />
           <div className="px-4 sm:px-8 py-7">
             <div className="animate-pulse space-y-4">
-              <div className="h-10 bg-muted rounded-xl w-1/3" />
-              <div className="h-32 bg-muted rounded-2xl" />
-              <div className="h-64 bg-muted rounded-2xl" />
+              <div className="h-10 bg-slate-200 rounded-xl w-1/3" />
+              <div className="h-32 bg-slate-200 rounded-2xl" />
+              <div className="h-64 bg-slate-200 rounded-2xl" />
             </div>
           </div>
         </div>
@@ -318,7 +313,7 @@ export default function CashFlowDetailsPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -328,83 +323,102 @@ export default function CashFlowDetailsPage() {
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Cash Flow Details
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Detailed breakdown of all transactions by POP, user type, and zone.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search..."
-                  className="pl-9 rounded-full w-56 h-9"
+                  className="pl-9 rounded-full w-56 h-9 border-slate-200 text-signal"
                 />
               </div>
               <Button
                 onClick={handleExportCSV}
                 variant="outline"
-                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 h-9"
+                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 h-9 hover:bg-signal-tint"
               >
                 <Download className="h-3.5 w-3.5" /> Export CSV
               </Button>
               <Button
                 onClick={handlePrint}
                 variant="outline"
-                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 h-9"
+                className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 h-9 hover:bg-signal-tint"
               >
                 <Printer className="h-3.5 w-3.5" /> Print
               </Button>
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Layers className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Transactions</p>
+          {/* 🎯 Compact Stat Cards — Theme-Based Solid Colors */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {/* Transactions — Teal */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-signal text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Layers className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">{stats.totalTransactions}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Txns</p>
+                <p className="text-lg font-heading font-bold">{stats.totalTransactions}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Wallet className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Bill</p>
+
+            {/* Total Bill — Violet */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-violet-accent text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Wallet className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.totalBill)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Bill</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(stats.totalBill)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Total Received</p>
+
+            {/* Received — Success */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-success text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.totalReceived)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Received</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(stats.totalReceived)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-5 h-5" />
-                <p className="text-xs font-semibold uppercase opacity-90">Net Balance</p>
+
+            {/* Net Balance — Warning */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-warning text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4" />
               </div>
-              <p className="font-heading text-xl font-bold">৳{formatCurrency(stats.netBalance)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Net</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(stats.netBalance)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
           </div>
 
           {/* Filter Bar */}
-          <div className="bg-card rounded-2xl border shadow-sm p-5 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
             <div className="flex flex-wrap items-center gap-4 mb-4">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-signal" />
-                <span className="font-semibold text-sm">POP:</span>
+                <span className="font-semibold text-sm text-signal">POP:</span>
               </div>
               <select
                 value={pop}
                 onChange={(e) => setPop(e.target.value)}
-                className="border rounded-xl px-4 py-2 bg-muted/40 text-sm focus:ring-2 focus:ring-signal outline-none min-w-[200px]"
+                className="border border-slate-200 rounded-xl px-4 py-2 bg-white text-sm text-signal focus:ring-2 focus:ring-signal outline-none min-w-[200px]"
               >
                 {pops.map((p) => (
                   <option key={p.id} value={p.id}>{p.name}</option>
@@ -413,25 +427,25 @@ export default function CashFlowDetailsPage() {
 
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-signal" />
-                <span className="font-semibold text-sm">From:</span>
+                <span className="font-semibold text-sm text-signal">From:</span>
               </div>
               <Input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => { setDateFrom(e.target.value); setActiveRange(""); }}
-                className="rounded-xl w-40"
+                className="rounded-xl w-40 border-slate-200 text-signal"
               />
-              <span className="font-semibold text-sm">To:</span>
+              <span className="font-semibold text-sm text-signal">To:</span>
               <Input
                 type="date"
                 value={dateTo}
                 onChange={(e) => { setDateTo(e.target.value); setActiveRange(""); }}
-                className="rounded-xl w-40"
+                className="rounded-xl w-40 border-slate-200 text-signal"
               />
               <Button
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="rounded-xl bg-gradient-to-r from-signal to-violet-accent border-0 px-6"
+                className="rounded-xl bg-signal text-white hover:bg-signal-hover border-0 px-6 shadow-md"
               >
                 {isLoading ? (
                   <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Loading...</>
@@ -448,7 +462,7 @@ export default function CashFlowDetailsPage() {
                     "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                     activeRange === r.id
                       ? "bg-signal text-white border-signal shadow-md"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {r.label}
@@ -486,8 +500,8 @@ export default function CashFlowDetailsPage() {
           />
 
           {/* Cash Flow Summary */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-signal to-violet-accent text-white px-6 py-4 flex items-center gap-2">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-signal text-white px-6 py-4 flex items-center gap-2">
               <Wallet className="w-5 h-5" />
               <h2 className="font-heading font-bold text-lg">Cash Flow Summary</h2>
             </div>
@@ -497,17 +511,17 @@ export default function CashFlowDetailsPage() {
                 <div
                   key={item.label}
                   className={cn(
-                    "flex items-center justify-between px-8 py-4 border-t transition-colors",
+                    "flex items-center justify-between px-8 py-4 border-t border-slate-100 transition-colors",
                     i === 0 && "border-t-0",
                     item.isTotal
-                      ? "bg-gradient-to-r from-signal/10 to-violet-accent/10 border-t-2"
-                      : i % 2 === 0 ? "bg-muted/20" : "bg-card"
+                      ? "bg-signal-tint border-t-2 border-signal/20"
+                      : i % 2 === 0 ? "bg-slate-50" : "bg-white"
                   )}
                 >
                   <span
                     className={cn(
                       "text-sm flex items-center gap-2",
-                      item.isTotal ? "font-heading font-bold text-signal text-base" : "font-semibold"
+                      item.isTotal ? "font-heading font-bold text-signal text-base" : "font-semibold text-slate-600"
                     )}
                   >
                     {item.isTotal && <DollarSign className="w-4 h-4" />}
@@ -516,9 +530,9 @@ export default function CashFlowDetailsPage() {
                   <span
                     className={cn(
                       "text-sm font-semibold",
-                      item.isTotal ? "font-heading font-bold text-signal text-base" : "",
-                      item.positive ? "text-emerald-600" : "",
-                      item.negative ? "text-red-600" : ""
+                      item.isTotal ? "font-heading font-bold text-signal text-base" : "text-slate-600",
+                      item.positive ? "text-success" : "",
+                      item.negative ? "text-destructive" : ""
                     )}
                   >
                     {item.positive ? "+" : item.negative ? "-" : ""}৳{formatCurrency(Math.abs(item.value))}
@@ -529,7 +543,7 @@ export default function CashFlowDetailsPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Use the POP filter to narrow down to a specific

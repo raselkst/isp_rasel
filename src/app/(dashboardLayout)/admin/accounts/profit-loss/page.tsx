@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// ডামি ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const mockTransactions = [
   { id: 1, time: "2025-07-23", income: 12500, expense: 3200, description: "Daily Summary" },
   { id: 2, time: "2025-07-22", income: 18400, expense: 5100, description: "Daily Summary" },
@@ -43,7 +42,6 @@ export default function ProfitLossPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // ফিল্টার ও ডেটা
   const filteredData = useMemo(() => {
     return mockTransactions.filter((t) => {
       const tDate = new Date(t.time);
@@ -58,12 +56,10 @@ export default function ProfitLossPage() {
     });
   }, [dateFrom, dateTo, searchTerm]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + rowsPerPage);
 
-  // টোটাল ক্যালকুলেশন
   const totals = useMemo(() => {
     const income = filteredData.reduce((sum, t) => sum + t.income, 0);
     const expense = filteredData.reduce((sum, t) => sum + t.expense, 0);
@@ -72,7 +68,6 @@ export default function ProfitLossPage() {
     return { income, expense, profit, margin };
   }, [filteredData]);
 
-  // Quick Range হ্যান্ডলার
   const handleQuickRange = (rangeId: string) => {
     setActiveRange(rangeId);
     setIsLoading(true);
@@ -115,14 +110,12 @@ export default function ProfitLossPage() {
     setTimeout(() => setIsLoading(false), 400);
   };
 
-  // Go বাটন
   const handleGo = () => {
     setIsLoading(true);
     setActiveRange("");
     setTimeout(() => setIsLoading(false), 400);
   };
 
-  // Export Actions
   const exportToCSV = (filename: string) => {
     const headers = "Time,Income,Expense,Profit/Loss";
     const rows = filteredData
@@ -161,32 +154,32 @@ export default function ProfitLossPage() {
     alert("Print dialog opened. Save as PDF to export.");
   };
 
-  // ফরম্যাটিং
   const formatCurrency = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         <div className="px-4 sm:px-8 py-7">
+          {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Profit &amp; Loss Report
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Track your income, expenses, and net profitability.
               </p>
             </div>
             <div className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border",
               totals.profit >= 0
-                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                : "bg-red-500/10 text-red-600 border-red-500/20"
+                ? "bg-success-tint text-success border-success/30"
+                : "bg-destructive/10 text-destructive border-destructive/30"
             )}>
               {totals.profit >= 0 ? (
                 <TrendingUp className="w-3.5 h-3.5" />
@@ -197,65 +190,84 @@ export default function ProfitLossPage() {
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Total Income</p>
+          {/* 🎯 Compact Stat Cards — Theme-Based Solid Colors */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {/* Total Income — Success */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-success text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <ArrowUpRight className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">৳{formatCurrency(totals.income)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Income</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.income)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Total Expense</p>
+
+            {/* Total Expense — Destructive */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-destructive text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <ArrowDownRight className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">৳{formatCurrency(totals.expense)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Expense</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.expense)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
+
+            {/* Net Profit/Loss — Teal or Destructive */}
             <div className={cn(
-              "rounded-2xl p-5 text-white shadow-lg bg-gradient-to-br",
-              totals.profit >= 0 ? "from-signal to-violet-accent" : "from-orange-500 to-red-500"
+              "relative overflow-hidden rounded-xl p-3 flex items-center gap-3 text-white shadow-md",
+              totals.profit >= 0 ? "bg-signal" : "bg-destructive"
             )}>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Net Profit/Loss</p>
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <DollarSign className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">৳{formatCurrency(totals.profit)}</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Net P/L</p>
+                <p className="text-lg font-heading font-bold">৳{formatCurrency(totals.profit)}</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
-            <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase opacity-90">Profit Margin</p>
+
+            {/* Profit Margin — Warning */}
+            <div className="relative overflow-hidden rounded-xl p-3 flex items-center gap-3 bg-warning text-white shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Percent className="w-4 h-4" />
               </div>
-              <p className="font-heading text-2xl font-bold">{totals.margin.toFixed(1)}%</p>
+              <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase opacity-90 whitespace-nowrap">Margin</p>
+                <p className="text-lg font-heading font-bold">{totals.margin.toFixed(1)}%</p>
+              </div>
+              <div className="absolute -right-3 -bottom-3 w-16 h-16 rounded-full border-2 border-white/10" />
             </div>
           </div>
 
           {/* Date Range Filter */}
-          <div className="bg-card rounded-2xl border shadow-sm p-5 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
             <div className="flex flex-wrap items-center gap-4 mb-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-signal" />
-                <span className="font-semibold text-sm">From Date:</span>
+                <span className="font-semibold text-sm text-signal">From Date:</span>
               </div>
               <Input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => { setDateFrom(e.target.value); setActiveRange(""); }}
-                className="rounded-xl w-44"
+                className="rounded-xl w-44 border-slate-200 text-signal"
               />
-              <span className="font-semibold text-sm">To Date:</span>
+              <span className="font-semibold text-sm text-signal">To Date:</span>
               <Input
                 type="date"
                 value={dateTo}
                 onChange={(e) => { setDateTo(e.target.value); setActiveRange(""); }}
-                className="rounded-xl w-44"
+                className="rounded-xl w-44 border-slate-200 text-signal"
               />
               <Button
                 onClick={handleGo}
                 disabled={isLoading}
-                className="rounded-xl bg-gradient-to-r from-signal to-violet-accent border-0 px-6"
+                className="rounded-xl bg-signal text-white hover:bg-signal-hover border-0 px-6 shadow-md"
               >
                 {isLoading ? (
                   <>
@@ -277,7 +289,7 @@ export default function ProfitLossPage() {
                     "px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
                     activeRange === r.id
                       ? "bg-signal text-white border-signal shadow-md"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {r.label}
@@ -287,21 +299,21 @@ export default function ProfitLossPage() {
           </div>
 
           {/* Visual Bar Chart */}
-          <div className="bg-card rounded-2xl border shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-5">
               <BarChart3 className="w-5 h-5 text-signal" />
-              <h2 className="font-heading font-bold text-lg">Income vs Expense Overview</h2>
+              <h2 className="font-heading font-bold text-lg text-signal">Income vs Expense Overview</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="flex justify-between text-xs font-semibold mb-2">
-                  <span className="text-emerald-600">Income</span>
-                  <span>৳{formatCurrency(totals.income)}</span>
+                  <span className="text-success">Income</span>
+                  <span className="text-signal">৳{formatCurrency(totals.income)}</span>
                 </div>
-                <div className="h-3 rounded-full bg-muted overflow-hidden">
+                <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500"
+                    className="h-full bg-success rounded-full transition-all duration-500"
                     style={{
                       width: `${totals.income + totals.expense > 0
                         ? (totals.income / (totals.income + totals.expense)) * 100
@@ -312,12 +324,12 @@ export default function ProfitLossPage() {
               </div>
               <div>
                 <div className="flex justify-between text-xs font-semibold mb-2">
-                  <span className="text-red-600">Expense</span>
-                  <span>৳{formatCurrency(totals.expense)}</span>
+                  <span className="text-destructive">Expense</span>
+                  <span className="text-signal">৳{formatCurrency(totals.expense)}</span>
                 </div>
-                <div className="h-3 rounded-full bg-muted overflow-hidden">
+                <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full transition-all duration-500"
+                    className="h-full bg-destructive rounded-full transition-all duration-500"
                     style={{
                       width: `${totals.income + totals.expense > 0
                         ? (totals.expense / (totals.income + totals.expense)) * 100
@@ -328,11 +340,11 @@ export default function ProfitLossPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-6 pt-5 border-t">
-              <span className="text-sm font-semibold">Net Result</span>
+            <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100">
+              <span className="text-sm font-semibold text-signal">Net Result</span>
               <span className={cn(
                 "font-heading text-xl font-bold",
-                totals.profit >= 0 ? "text-emerald-600" : "text-red-600"
+                totals.profit >= 0 ? "text-success" : "text-destructive"
               )}>
                 ৳{formatCurrency(totals.profit)}
               </span>
@@ -351,11 +363,11 @@ export default function ProfitLossPage() {
           />
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[800px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     <th className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap">Time</th>
                     <th className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap">Description</th>
                     <th className="text-right px-6 py-4 font-semibold text-xs whitespace-nowrap">Income</th>
@@ -366,7 +378,7 @@ export default function ProfitLossPage() {
                 <tbody>
                   {isLoading ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={5} className="px-6 py-16 text-center text-slate-500">
                         <RefreshCw className="w-8 h-8 mx-auto mb-3 opacity-40 animate-spin" />
                         <p className="font-semibold">Loading data...</p>
                       </td>
@@ -375,18 +387,18 @@ export default function ProfitLossPage() {
                     paginatedData.map((t) => {
                       const pl = t.income - t.expense;
                       return (
-                        <tr key={t.id} className="border-t hover:bg-muted/30 transition-colors">
-                          <td className="px-6 py-4 font-medium">{t.time}</td>
-                          <td className="px-6 py-4 text-muted-foreground text-xs">{t.description}</td>
-                          <td className="px-6 py-4 text-right text-emerald-600 font-semibold">
+                        <tr key={t.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                          <td className="px-6 py-4 font-medium text-signal">{t.time}</td>
+                          <td className="px-6 py-4 text-slate-500 text-xs">{t.description}</td>
+                          <td className="px-6 py-4 text-right text-success font-semibold">
                             ৳{formatCurrency(t.income)}
                           </td>
-                          <td className="px-6 py-4 text-right text-red-600 font-semibold">
+                          <td className="px-6 py-4 text-right text-destructive font-semibold">
                             ৳{formatCurrency(t.expense)}
                           </td>
                           <td className={cn(
                             "px-6 py-4 text-right font-bold",
-                            pl >= 0 ? "text-emerald-600" : "text-red-600"
+                            pl >= 0 ? "text-success" : "text-destructive"
                           )}>
                             {pl >= 0 ? "+" : "-"}৳{formatCurrency(Math.abs(pl))}
                           </td>
@@ -395,27 +407,27 @@ export default function ProfitLossPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={5} className="px-6 py-16 text-center text-slate-500">
                         <Info className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No records found</p>
+                        <p className="font-semibold text-signal">No records found</p>
                         <p className="text-xs mt-1">Try adjusting your date range or search</p>
                       </td>
                     </tr>
                   )}
                 </tbody>
                 {!isLoading && paginatedData.length > 0 && (
-                  <tfoot className="bg-muted/50 font-bold border-t-2 border-border">
+                  <tfoot className="bg-slate-50 font-bold border-t-2 border-slate-200">
                     <tr>
-                      <td className="px-6 py-4" colSpan={2}>Total</td>
-                      <td className="px-6 py-4 text-right text-emerald-600">
+                      <td className="px-6 py-4 text-signal" colSpan={2}>Total</td>
+                      <td className="px-6 py-4 text-right text-success">
                         ৳{formatCurrency(totals.income)}
                       </td>
-                      <td className="px-6 py-4 text-right text-red-600">
+                      <td className="px-6 py-4 text-right text-destructive">
                         ৳{formatCurrency(totals.expense)}
                       </td>
                       <td className={cn(
                         "px-6 py-4 text-right font-bold",
-                        totals.profit >= 0 ? "text-emerald-600" : "text-red-600"
+                        totals.profit >= 0 ? "text-success" : "text-destructive"
                       )}>
                         {totals.profit >= 0 ? "+" : "-"}৳{formatCurrency(Math.abs(totals.profit))}
                       </td>
@@ -437,7 +449,7 @@ export default function ProfitLossPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20 mt-6">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20 mt-6">
             <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
             <p className="text-xs text-signal leading-relaxed">
               <span className="font-bold">Tip:</span> Use quick range buttons or custom dates to filter
