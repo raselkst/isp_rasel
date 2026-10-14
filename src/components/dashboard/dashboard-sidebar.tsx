@@ -96,7 +96,7 @@ const groups: NavGroupDef[] = [
     items: [
       { label: "Add New Subscriber", href: "/admin/clients/create" },
       { label: "Standard Renewal", href: "/admin/clients/general-renew" },
-      { label: "Subscriber Profile", href: "/admin/clients/view-information" },
+      { label: "Client Information", href: "/admin/clients/view-information" },
       { label: "Find Subscriber", href: "/admin/clients/client-search" },
       { label: "Plan Switch", href: "/admin/clients/plan-migration" },
       { label: "Custom Renewal", href: "/admin/clients/special-renew" },
