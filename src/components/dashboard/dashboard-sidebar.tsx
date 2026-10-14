@@ -35,8 +35,8 @@ interface NavLinkDef {
 
 // Single Links
 const singleLinks: NavLinkDef[] = [
-  { key: "dashboard", label: "DASHBOARD", icon: LayoutGrid, href: "/admin/dashboard" },
-  { key: "all-accounts", label: "All Accounts", icon: FileText, href: "/admin/billing/all-accounts" },
+  { key: "dashboard", label: "Control Room", icon: LayoutGrid, href: "/admin/dashboard" },
+  { key: "all-accounts", label: "Revenue Hub", icon: FileText, href: "/admin/billing/all-accounts" },
   { key: "self-recharge", label: "Auto Top-Up", icon: Zap, href: "/admin/self-recharge" },
   { key: "instant-pay", label: "Quick Settle", icon: Zap, href: "/admin/instant-pay" },
   { key: "payments", label: "Money Stream", icon: Wallet, href: "/admin/payments" },
@@ -50,7 +50,7 @@ const singleLinks: NavLinkDef[] = [
 // Groups
 const groups: NavGroupDef[] = [
   {
-    key: "zone", label: "ZONE", icon: Radio, basePath: "/zone",
+    key: "zone", label: "Territory Insights", icon: Radio, basePath: "/zone",
     color: "text-blue-400", colorBg: "bg-blue-500/15",
     items: [
       { label: "Add New Territory", href: "/admin/zone/create" },
@@ -60,7 +60,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "reports", label: "REPORTS", icon: BarChart3, basePath: "/reports",
+    key: "reports", label: "Data Chronicles", icon: BarChart3, basePath: "/reports",
     color: "text-cyan-400", colorBg: "bg-cyan-500/15",
     items: [
       { label: "PoP Subscriber View", href: "/admin/reports/report-pop-wise" },
@@ -81,7 +81,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "analytics", label: "ANALYTICS", icon: BarChart3, basePath: "/admin/analytics",
+    key: "analytics", label: "Signal Intelligence", icon: BarChart3, basePath: "/admin/analytics",
     color: "text-violet-400", colorBg: "bg-violet-500/15",
     items: [
       { label: "Bandwidth Peaks", href: "/admin/analytics/high-traffic-usages" },
@@ -91,7 +91,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "clients", label: "CLIENTS", icon: UserCircle, basePath: "/clients",
+    key: "clients", label: "Subscriber Hub", icon: UserCircle, basePath: "/clients",
     color: "text-pink-400", colorBg: "bg-pink-500/15",
     items: [
       { label: "Add New Subscriber", href: "/admin/clients/create" },
@@ -105,7 +105,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "pppoe", label: "PPPoE", icon: Radar, basePath: "/pppoe",
+    key: "pppoe", label: "Broadband Core", icon: Radar, basePath: "/pppoe",
     color: "text-emerald-400", colorBg: "bg-emerald-500/15",
     items: [
       { label: "Broadband Directory", href: "/admin/pppoe/all-users" },
@@ -117,7 +117,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "hotspot", label: "HOTSPOT Zone", icon: Wifi, basePath: "/hotspot",
+    key: "hotspot", label: "Wi-Fi Zone", icon: Wifi, basePath: "/hotspot",
     color: "text-amber-400", colorBg: "bg-amber-500/15",
     items: [
       { label: "Wi-Fi Directory", href: "/admin/hotspot/all-users" },
@@ -129,7 +129,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "cards", label: "CARDS", icon: CreditCard, basePath: "/cards",
+    key: "cards", label: "Voucher Studio", icon: CreditCard, basePath: "/cards",
     color: "text-orange-400", colorBg: "bg-orange-500/15",
     items: [
       { label: "Voucher Directory", href: "/admin/cards/list" },
@@ -167,7 +167,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "config", label: "CONFIG", icon: Settings, basePath: "/config",
+    key: "config", label: "System Console", icon: Settings, basePath: "/config",
     color: "text-slate-400", colorBg: "bg-slate-500/15",
     items: [
       { label: "Service Catalog", href: "/admin/config/package-plan" },
@@ -180,7 +180,7 @@ const groups: NavGroupDef[] = [
     ],
   },
   {
-    key: "package-rate", label: "PLAN & PRICING", icon: BadgeDollarSign, basePath: "/package-rate",
+    key: "package-rate", label: "Plan & Pricing", icon: BadgeDollarSign, basePath: "/package-rate",
     color: "text-fuchsia-400", colorBg: "bg-fuchsia-500/15",
     items: [
       { label: "Balance Top-Up", href: "/admin/package-rate/balance-add" },
@@ -418,7 +418,7 @@ export function DashboardSidebar() {
         {/* HEADER */}
         <div className="flex items-center justify-between px-3.5 pt-4 pb-3 shrink-0 border-b border-white/5">
           <div className={cn("flex items-center gap-2.5 min-w-0", collapsed && "justify-center w-full")}>
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-signal to-violet-accent flex items-center justify-center shrink-0 shadow-lg shadow-signal/30">
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-signal to-signal-light flex items-center justify-center shrink-0 shadow-lg shadow-signal/30">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M12 3C7 3 3 6.5 3 11c0 3 2 5.5 4.5 6.8L12 21l4.5-3.2C19 16.5 21 14 21 11c0-4.5-4-8-9-8z" stroke="white" strokeWidth="1.6" />
                 <circle cx="12" cy="10" r="2.2" fill="white" />
@@ -451,7 +451,7 @@ export function DashboardSidebar() {
           <div className="px-3.5 py-3 shrink-0 border-b border-white/5">
             <div className="flex items-center gap-2.5 p-2 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/5 hover:border-signal/30 transition-all cursor-pointer group">
               <div className="relative">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-accent to-signal flex items-center justify-center text-white font-bold text-xs shadow-md">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-signal to-signal-light flex items-center justify-center text-white font-bold text-xs shadow-md">
                   RB
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0f1523]" />
@@ -525,7 +525,7 @@ export function DashboardSidebar() {
                     className={cn(
                       "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold transition-all",
                       isActive
-                        ? "bg-gradient-to-r from-signal to-violet-accent text-white shadow-md"
+                        ? "bg-gradient-to-r from-signal to-signal-light text-white shadow-md"
                         : "text-slate-500 hover:text-white hover:bg-white/5"
                     )}
                   >
@@ -619,7 +619,7 @@ export function DashboardSidebar() {
                         "relative flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all mb-0.5",
                         collapsed && "justify-center",
                         active
-                          ? "bg-gradient-to-r from-signal to-violet-accent text-white font-semibold shadow-md shadow-signal/20"
+                          ? "bg-gradient-to-r from-signal to-signal-light text-white font-semibold shadow-md shadow-signal/20"
                           : "text-slate-300/80 hover:bg-white/5 hover:text-white"
                       )}
                     >
@@ -711,7 +711,7 @@ export function DashboardSidebar() {
                         "relative flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all mb-0.5",
                         collapsed && "justify-center",
                         active
-                          ? "bg-gradient-to-r from-signal to-violet-accent text-white font-semibold shadow-md shadow-signal/20"
+                          ? "bg-gradient-to-r from-signal to-signal-light text-white font-semibold shadow-md shadow-signal/20"
                           : "text-slate-300/80 hover:bg-white/5 hover:text-white"
                       )}
                     >

@@ -4,14 +4,12 @@ import { useState, useMemo } from "react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardTopbar } from "@/components/dashboard/dashboard-topbar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { FormShell, FormSection, EditableField, premiumInput } from "@/components/clients-v2/premium-form";
 import {
   CalendarClock, Plus, Minus, ArrowRight, CheckCircle2,
   AlertCircle, Zap, Gift, Percent, Wallet, FileText, ShieldCheck
 } from "lucide-react";
 
-// ক্লায়েন্ট ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const clientInfo = {
   name: "Liton",
   id: "2550",
@@ -25,19 +23,17 @@ export default function ClientDateExtendPage() {
   const [formData, setFormData] = useState({
     days: 3,
     reason: "",
-    chargeable: false, // চার্জ নেওয়া হবে কি না
+    chargeable: false,
     applyVAT: false,
     sendSMS: true,
     autoRenew: false,
   });
 
-  // রিয়েল-টাইম ক্যালকুলেশন
   const calculations = useMemo(() => {
     const currentDate = new Date(clientInfo.currentExpiry);
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() + formData.days);
 
-    // প্রোরেটেড চার্জ (যদি Chargeable হয়)
     const dailyRate = clientInfo.monthlyPrice / 30;
     const baseCharge = dailyRate * formData.days;
     const vatAmount = formData.applyVAT ? baseCharge * 0.05 : 0;
@@ -75,7 +71,7 @@ export default function ClientDateExtendPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -86,25 +82,25 @@ export default function ClientDateExtendPage() {
             
             {/* Client Info Card */}
             <FormSection>
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-signal to-violet-accent text-white flex items-center justify-center font-heading font-bold text-xl shrink-0 shadow-lg">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-200">
+                <div className="w-14 h-14 rounded-2xl bg-signal text-white flex items-center justify-center font-heading font-bold text-xl shrink-0 shadow-lg">
                   {clientInfo.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <p className="font-heading font-bold text-lg">{clientInfo.name}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="font-heading font-bold text-lg text-signal">{clientInfo.name}</p>
+                  <p className="text-xs text-slate-500">
                     ID: {clientInfo.id} · {clientInfo.username} · {clientInfo.package}
                   </p>
                 </div>
-                <div className="hidden sm:flex items-center gap-2 bg-signal-tint text-signal px-3 py-1.5 rounded-full text-xs font-semibold border border-signal/20">
+                <div className="hidden sm:flex items-center gap-2 bg-signal-tint text-signal px-3 py-1.5 rounded-full text-xs font-semibold border border-signal/30">
                   <ShieldCheck className="w-3.5 h-3.5" /> Active
                 </div>
               </div>
 
-              <div className="bg-muted/30 rounded-xl p-4 border border-border">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase mb-1">Current Expiry</p>
-                <p className="font-heading font-bold text-lg">{calculations.oldExpiry}</p>
-                <p className="text-xs text-muted-foreground mt-1">Time: 06:00 AM</p>
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase mb-1">Current Expiry</p>
+                <p className="font-heading font-bold text-lg text-signal">{calculations.oldExpiry}</p>
+                <p className="text-xs text-slate-500 mt-1">Time: 06:00 AM</p>
               </div>
             </FormSection>
 
@@ -114,15 +110,15 @@ export default function ClientDateExtendPage() {
                 <button
                   type="button"
                   onClick={() => adjustDays(-1)}
-                  className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center hover:bg-muted/70 transition-colors shrink-0 active:scale-95"
+                  className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors shrink-0 active:scale-95 text-slate-600"
                 >
                   <Minus className="h-5 w-5" />
                 </button>
                 <div className="flex-1 text-center">
-                  <span className="font-heading text-5xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                  <span className="font-heading text-5xl font-bold text-signal">
                     {formData.days}
                   </span>
-                  <span className="text-sm text-muted-foreground ml-2 font-semibold">
+                  <span className="text-sm text-slate-500 ml-2 font-semibold">
                     day{formData.days !== 1 && "s"}
                   </span>
                 </div>
@@ -145,7 +141,7 @@ export default function ClientDateExtendPage() {
                     className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                       formData.days === n
                         ? "bg-signal text-white shadow-md scale-105"
-                        : "bg-muted text-muted-foreground hover:bg-muted/70"
+                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                     }`}
                   >
                     +{n}d
@@ -154,19 +150,19 @@ export default function ClientDateExtendPage() {
               </div>
 
               {/* Expiry Transition */}
-              <div className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-signal-tint/60 to-violet-accent-tint/60 border border-signal/10">
+              <div className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20">
                 <CalendarClock className="h-5 w-5 text-signal shrink-0" />
                 <div className="flex items-center gap-3 text-sm">
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-semibold">Old Expiry</p>
-                    <span className="text-muted-foreground line-through">{calculations.oldExpiry}</span>
+                    <p className="text-[10px] text-slate-500 uppercase font-semibold">Old Expiry</p>
+                    <span className="text-slate-500 line-through">{calculations.oldExpiry}</span>
                   </div>
                   <ArrowRight className="h-4 w-4 text-signal" />
                   <div>
                     <p className="text-[10px] text-signal uppercase font-semibold">New Expiry</p>
                     <span className="font-bold text-signal">{calculations.newExpiry}</span>
                   </div>
-                  <div className="ml-auto bg-emerald-500/10 text-emerald-600 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/20">
+                  <div className="ml-auto bg-success-tint text-success px-3 py-1 rounded-full text-xs font-semibold border border-success/30">
                     +{formData.days} days
                   </div>
                 </div>
@@ -175,19 +171,19 @@ export default function ClientDateExtendPage() {
 
             {/* Charge Configuration */}
             <FormSection title="Charge Configuration">
-              <label className="flex items-center gap-3 p-4 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors mb-5">
+              <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors mb-5">
                 <input
                   type="checkbox"
                   name="chargeable"
                   checked={formData.chargeable}
                   onChange={handleChange}
-                  className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+                  className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
                 />
                 <div className="flex-1">
-                  <p className="text-sm font-semibold flex items-center gap-1.5">
+                  <p className="text-sm font-semibold flex items-center gap-1.5 text-signal">
                     <Wallet className="w-4 h-4 text-signal" /> Charge for Extension
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-slate-500">
                     If unchecked, this will be a free extension (no charge applied)
                   </p>
                 </div>
@@ -196,33 +192,33 @@ export default function ClientDateExtendPage() {
               {formData.chargeable && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-muted/30 rounded-xl p-4 border border-border">
-                      <p className="text-[11px] text-muted-foreground font-semibold uppercase mb-1">Daily Rate</p>
-                      <p className="font-heading font-bold text-lg">৳{calculations.dailyRate.toFixed(2)}</p>
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                      <p className="text-[11px] text-slate-500 font-semibold uppercase mb-1">Daily Rate</p>
+                      <p className="font-heading font-bold text-lg text-signal">৳{calculations.dailyRate.toFixed(2)}</p>
                     </div>
-                    <div className="bg-muted/30 rounded-xl p-4 border border-border">
-                      <p className="text-[11px] text-muted-foreground font-semibold uppercase mb-1">Base Charge</p>
-                      <p className="font-heading font-bold text-lg">৳{calculations.baseCharge.toFixed(2)}</p>
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                      <p className="text-[11px] text-slate-500 font-semibold uppercase mb-1">Base Charge</p>
+                      <p className="font-heading font-bold text-lg text-signal">৳{calculations.baseCharge.toFixed(2)}</p>
                     </div>
-                    <div className="bg-signal-tint/60 rounded-xl p-4 border border-signal/20">
+                    <div className="bg-signal-tint rounded-xl p-4 border border-signal/30">
                       <p className="text-[11px] text-signal font-semibold uppercase mb-1">Total Charge</p>
                       <p className="font-heading font-bold text-lg text-signal">৳{calculations.totalCharge.toFixed(2)}</p>
                     </div>
                   </div>
 
-                  <label className="flex items-center gap-3 p-3 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors">
+                  <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
                     <input
                       type="checkbox"
                       name="applyVAT"
                       checked={formData.applyVAT}
                       onChange={handleChange}
-                      className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold flex items-center gap-1.5">
+                      <p className="text-sm font-semibold flex items-center gap-1.5 text-signal">
                         <Percent className="w-3.5 h-3.5 text-signal" /> Apply VAT (5%)
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-slate-500">
                         Adds ৳{calculations.vatAmount.toFixed(2)} government VAT
                       </p>
                     </div>
@@ -231,7 +227,7 @@ export default function ClientDateExtendPage() {
               )}
 
               {/* Total Display */}
-              <div className="mt-5 p-5 rounded-2xl bg-gradient-to-r from-signal to-violet-accent text-white flex items-center justify-between shadow-lg">
+              <div className="mt-5 p-5 rounded-2xl bg-signal text-white flex items-center justify-between shadow-lg">
                 <div>
                   <p className="text-xs opacity-90 font-semibold uppercase tracking-wider">Total Payable</p>
                   <p className="text-[10px] opacity-75 mt-0.5">
@@ -247,48 +243,48 @@ export default function ClientDateExtendPage() {
               <div className="space-y-4">
                 <EditableField label="Reason for Extension" required>
                   <div className="relative">
-                    <FileText className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <FileText className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
                     <textarea
                       name="reason"
                       value={formData.reason}
                       onChange={handleChange}
                       placeholder="e.g. Service outage compensation, Customer request, etc."
                       rows={3}
-                      className="w-full bg-background border border-input rounded-xl pl-9 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none resize-none"
+                      className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none resize-none"
                     />
                   </div>
                 </EditableField>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <label className="flex items-center gap-3 p-3 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors">
+                  <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
                     <input
                       type="checkbox"
                       name="sendSMS"
                       checked={formData.sendSMS}
                       onChange={handleChange}
-                      className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold flex items-center gap-1.5">
+                      <p className="text-sm font-semibold flex items-center gap-1.5 text-signal">
                         <Zap className="w-3.5 h-3.5 text-violet-accent" /> Send SMS
                       </p>
-                      <p className="text-xs text-muted-foreground">Notify client</p>
+                      <p className="text-xs text-slate-500">Notify client</p>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 p-3 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors">
+                  <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
                     <input
                       type="checkbox"
                       name="autoRenew"
                       checked={formData.autoRenew}
                       onChange={handleChange}
-                      className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold flex items-center gap-1.5">
+                      <p className="text-sm font-semibold flex items-center gap-1.5 text-signal">
                         <Gift className="w-3.5 h-3.5 text-violet-accent" /> Auto Renew
                       </p>
-                      <p className="text-xs text-muted-foreground">Enable after expiry</p>
+                      <p className="text-xs text-slate-500">Enable after expiry</p>
                     </div>
                   </label>
                 </div>
@@ -296,11 +292,11 @@ export default function ClientDateExtendPage() {
             </FormSection>
 
             {/* Info Banner */}
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-signal-tint/50 border border-signal/20">
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-signal-tint border border-signal/20">
               <AlertCircle className="w-5 h-5 text-signal shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs font-semibold text-signal uppercase">Important</p>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
                   Extending the expiry date will not affect the client's billing cycle. 
                   The new expiry is calculated from the current expiry date.
                 </p>
@@ -312,13 +308,13 @@ export default function ClientDateExtendPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="rounded-2xl font-semibold h-12 px-8 order-2 sm:order-1"
+                className="rounded-2xl font-semibold h-12 px-8 order-2 sm:order-1 border-slate-200 text-slate-600 hover:bg-slate-50"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="rounded-2xl font-semibold h-12 px-8 bg-gradient-to-r from-signal to-violet-accent border-0 shadow-lg hover:shadow-xl transition-shadow order-1 sm:order-2"
+                className="rounded-2xl font-semibold h-12 px-8 bg-signal hover:bg-signal-hover text-white border-0 shadow-lg hover:shadow-xl transition-all order-1 sm:order-2"
               >
                 <CheckCircle2 className="w-4 h-4 mr-2" /> Extend Expiry
               </Button>

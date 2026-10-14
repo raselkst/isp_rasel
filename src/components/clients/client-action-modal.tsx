@@ -57,7 +57,7 @@ function ActionIllustration() {
   );
 }
 
-// ডামি ক্লায়েন্ট ডেটা (সার্চ করার পর দেখানোর জন্য)
+// ডামি ক্লায়েন্ট ডেটা
 const mockClientData = {
   name: "Liton Ahmed",
   id: "2550",
@@ -89,22 +89,22 @@ export function ClientActionModal({ activeTab }: ClientActionModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px]" onClick={() => setShowPreview(false)} />
-      <div className="relative bg-card w-full max-w-lg h-full overflow-y-auto p-8 shadow-2xl">
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" onClick={() => setShowPreview(false)} />
+      <div className="relative bg-white w-full max-w-lg h-full overflow-y-auto p-8 shadow-2xl border-l border-slate-200">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-[9px] bg-signal" />
-            <span className="font-heading font-bold text-sm">LOGO ICON ONLY</span>
+            <span className="font-heading font-bold text-sm text-signal">LOGO ICON ONLY</span>
           </div>
           <Link
             href="/admin/clients/create"
-            className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+            className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
           >
             <X className="h-4 w-4" />
           </Link>
         </div>
 
-        <h2 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent mb-4">
+        <h2 className="font-heading text-2xl font-bold text-signal mb-4">
           {titles[activeTab]}
         </h2>
 
@@ -116,8 +116,8 @@ export function ClientActionModal({ activeTab }: ClientActionModalProps) {
               className={cn(
                 "rounded-full border px-4 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors",
                 t.id === activeTab
-                  ? "border-signal text-signal"
-                  : "border-border text-foreground hover:border-signal/50"
+                  ? "border-signal text-signal bg-signal-tint"
+                  : "border-slate-200 text-slate-500 hover:border-signal/50 hover:text-signal"
               )}
             >
               {t.label}
@@ -134,13 +134,15 @@ export function ClientActionModal({ activeTab }: ClientActionModalProps) {
               <div className="space-y-6">
                 {["SERVER-2", "SERVER-3"].map((server) => (
                   <div key={server} className="space-y-2">
-                    <h4 className="font-heading font-bold text-sm">{server}</h4>
+                    <h4 className="font-heading font-bold text-sm text-signal">{server}</h4>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         placeholder={`${server} Client's username`}
-                        className="flex-1 h-11 px-4 rounded-xl border bg-muted/30 text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                        className="flex-1 h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm outline-none focus:ring-2 focus:ring-signal/30 text-signal"
                       />
-                      <Button className="rounded-full font-semibold px-6">Search</Button>
+                      <Button className="rounded-full font-semibold px-6 bg-signal hover:bg-signal-hover text-white">
+                        Search
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -148,95 +150,102 @@ export function ClientActionModal({ activeTab }: ClientActionModalProps) {
             ) : (
               field && (
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold">{field.label}</label>
+                  <label className="text-sm font-semibold text-signal">{field.label}</label>
                   <input
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={field.placeholder}
-                    className="w-full h-12 px-4 rounded-xl border bg-muted/30 text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm outline-none focus:ring-2 focus:ring-signal/30 text-signal"
                   />
                   {activeTab === "client-date-extend" && (
-                    <p className="text-xs text-muted-foreground">Please enter 2 or more characters</p>
+                    <p className="text-xs text-slate-500">Please enter 2 or more characters</p>
                   )}
                 </div>
               )
             )}
 
             {activeTab !== "online-renew" && (
-              <Button onClick={handleSearch} className="w-full rounded-full font-semibold mt-4">
+              <Button
+                onClick={handleSearch}
+                className="w-full rounded-full font-semibold mt-4 bg-signal hover:bg-signal-hover text-white"
+              >
                 <Search className="w-4 h-4 mr-2" /> Search Client
               </Button>
             )}
           </div>
         ) : (
-          // Preview View (সার্চ করার পর)
+          // Preview View
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-gradient-to-br from-signal-tint to-violet-accent-tint rounded-2xl p-5 border border-signal/20">
+            <div className="rounded-2xl p-5 border bg-signal-tint border-signal/20">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-signal to-violet-accent text-white flex items-center justify-center font-heading font-bold text-xl">
+                <div className="w-14 h-14 rounded-full bg-signal text-white flex items-center justify-center font-heading font-bold text-xl">
                   {mockClientData.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-heading font-bold text-lg">{mockClientData.name}</h3>
-                  <p className="text-xs text-muted-foreground">ID: {mockClientData.id} · @{mockClientData.username}</p>
+                  <h3 className="font-heading font-bold text-lg text-signal">{mockClientData.name}</h3>
+                  <p className="text-xs text-slate-500">ID: {mockClientData.id} · @{mockClientData.username}</p>
                 </div>
-                <span className="bg-emerald-500/20 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30">
+                <span className="bg-success-tint text-success text-xs font-bold px-3 py-1 rounded-full border border-success/30">
                   {mockClientData.status}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2 text-slate-500">
                   <Phone className="w-3.5 h-3.5" /> {mockClientData.mobile}
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2 text-slate-500">
                   <Mail className="w-3.5 h-3.5" /> {mockClientData.email}
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-card border rounded-xl p-4">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <CreditCard className="w-4 h-4 text-signal" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase">Package</p>
+                  <p className="text-xs text-slate-500 font-semibold uppercase">Package</p>
                 </div>
-                <p className="font-bold text-sm">{mockClientData.package}</p>
+                <p className="font-bold text-sm text-signal">{mockClientData.package}</p>
               </div>
-              <div className="bg-card border rounded-xl p-4">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <Activity className="w-4 h-4 text-violet-accent" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase">Balance</p>
+                  <p className="text-xs text-slate-500 font-semibold uppercase">Balance</p>
                 </div>
-                <p className="font-bold text-sm text-emerald-600">৳{mockClientData.balance.toFixed(2)}</p>
+                <p className="font-bold text-sm text-success">৳{mockClientData.balance.toFixed(2)}</p>
               </div>
-              <div className="bg-card border rounded-xl p-4">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <RefreshCw className="w-4 h-4 text-amber-500" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase">Expiry Date</p>
+                  <RefreshCw className="w-4 h-4 text-warning" />
+                  <p className="text-xs text-slate-500 font-semibold uppercase">Expiry Date</p>
                 </div>
-                <p className="font-bold text-sm">{mockClientData.expiryDate}</p>
+                <p className="font-bold text-sm text-signal">{mockClientData.expiryDate}</p>
               </div>
-              <div className="bg-card border rounded-xl p-4">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <User className="w-4 h-4 text-blue-500" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase">Billing Cycle</p>
+                  <User className="w-4 h-4 text-signal" />
+                  <p className="text-xs text-slate-500 font-semibold uppercase">Billing Cycle</p>
                 </div>
-                <p className="font-bold text-sm">{mockClientData.billingCycle}</p>
+                <p className="font-bold text-sm text-signal">{mockClientData.billingCycle}</p>
               </div>
             </div>
 
-            <div className="bg-card border rounded-xl p-4">
-              <p className="text-xs text-muted-foreground font-semibold uppercase mb-1">Address</p>
-              <p className="text-sm">{mockClientData.address}</p>
+            <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Address</p>
+              <p className="text-sm text-signal">{mockClientData.address}</p>
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button onClick={() => setShowPreview(false)} variant="outline" className="flex-1 rounded-full font-semibold">
+              <Button
+                onClick={() => setShowPreview(false)}
+                variant="outline"
+                className="flex-1 rounded-full font-semibold border-slate-200 text-slate-600 hover:bg-slate-50"
+              >
                 Back to Search
               </Button>
               <Link href="/admin/clients/general-renew" className="flex-1">
-                <Button className="w-full rounded-full font-semibold bg-gradient-to-r from-signal to-violet-accent border-0">
+                <Button className="w-full rounded-full font-semibold bg-signal hover:bg-signal-hover text-white border-0">
                   Renew Now
                 </Button>
               </Link>

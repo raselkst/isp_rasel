@@ -16,7 +16,6 @@ import {
   Copy, Archive, AlertTriangle, Send, FileText, Check,
 } from "lucide-react";
 
-// 🎯 জোন ডেটা টাইপ
 interface Zone {
   id: number;
   name: string;
@@ -54,14 +53,12 @@ export default function ListZonePage() {
   const [moreMenuOpen, setMoreMenuOpen] = useState<number | null>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
 
-  // 🎯 Modal States
   const [paymentModal, setPaymentModal] = useState<{ open: boolean; zone: Zone | null; type: "add" | "advance" }>({ open: false, zone: null, type: "add" });
   const [smsModal, setSmsModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; zone: Zone | null }>({ open: false, zone: null });
   const [advanceReportModal, setAdvanceReportModal] = useState<{ open: boolean; zone: Zone | null }>({ open: false, zone: null });
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // 🎯 ক্লিক আউটসাইড
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
@@ -72,7 +69,6 @@ export default function ListZonePage() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // 🎯 টোস্ট অটো হাইড
   useEffect(() => {
     if (toast) {
       const t = setTimeout(() => setToast(null), 2500);
@@ -80,39 +76,35 @@ export default function ListZonePage() {
     }
   }, [toast]);
 
-  // 🎯 স্ট্যাট
   const stats = useMemo(() => {
     const total = zones.length;
-    const active = zones.filter(z => z.status === "Active").length;
-    const inactive = zones.filter(z => z.status === "Inactive").length;
+    const active = zones.filter((z) => z.status === "Active").length;
+    const inactive = zones.filter((z) => z.status === "Inactive").length;
     const totalBalance = zones.reduce((acc, z) => acc + z.balance, 0);
     return { total, active, inactive, totalBalance };
   }, [zones]);
 
-  // 🎯 ফিল্টার
   const filteredZones = useMemo(() => {
     let result = zones;
-    if (statusFilter !== "All") result = result.filter(z => z.status === statusFilter);
+    if (statusFilter !== "All") result = result.filter((z) => z.status === statusFilter);
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
-      result = result.filter(z =>
+      result = result.filter((z) =>
         z.name.toLowerCase().includes(q) || z.mobile.includes(q) || String(z.id).includes(q)
       );
     }
     return result;
   }, [zones, searchTerm, statusFilter]);
 
-  // 🎯 পেজিনেশন
   const totalPages = Math.ceil(filteredZones.length / pageSize);
   const paginatedZones = filteredZones.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => { setCurrentPage(1); }, [searchTerm, statusFilter, pageSize]);
 
-  // 🎯 Excel Export
   const exportExcel = () => {
     const headers = ["ID", "Zone Name", "Mobile", "Balance", "Adv. Balance", "Creation Date", "C.ID Start", "Bill Cycle", "Status"];
-    const rows = filteredZones.map(z => [z.id, z.name, z.mobile, z.balance, z.advBalance, z.creationDate, z.cidStart, z.billCycleChange, z.status]);
-    const tsv = [headers, ...rows].map(r => r.join("\t")).join("\n");
+    const rows = filteredZones.map((z) => [z.id, z.name, z.mobile, z.balance, z.advBalance, z.creationDate, z.cidStart, z.billCycleChange, z.status]);
+    const tsv = [headers, ...rows].map((r) => r.join("\t")).join("\n");
     const blob = new Blob([tsv], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -123,20 +115,19 @@ export default function ListZonePage() {
     setToast({ message: "Excel file downloaded!", type: "success" });
   };
 
-  // 🎯 Import CSV
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
       const text = event.target?.result as string;
-      const lines = text.split("\n").slice(1); // skip header
+      const lines = text.split("\n").slice(1);
       const imported: Zone[] = lines
-        .filter(l => l.trim())
+        .filter((l) => l.trim())
         .map((line, i) => {
-          const [name, mobile, balance, advBalance] = line.split(",").map(s => s.trim());
+          const [name, mobile, balance, advBalance] = line.split(",").map((s) => s.trim());
           return {
-            id: Math.max(...zones.map(z => z.id), 0) + i + 1,
+            id: Math.max(...zones.map((z) => z.id), 0) + i + 1,
             name: name || "Imported Zone",
             mobile: mobile || "01700000000",
             balance: Number(balance) || 0,
@@ -147,24 +138,25 @@ export default function ListZonePage() {
             status: "Active" as const,
           };
         });
-      setZones(prev => [...imported, ...prev]);
+      setZones((prev) => [...imported, ...prev]);
       setToast({ message: `${imported.length} zones imported!`, type: "success" });
     };
     reader.readAsText(file);
     e.target.value = "";
   };
 
-  // 🎯 Add/Advance Payment
   const handlePaymentSubmit = (amount: number, remark: string, type: "add" | "advance") => {
     if (!paymentModal.zone) return;
-    setZones(prev => prev.map(z => {
-      if (z.id === paymentModal.zone!.id) {
-        return type === "add"
-          ? { ...z, balance: z.balance + amount }
-          : { ...z, advBalance: z.advBalance + amount };
-      }
-      return z;
-    }));
+    setZones((prev) =>
+      prev.map((z) => {
+        if (z.id === paymentModal.zone!.id) {
+          return type === "add"
+            ? { ...z, balance: z.balance + amount }
+            : { ...z, advBalance: z.advBalance + amount };
+        }
+        return z;
+      })
+    );
     setToast({
       message: `৳${amount} ${type === "add" ? "added to balance" : "added to advance balance"} for ${paymentModal.zone.name}!`,
       type: "success",
@@ -172,49 +164,44 @@ export default function ListZonePage() {
     setPaymentModal({ open: false, zone: null, type: "add" });
   };
 
-  // 🎯 Delete
   const handleDelete = () => {
     if (!deleteModal.zone) return;
-    setZones(prev => prev.filter(z => z.id !== deleteModal.zone!.id));
+    setZones((prev) => prev.filter((z) => z.id !== deleteModal.zone!.id));
     setToast({ message: `${deleteModal.zone.name} deleted!`, type: "success" });
     setDeleteModal({ open: false, zone: null });
   };
 
-  // 🎯 SMS
   const handleSendSms = (message: string, recipients: string) => {
     setToast({ message: `SMS sent to ${recipients}!`, type: "success" });
     setSmsModal(false);
   };
 
-  // 🎯 Copy ID
   const handleCopyId = (id: number) => {
     navigator.clipboard.writeText(String(id));
     setToast({ message: `Zone ID #${id} copied!`, type: "success" });
     setMoreMenuOpen(null);
   };
 
-  // 🎯 Duplicate
   const handleDuplicate = (zone: Zone) => {
     const newZone: Zone = {
       ...zone,
-      id: Math.max(...zones.map(z => z.id), 0) + 1,
+      id: Math.max(...zones.map((z) => z.id), 0) + 1,
       name: `${zone.name} (Copy)`,
       status: "Inactive",
     };
-    setZones(prev => [newZone, ...prev]);
+    setZones((prev) => [newZone, ...prev]);
     setToast({ message: "Zone duplicated!", type: "success" });
     setMoreMenuOpen(null);
   };
 
-  // 🎯 Archive (set inactive)
   const handleArchive = (zone: Zone) => {
-    setZones(prev => prev.map(z => z.id === zone.id ? { ...z, status: "Inactive" as const } : z));
+    setZones((prev) => prev.map((z) => (z.id === zone.id ? { ...z, status: "Inactive" as const } : z)));
     setToast({ message: `${zone.name} archived!`, type: "success" });
     setMoreMenuOpen(null);
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -227,111 +214,117 @@ export default function ListZonePage() {
             <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1 flex items-center gap-1.5">
               <Building2 className="h-3 w-3" /> Zone Management
             </p>
-            <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1 className="font-heading text-[28px] font-bold tracking-tight text-signal">
               List Zone
             </h1>
           </div>
 
-          {/* Compact Stat Cards - এক লাইনে */}
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-  {[
-    { label: "Total Zones", value: stats.total, icon: Building2, bg: "bg-blue-500/10", color: "text-blue-600" },
-    { label: "Active", value: stats.active, icon: CheckCircle2, bg: "bg-emerald-500/10", color: "text-emerald-600" },
-    { label: "Inactive", value: stats.inactive, icon: XCircle, bg: "bg-red-500/10", color: "text-red-600" },
-    { label: "Total Balance", value: `৳${stats.totalBalance.toLocaleString()}`, icon: DollarSign, bg: "bg-amber-500/10", color: "text-amber-600" },
-  ].map((s) => (
-    <div key={s.label} className="bg-card rounded-xl border p-3 flex items-center gap-3 hover:shadow-md transition-all">
-      <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center shrink-0", s.bg)}>
-        <s.icon className={cn("h-4 w-4", s.color)} />
-      </div>
-      <div className="flex items-baseline gap-2 min-w-0">
-        <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">{s.label}</p>
-        <p className={cn("text-lg font-heading font-bold", s.color)}>{s.value}</p>
-      </div>
-    </div>
-  ))}
-</div>
+          {/* Compact Stat Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {[
+              { label: "Total Zones", value: stats.total, icon: Building2 },
+              { label: "Active", value: stats.active, icon: CheckCircle2 },
+              { label: "Inactive", value: stats.inactive, icon: XCircle },
+              { label: "Total Balance", value: `৳${stats.totalBalance.toLocaleString()}`, icon: DollarSign },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all"
+              >
+                <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                  <s.icon className="h-4 w-4 text-signal" />
+                </div>
+                <div className="flex items-baseline gap-2 min-w-0">
+                  <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">{s.label}</p>
+                  <p className="text-lg font-heading font-bold text-signal">{s.value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Filter Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-6 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-xl">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 flex flex-wrap items-center gap-3 shadow-sm">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100">
               {(["All", "Active", "Inactive"] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
                   className={cn(
                     "flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all",
-                    statusFilter === s ? "bg-card shadow-sm text-signal" : "text-muted-foreground hover:text-foreground"
+                    statusFilter === s ? "bg-white shadow-sm text-signal" : "text-slate-500 hover:text-slate-900"
                   )}
                 >
                   {s}
-                  <span className={cn("px-1.5 py-0.5 rounded-md text-[10px]", statusFilter === s ? "bg-signal/10 text-signal" : "bg-muted")}>
-                    {s === "All" ? zones.length : zones.filter(z => z.status === s).length}
+                  <span className={cn(
+                    "px-1.5 py-0.5 rounded-md text-[10px]",
+                    statusFilter === s ? "bg-signal-tint text-signal" : "bg-white text-slate-500"
+                  )}>
+                    {s === "All" ? zones.length : zones.filter((z) => z.status === s).length}
                   </span>
                 </button>
               ))}
             </div>
 
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search by name, mobile or ID…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30"
               />
             </div>
 
-            {/* Import */}
-            <label className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all cursor-pointer">
+            <label className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-signal hover:shadow-md transition-all cursor-pointer">
               <Upload className="h-3.5 w-3.5" /> Import
               <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
             </label>
 
-            {/* Send SMS */}
             <button
               onClick={() => setSmsModal(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-signal hover:shadow-md transition-all"
             >
               <MessageSquare className="h-3.5 w-3.5" /> Send SMS
             </button>
 
-            {/* Excel */}
             <button
               onClick={exportExcel}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-signal hover:shadow-md transition-all"
             >
               <FileSpreadsheet className="h-3.5 w-3.5" /> Excel
             </button>
 
-            {/* Settings */}
             <button
               onClick={() => setSettingsOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-signal hover:shadow-md transition-all"
             >
               <Settings className="h-3.5 w-3.5" /> Settings
             </button>
 
-            {/* Add New */}
             <button
               onClick={() => router.push("/admin/zone/create")}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-signal to-violet-accent text-white text-xs font-bold shadow-md shadow-signal/20 hover:scale-105 transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-signal text-white text-xs font-bold shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
             >
               <Plus className="h-3.5 w-3.5" /> Add Zone
             </button>
           </div>
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden overflow-x-auto">
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden overflow-x-auto shadow-sm">
             <table className="w-full text-sm min-w-[1200px]">
               <thead>
-                <tr className="bg-gradient-to-r from-signal to-violet-accent text-white">
+                <tr className="bg-signal text-white">
                   {[
-                    { label: "ID", icon: Hash }, { label: "Zone Name", icon: Building2 },
-                    { label: "Mobile No.", icon: Users }, { label: "Balance", icon: Wallet },
-                    { label: "Advance Balance", icon: TrendingUp }, { label: "Creation Date", icon: Calendar },
-                    { label: "C.ID Start", icon: Hash }, { label: "Bill Cycle Change", icon: Activity },
-                    { label: "Status", icon: Zap }, { label: "Actions", icon: MoreHorizontal },
+                    { label: "ID", icon: Hash },
+                    { label: "Zone Name", icon: Building2 },
+                    { label: "Mobile No.", icon: Users },
+                    { label: "Balance", icon: Wallet },
+                    { label: "Advance Balance", icon: TrendingUp },
+                    { label: "Creation Date", icon: Calendar },
+                    { label: "C.ID Start", icon: Hash },
+                    { label: "Bill Cycle Change", icon: Activity },
+                    { label: "Status", icon: Zap },
+                    { label: "Actions", icon: MoreHorizontal },
                   ].map((h) => {
                     const Icon = h.icon;
                     return (
@@ -347,36 +340,34 @@ export default function ListZonePage() {
               <tbody>
                 {paginatedZones.length > 0 ? (
                   paginatedZones.map((z) => (
-                    <tr key={z.id} className="border-t hover:bg-signal-tint/20 transition-colors group">
-                      <td className="px-4 py-4">
-                        <span className="font-mono font-bold text-signal">#{z.id}</span>
-                      </td>
+                    <tr key={z.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors group">
+                      <td className="px-4 py-4 font-mono font-bold text-signal">#{z.id}</td>
                       <td className="px-4 py-4">
                         <button
                           onClick={() => setInfoOpen(true)}
-                          className="flex items-center gap-2 text-signal font-semibold hover:underline text-left"
+                          className="flex items-center gap-2 font-semibold hover:underline text-left text-signal"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-signal/10 flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
                             <Building2 className="h-4 w-4 text-signal" />
                           </div>
                           {z.name}
                         </button>
                       </td>
-                      <td className="px-4 py-4 font-mono text-xs">{z.mobile}</td>
+                      <td className="px-4 py-4 font-mono text-xs text-slate-600">{z.mobile}</td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-sm">৳{z.balance.toFixed(2)}</span>
+                          <span className="font-mono font-bold text-sm text-signal">৳{z.balance.toFixed(2)}</span>
                           <button
                             title="Add Payment"
                             onClick={() => setPaymentModal({ open: true, zone: z, type: "add" })}
-                            className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center hover:bg-emerald-500/20 transition-colors"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors bg-signal-tint text-signal hover:bg-signal/15"
                           >
                             <Wallet className="h-3.5 w-3.5" />
                           </button>
                           <button
                             title="Pay Report"
                             onClick={() => router.push(`/admin/zone/zone-payment?zone=${z.id}`)}
-                            className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-600 flex items-center justify-center hover:bg-violet-500/20 transition-colors"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors border border-slate-200 text-slate-600 hover:bg-slate-100"
                           >
                             <Receipt className="h-3.5 w-3.5" />
                           </button>
@@ -384,71 +375,90 @@ export default function ListZonePage() {
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-sm">৳{z.advBalance.toFixed(2)}</span>
+                          <span className="font-mono font-bold text-sm text-signal">৳{z.advBalance.toFixed(2)}</span>
                           <button
                             title="Adv. Balance"
                             onClick={() => setPaymentModal({ open: true, zone: z, type: "advance" })}
-                            className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center hover:bg-amber-500/20 transition-colors"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors bg-signal-tint text-signal hover:bg-signal/15"
                           >
                             <UserRoundPlus className="h-3.5 w-3.5" />
                           </button>
                           <button
                             title="Adv. Report"
                             onClick={() => setAdvanceReportModal({ open: true, zone: z })}
-                            className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center hover:bg-blue-500/20 transition-colors"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors border border-slate-200 text-slate-600 hover:bg-slate-100"
                           >
                             <FileBarChart className="h-3.5 w-3.5" />
                           </button>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-xs text-muted-foreground whitespace-nowrap">{z.creationDate}</td>
-                      <td className="px-4 py-4 font-mono text-xs">{z.cidStart}</td>
+                      <td className="px-4 py-4 text-xs text-slate-500 whitespace-nowrap">{z.creationDate}</td>
+                      <td className="px-4 py-4 font-mono text-xs text-slate-600">{z.cidStart}</td>
                       <td className="px-4 py-4">
                         <span className={cn(
-                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider",
-                          z.billCycleChange === "Allowed" ? "bg-red-500/10 text-red-600" : "bg-slate-500/10 text-slate-600"
+                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
+                          z.billCycleChange === "Allowed"
+                            ? "border-destructive/30 bg-destructive/10 text-destructive"
+                            : "border-slate-200 bg-slate-50 text-slate-600"
                         )}>
                           {z.billCycleChange}
                         </span>
                       </td>
                       <td className="px-4 py-4">
                         <span className={cn(
-                          "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold",
-                          z.status === "Active" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                          "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border",
+                          z.status === "Active"
+                            ? "bg-success-tint text-success border-success/30"
+                            : "bg-destructive/10 text-destructive border-destructive/30"
                         )}>
-                          <span className={cn("w-1.5 h-1.5 rounded-full", z.status === "Active" ? "bg-emerald-500 animate-pulse" : "bg-red-500")} />
+                          <span className={cn(
+                            "w-1.5 h-1.5 rounded-full",
+                            z.status === "Active" ? "bg-success animate-pulse" : "bg-destructive"
+                          )} />
                           {z.status}
                         </span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => setInfoOpen(true)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-signal" title="View">
+                          <button
+                            onClick={() => setInfoOpen(true)}
+                            className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal"
+                            title="View"
+                          >
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button onClick={() => router.push(`/admin/zone/edit/${z.id}`)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-violet-500" title="Edit">
+                          <button
+                            onClick={() => router.push(`/admin/zone/edit/${z.id}`)}
+                            className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal"
+                            title="Edit"
+                          >
                             <Edit3 className="h-4 w-4" />
                           </button>
-                          <button onClick={() => setDeleteModal({ open: true, zone: z })} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive" title="Delete">
+                          <button
+                            onClick={() => setDeleteModal({ open: true, zone: z })}
+                            className="p-2 rounded-lg hover:bg-destructive/10 text-slate-500 hover:text-destructive"
+                            title="Delete"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </button>
                           <div className="relative">
                             <button
                               onClick={() => setMoreMenuOpen(moreMenuOpen === z.id ? null : z.id)}
-                              className="p-2 rounded-lg hover:bg-muted text-muted-foreground"
+                              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"
                               title="More"
                             >
                               <MoreHorizontal className="h-4 w-4" />
                             </button>
                             {moreMenuOpen === z.id && (
-                              <div ref={moreMenuRef} className="absolute right-0 top-full mt-1 w-44 bg-card border rounded-xl shadow-xl overflow-hidden z-40">
-                                <button onClick={() => handleCopyId(z.id)} className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-muted text-left">
-                                  <Copy className="h-3.5 w-3.5 text-blue-500" /> Copy ID
+                              <div ref={moreMenuRef} className="absolute right-0 top-full mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-40">
+                                <button onClick={() => handleCopyId(z.id)} className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-slate-50 text-left text-signal">
+                                  <Copy className="h-3.5 w-3.5" /> Copy ID
                                 </button>
-                                <button onClick={() => handleDuplicate(z)} className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-muted text-left">
-                                  <Copy className="h-3.5 w-3.5 text-violet-500" /> Duplicate
+                                <button onClick={() => handleDuplicate(z)} className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-slate-50 text-left text-signal">
+                                  <Copy className="h-3.5 w-3.5" /> Duplicate
                                 </button>
-                                <button onClick={() => handleArchive(z)} className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-muted text-left">
-                                  <Archive className="h-3.5 w-3.5 text-amber-500" /> Archive
+                                <button onClick={() => handleArchive(z)} className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-slate-50 text-left text-signal">
+                                  <Archive className="h-3.5 w-3.5" /> Archive
                                 </button>
                               </div>
                             )}
@@ -461,11 +471,11 @@ export default function ListZonePage() {
                   <tr>
                     <td colSpan={10} className="px-4 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 rounded-full bg-signal/10 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-signal-tint flex items-center justify-center">
                           <Building2 className="h-8 w-8 text-signal" />
                         </div>
-                        <p className="font-semibold">No zones found</p>
-                        <p className="text-xs text-muted-foreground">Try adjusting your filters or search term.</p>
+                        <p className="font-semibold text-signal">No zones found</p>
+                        <p className="text-xs text-slate-500">Try adjusting your filters or search term.</p>
                       </div>
                     </td>
                   </tr>
@@ -474,13 +484,13 @@ export default function ListZonePage() {
             </table>
 
             {/* Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-t text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-t border-slate-100 text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <span>Show Entities</span>
                 <select
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="border rounded-md px-2 py-1 bg-background font-semibold"
+                  className="border border-slate-200 rounded-md px-2 py-1 bg-white font-semibold text-signal"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -488,41 +498,41 @@ export default function ListZonePage() {
                   <option value={100}>100</option>
                 </select>
                 <span>•</span>
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-signal">
                   {filteredZones.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, filteredZones.length)}
                 </span>
                 <span>of</span>
-                <span className="font-semibold text-foreground">{filteredZones.length}</span>
+                <span className="font-semibold text-signal">{filteredZones.length}</span>
                 <span>items</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>Page</span>
-                <span className="font-semibold text-foreground">{currentPage}</span>
+                <span className="font-semibold text-signal">{currentPage}</span>
                 <span>of</span>
-                <span className="font-semibold text-foreground">{totalPages || 1}</span>
+                <span className="font-semibold text-signal">{totalPages || 1}</span>
                 <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(p => (
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
                     onClick={() => setCurrentPage(p)}
                     className={cn(
                       "w-8 h-8 rounded-lg font-bold text-xs transition-all",
-                      currentPage === p ? "bg-signal text-white shadow-md" : "border bg-card hover:bg-muted"
+                      currentPage === p ? "bg-signal text-white shadow-md" : "border border-slate-200 bg-white hover:bg-slate-50 text-signal"
                     )}
                   >
                     {p}
                   </button>
                 ))}
                 <button
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -532,7 +542,7 @@ export default function ListZonePage() {
         </div>
       </div>
 
-      {/* 🎯 Payment Modal */}
+      {/* Payment Modal */}
       {paymentModal.open && paymentModal.zone && (
         <PaymentModal
           zone={paymentModal.zone}
@@ -542,7 +552,7 @@ export default function ListZonePage() {
         />
       )}
 
-      {/* 🎯 SMS Modal */}
+      {/* SMS Modal */}
       {smsModal && (
         <SmsModal
           zones={filteredZones}
@@ -551,7 +561,7 @@ export default function ListZonePage() {
         />
       )}
 
-      {/* 🎯 Delete Confirm Modal */}
+      {/* Delete Confirm Modal */}
       {deleteModal.open && deleteModal.zone && (
         <ConfirmModal
           title="Delete Zone"
@@ -563,7 +573,7 @@ export default function ListZonePage() {
         />
       )}
 
-      {/* 🎯 Advance Report Modal */}
+      {/* Advance Report Modal */}
       {advanceReportModal.open && advanceReportModal.zone && (
         <AdvanceReportModal
           zone={advanceReportModal.zone}
@@ -571,11 +581,11 @@ export default function ListZonePage() {
         />
       )}
 
-      {/* 🎯 Toast */}
+      {/* Toast */}
       {toast && (
         <div className={cn(
-          "fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl animate-in slide-in-from-bottom-2 duration-300",
-          toast.type === "success" ? "bg-emerald-500 text-white" : "bg-red-500 text-white"
+          "fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl animate-in slide-in-from-bottom-2 duration-300 text-white",
+          toast.type === "success" ? "bg-signal" : "bg-destructive"
         )}>
           {toast.type === "success" ? <CheckCircle2 className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
           <span className="text-sm font-bold">{toast.message}</span>
@@ -589,7 +599,7 @@ export default function ListZonePage() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🎯 Payment Modal Component
+// Payment Modal
 // ═══════════════════════════════════════════════════════════════
 function PaymentModal({
   zone,
@@ -615,71 +625,74 @@ function PaymentModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-card rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className={cn("h-1.5 bg-gradient-to-r", type === "add" ? "from-emerald-500 to-teal-500" : "from-amber-500 to-orange-500")} />
-        <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        <div className="h-1.5 bg-signal" />
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md bg-gradient-to-br", type === "add" ? "from-emerald-500 to-teal-500" : "from-amber-500 to-orange-500")}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md bg-signal">
               {type === "add" ? <Wallet className="h-5 w-5" /> : <UserRoundPlus className="h-5 w-5" />}
             </div>
             <div>
-              <h3 className="font-heading text-base font-bold">
+              <h3 className="font-heading text-base font-bold text-signal">
                 {type === "add" ? "Add Payment" : "Add Advance Balance"}
               </h3>
-              <p className="text-xs text-muted-foreground">{zone.name}</p>
+              <p className="text-xs text-slate-500">{zone.name}</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
             <X className="h-4 w-4" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="bg-muted/40 rounded-xl p-3 flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground">
+          <div className="rounded-xl p-3 flex items-center justify-between border border-signal/20 bg-signal-tint">
+            <span className="text-xs font-semibold text-slate-600">
               Current {type === "add" ? "Balance" : "Adv. Balance"}
             </span>
-            <span className="font-mono font-bold text-sm">
+            <span className="font-mono font-bold text-sm text-signal">
               ৳{type === "add" ? zone.balance.toFixed(2) : zone.advBalance.toFixed(2)}
             </span>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold">Amount *</label>
+            <label className="text-xs font-semibold text-signal">Amount *</label>
             <input
               type="number"
               required
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount"
-              className="w-full px-4 py-3 rounded-xl border bg-background text-lg font-bold outline-none focus:ring-2 focus:ring-signal/30"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-lg font-bold outline-none focus:ring-2 focus:ring-signal/30 text-signal"
             />
           </div>
           <div className="flex flex-wrap gap-2">
-            {[500, 1000, 2000, 5000].map(amt => (
+            {[500, 1000, 2000, 5000].map((amt) => (
               <button
                 key={amt}
                 type="button"
                 onClick={() => setAmount(String(amt))}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-muted/50 text-muted-foreground hover:bg-signal/10 hover:text-signal transition-all"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border border-slate-200 hover:bg-signal-tint text-signal"
               >
                 ৳{amt}
               </button>
             ))}
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold">Remark (Optional)</label>
+            <label className="text-xs font-semibold text-signal">Remark (Optional)</label>
             <input
               type="text"
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
               placeholder="Payment note…"
-              className="w-full px-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30 text-signal"
             />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl text-sm font-bold bg-muted text-muted-foreground hover:bg-muted/80">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">
               Cancel
             </button>
-            <button type="submit" className={cn("flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg transition-all", type === "add" ? "bg-gradient-to-r from-emerald-500 to-teal-500" : "bg-gradient-to-r from-amber-500 to-orange-500")}>
+            <button
+              type="submit"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg bg-signal hover:bg-signal-hover transition-all"
+            >
               <Check className="h-4 w-4" /> Confirm
             </button>
           </div>
@@ -690,7 +703,7 @@ function PaymentModal({
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🎯 SMS Modal
+// SMS Modal
 // ═══════════════════════════════════════════════════════════════
 function SmsModal({
   zones,
@@ -704,7 +717,7 @@ function SmsModal({
   const [message, setMessage] = useState("");
   const [recipient, setRecipient] = useState<"all" | "active" | "inactive">("all");
 
-  const count = recipient === "all" ? zones.length : zones.filter(z => z.status.toLowerCase() === recipient).length;
+  const count = recipient === "all" ? zones.length : zones.filter((z) => z.status.toLowerCase() === recipient).length;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -715,37 +728,37 @@ function SmsModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-card rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className="h-1.5 bg-gradient-to-r from-signal to-violet-accent" />
-        <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        <div className="h-1.5 bg-signal" />
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-signal to-violet-accent flex items-center justify-center text-white shadow-md">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md bg-signal">
               <MessageSquare className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-heading text-base font-bold">Send Bulk SMS</h3>
-              <p className="text-xs text-muted-foreground">Notify zone owners via SMS</p>
+              <h3 className="font-heading text-base font-bold text-signal">Send Bulk SMS</h3>
+              <p className="text-xs text-slate-500">Notify zone owners via SMS</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
             <X className="h-4 w-4" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold">Recipients</label>
+            <label className="text-xs font-semibold text-signal">Recipients</label>
             <select
               value={recipient}
               onChange={(e) => setRecipient(e.target.value as any)}
-              className="w-full px-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30 text-signal"
             >
               <option value="all">All Zones ({zones.length})</option>
-              <option value="active">Active Zones ({zones.filter(z => z.status === "Active").length})</option>
-              <option value="inactive">Inactive Zones ({zones.filter(z => z.status === "Inactive").length})</option>
+              <option value="active">Active Zones ({zones.filter((z) => z.status === "Active").length})</option>
+              <option value="inactive">Inactive Zones ({zones.filter((z) => z.status === "Inactive").length})</option>
             </select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold">Message *</label>
+            <label className="text-xs font-semibold text-signal">Message *</label>
             <textarea
               required
               value={message}
@@ -753,15 +766,18 @@ function SmsModal({
               placeholder="Type your SMS message…"
               rows={4}
               maxLength={160}
-              className="w-full px-4 py-3 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30 resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30 resize-none text-signal"
             />
-            <p className="text-[10px] text-muted-foreground text-right">{message.length}/160</p>
+            <p className="text-[10px] text-slate-500 text-right">{message.length}/160</p>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl text-sm font-bold bg-muted text-muted-foreground hover:bg-muted/80">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">
               Cancel
             </button>
-            <button type="submit" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg">
+            <button
+              type="submit"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg bg-signal hover:bg-signal-hover transition-all"
+            >
               <Send className="h-4 w-4" /> Send to {count}
             </button>
           </div>
@@ -772,7 +788,7 @@ function SmsModal({
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🎯 Confirm Modal
+// Confirm Modal
 // ═══════════════════════════════════════════════════════════════
 function ConfirmModal({
   title, message, confirmLabel, onClose, onConfirm, danger,
@@ -783,19 +799,25 @@ function ConfirmModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-sm bg-card rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className={cn("h-1.5 bg-gradient-to-r", danger ? "from-red-500 to-rose-500" : "from-signal to-violet-accent")} />
+      <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        <div className={cn("h-1.5", danger ? "bg-destructive" : "bg-signal")} />
         <div className="p-6 text-center">
-          <div className={cn("w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4", danger ? "bg-red-500/10" : "bg-signal/10")}>
-            <AlertTriangle className={cn("h-7 w-7", danger ? "text-red-500" : "text-signal")} />
+          <div className={cn("w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4", danger ? "bg-destructive/10" : "bg-signal-tint")}>
+            <AlertTriangle className={cn("h-7 w-7", danger ? "text-destructive" : "text-signal")} />
           </div>
-          <h3 className="font-heading text-lg font-bold mb-2">{title}</h3>
-          <p className="text-sm text-muted-foreground mb-6">{message}</p>
+          <h3 className="font-heading text-lg font-bold mb-2 text-signal">{title}</h3>
+          <p className="text-sm text-slate-500 mb-6">{message}</p>
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 px-4 py-3 rounded-xl text-sm font-bold bg-muted text-muted-foreground hover:bg-muted/80">
+            <button onClick={onClose} className="flex-1 px-4 py-3 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">
               Cancel
             </button>
-            <button onClick={onConfirm} className={cn("flex-1 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg", danger ? "bg-gradient-to-r from-red-500 to-rose-500" : "bg-gradient-to-r from-signal to-violet-accent")}>
+            <button
+              onClick={onConfirm}
+              className={cn(
+                "flex-1 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg",
+                danger ? "bg-destructive hover:bg-destructive/90" : "bg-signal hover:bg-signal-hover"
+              )}
+            >
               {confirmLabel}
             </button>
           </div>
@@ -806,7 +828,7 @@ function ConfirmModal({
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🎯 Advance Report Modal
+// Advance Report Modal
 // ═══════════════════════════════════════════════════════════════
 function AdvanceReportModal({ zone, onClose }: { zone: Zone; onClose: () => void }) {
   const mockHistory = [
@@ -818,47 +840,55 @@ function AdvanceReportModal({ zone, onClose }: { zone: Zone; onClose: () => void
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-card rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className="h-1.5 bg-gradient-to-r from-blue-500 to-cyan-500" />
-        <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between">
+      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        <div className="h-1.5 bg-signal" />
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-md">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md bg-signal">
               <FileBarChart className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-heading text-base font-bold">Advance Balance Report</h3>
-              <p className="text-xs text-muted-foreground">{zone.name}</p>
+              <h3 className="font-heading text-base font-bold text-signal">
+                Advance Balance Report
+              </h3>
+              <p className="text-xs text-slate-500">{zone.name}</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="p-6 space-y-4">
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-center justify-between">
-            <span className="text-xs font-semibold text-blue-700">Current Advance Balance</span>
-            <span className="font-mono font-bold text-lg text-blue-700">৳{zone.advBalance.toFixed(2)}</span>
+          <div className="rounded-xl p-4 flex items-center justify-between border border-signal/20 bg-signal-tint">
+            <span className="text-xs font-semibold text-signal">Current Advance Balance</span>
+            <span className="font-mono font-bold text-lg text-signal">৳{zone.advBalance.toFixed(2)}</span>
           </div>
           <div>
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Transaction History</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Transaction History</p>
             <div className="space-y-2">
               {mockHistory.map((h, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
                   <div>
-                    <p className="text-xs font-semibold">{h.remark}</p>
-                    <p className="text-[10px] text-muted-foreground">{h.date}</p>
+                    <p className="text-xs font-semibold text-signal">{h.remark}</p>
+                    <p className="text-[10px] text-slate-500">{h.date}</p>
                   </div>
                   <div className="text-right">
-                    <p className={cn("text-xs font-bold", h.type === "Credit" ? "text-emerald-600" : "text-red-600")}>
+                    <p className={cn(
+                      "text-xs font-bold",
+                      h.type === "Credit" ? "text-success" : "text-destructive"
+                    )}>
                       {h.type === "Credit" ? "+" : "-"}৳{h.amount}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">{h.type}</p>
+                    <p className="text-[10px] text-slate-500">{h.type}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <button onClick={onClose} className="w-full px-4 py-3 rounded-xl text-sm font-bold bg-muted text-muted-foreground hover:bg-muted/80">
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg bg-signal hover:bg-signal-hover transition-all"
+          >
             Close
           </button>
         </div>

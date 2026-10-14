@@ -11,7 +11,6 @@ import {
   Calendar, Zap, Gift, Percent, Wallet, RefreshCw
 } from "lucide-react";
 
-// প্ল্যান ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const availablePlans = [
   { id: "pkg1", name: "10_Mbps_Package", price: 490.0 },
   { id: "pkg2", name: "12_Mbps_Package", price: 588.0 },
@@ -20,7 +19,6 @@ const availablePlans = [
   { id: "pkg5", name: "30_Mbps_Package", price: 1200.0 },
 ];
 
-// ক্লায়েন্টের বর্তমান তথ্য
 const clientInfo = {
   name: "Md Milan",
   id: "10158",
@@ -48,16 +46,16 @@ function PlanCard({
     <div
       className={`flex-1 rounded-2xl p-5 border-2 transition-all duration-300 ${
         tone === "signal"
-          ? "border-signal bg-signal-tint/50 shadow-lg shadow-signal/10"
-          : "border-dashed border-border bg-muted/30"
+          ? "border-signal bg-signal-tint shadow-md shadow-signal/10"
+          : "border-dashed border-slate-300 bg-slate-50"
       }`}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">{label}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">{label}</p>
       <div className="flex items-center gap-2 mb-1">
-        <Icon className={`h-4 w-4 ${tone === "signal" ? "text-signal" : "text-muted-foreground"}`} />
-        <p className="font-heading font-bold text-sm">{name}</p>
+        <Icon className={`h-4 w-4 ${tone === "signal" ? "text-signal" : "text-slate-500"}`} />
+        <p className="font-heading font-bold text-sm text-signal">{name}</p>
       </div>
-      <p className={`text-sm font-semibold ${tone === "signal" ? "text-signal" : "text-muted-foreground"}`}>
+      <p className={`text-sm font-semibold ${tone === "signal" ? "text-signal" : "text-slate-500"}`}>
         ৳{price} / month
       </p>
     </div>
@@ -78,22 +76,15 @@ export default function PlanMigrationPage() {
 
   const selectedPlan = availablePlans.find((p) => p.id === formData.newPlanId) || availablePlans[1];
 
-  // রিয়েল-টাইম প্রোরেটেড ক্যালকুলেশন
   const calculations = useMemo(() => {
     const totalDays = clientInfo.billingCycleDays;
     const remainingDays = clientInfo.daysRemaining;
-    const usedDays = totalDays - remainingDays;
 
-    // পুরনো প্ল্যানের প্রোরেটেড ভ্যালু (যা ব্যবহার হয়নি)
     const oldPlanProrated = (clientInfo.currentPlan.price / totalDays) * remainingDays;
-    // নতুন প্ল্যানের প্রোরেটেড ভ্যালু (যা ব্যবহার হবে)
     const newPlanProrated = (selectedPlan.price / totalDays) * remainingDays;
-    // নেট ডিউ (পার্থক্য)
     const netDue = Math.max(0, newPlanProrated - oldPlanProrated);
-    // যদি নতুন প্ল্যান পুরনোর চেয়ে সস্তা হয়, তাহলে ক্যারি ফরওয়ার্ড ব্যালেন্স
     const carryForward = Math.max(0, oldPlanProrated - newPlanProrated);
 
-    // ডিসকাউন্ট এবং পেমেন্ট
     const discountAmount = (netDue * formData.discount) / 100;
     const finalDue = netDue - discountAmount;
     const change = formData.amountReceived - finalDue;
@@ -101,7 +92,6 @@ export default function PlanMigrationPage() {
     return {
       totalDays,
       remainingDays,
-      usedDays,
       oldPlanProrated,
       newPlanProrated,
       netDue,
@@ -132,7 +122,7 @@ export default function PlanMigrationPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -143,18 +133,18 @@ export default function PlanMigrationPage() {
             
             {/* Client Info Card */}
             <FormSection>
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-signal to-violet-accent text-white flex items-center justify-center font-heading font-bold text-lg shrink-0 shadow-md">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-200">
+                <div className="w-12 h-12 rounded-2xl bg-signal text-white flex items-center justify-center font-heading font-bold text-lg shrink-0 shadow-md">
                   M
                 </div>
                 <div className="flex-1">
-                  <p className="font-heading font-bold">{clientInfo.name}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="font-heading font-bold text-signal">{clientInfo.name}</p>
+                  <p className="text-xs text-slate-500">
                     Customer ID {clientInfo.id} · Username {clientInfo.username} ·{" "}
-                    <span className="text-emerald-600 font-semibold">{clientInfo.status}</span>
+                    <span className="text-success font-semibold">{clientInfo.status}</span>
                   </p>
                 </div>
-                <div className="hidden sm:flex items-center gap-2 bg-amber-500/10 text-amber-600 px-3 py-1.5 rounded-full text-xs font-semibold border border-amber-500/20">
+                <div className="hidden sm:flex items-center gap-2 bg-warning-tint text-warning px-3 py-1.5 rounded-full text-xs font-semibold border border-warning/30">
                   <Calendar className="w-3.5 h-3.5" /> {calculations.remainingDays} days left
                 </div>
               </div>
@@ -168,7 +158,7 @@ export default function PlanMigrationPage() {
                   tone="muted"
                   icon={Wifi}
                 />
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-signal to-violet-accent flex items-center justify-center shrink-0 shadow-lg rotate-90 sm:rotate-0">
+                <div className="w-10 h-10 rounded-full bg-signal flex items-center justify-center shrink-0 shadow-lg rotate-90 sm:rotate-0">
                   <ArrowLeftRight className="h-4 w-4 text-white" />
                 </div>
                 <PlanCard
@@ -184,7 +174,7 @@ export default function PlanMigrationPage() {
             {/* Plan Selection */}
             <FormSection title="Select New Plan">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Choose a Package</label>
+                <label className="text-sm font-semibold text-signal">Choose a Package</label>
                 <select
                   name="newPlanId"
                   value={formData.newPlanId}
@@ -203,36 +193,36 @@ export default function PlanMigrationPage() {
             {/* Prorated Adjustment */}
             <FormSection title="Prorated Adjustment">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-sm">
-                <div className="bg-muted/30 rounded-xl p-4 border border-border">
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-signal" />
-                    <p className="text-[11px] text-muted-foreground font-semibold uppercase">Remaining this cycle</p>
+                    <p className="text-[11px] text-slate-500 font-semibold uppercase">Remaining this cycle</p>
                   </div>
-                  <p className="font-heading font-bold text-lg">{calculations.remainingDays} days</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">
+                  <p className="font-heading font-bold text-lg text-signal">{calculations.remainingDays} days</p>
+                  <p className="text-[11px] text-slate-500 mt-1">
                     out of {calculations.totalDays} days
                   </p>
                 </div>
-                <div className="bg-muted/30 rounded-xl p-4 border border-border">
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <Calculator className="w-4 h-4 text-amber-500" />
-                    <p className="text-[11px] text-muted-foreground font-semibold uppercase">Old plan (prorated)</p>
+                    <Calculator className="w-4 h-4 text-warning" />
+                    <p className="text-[11px] text-slate-500 font-semibold uppercase">Old plan (prorated)</p>
                   </div>
-                  <p className="font-heading font-bold text-lg">৳{calculations.oldPlanProrated.toFixed(2)}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{clientInfo.currentPlan.name}</p>
+                  <p className="font-heading font-bold text-lg text-signal">৳{calculations.oldPlanProrated.toFixed(2)}</p>
+                  <p className="text-[11px] text-slate-500 mt-1">{clientInfo.currentPlan.name}</p>
                 </div>
-                <div className="bg-signal-tint/60 rounded-xl p-4 border border-signal/20">
+                <div className="bg-signal-tint rounded-xl p-4 border border-signal/30">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="w-4 h-4 text-signal" />
                     <p className="text-[11px] text-signal font-semibold uppercase">New plan (prorated)</p>
                   </div>
                   <p className="font-heading font-bold text-lg text-signal">৳{calculations.newPlanProrated.toFixed(2)}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{selectedPlan.name}</p>
+                  <p className="text-[11px] text-slate-500 mt-1">{selectedPlan.name}</p>
                 </div>
               </div>
 
               {/* Net Amount Due */}
-              <div className="mt-5 p-5 rounded-2xl bg-gradient-to-r from-signal to-violet-accent text-white flex items-center justify-between shadow-lg">
+              <div className="mt-5 p-5 rounded-2xl bg-signal text-white flex items-center justify-between shadow-lg">
                 <div>
                   <p className="text-xs opacity-90 font-semibold uppercase tracking-wider">Net Amount Due</p>
                   <p className="text-[10px] opacity-75 mt-0.5">
@@ -264,26 +254,26 @@ export default function PlanMigrationPage() {
                 </EditableField>
                 <EditableField label="Amount received">
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">৳</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">৳</span>
                     <Input
                       name="amountReceived"
                       type="number"
                       value={formData.amountReceived}
                       onChange={handleChange}
-                      className="pl-8"
+                      className="pl-8 text-signal"
                       placeholder={calculations.netDue.toFixed(2)}
                     />
                   </div>
                 </EditableField>
                 <EditableField label="Discount (%)">
                   <div className="relative">
-                    <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                     <Input
                       name="discount"
                       type="number"
                       value={formData.discount}
                       onChange={handleChange}
-                      className="pl-9"
+                      className="pl-9 text-signal"
                       placeholder="0"
                     />
                   </div>
@@ -305,26 +295,26 @@ export default function PlanMigrationPage() {
               <div
                 className={`mt-5 p-4 rounded-xl flex items-center gap-3 ${
                   calculations.change >= 0
-                    ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-amber-500/10 border border-amber-500/20"
+                    ? "bg-success-tint border border-success/30"
+                    : "bg-warning-tint border border-warning/30"
                 }`}
               >
                 {calculations.change >= 0 ? (
                   <>
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs text-emerald-700 font-semibold uppercase">Payment Complete</p>
-                      <p className="text-sm font-bold text-emerald-700">
+                      <p className="text-xs text-success font-semibold uppercase">Payment Complete</p>
+                      <p className="text-sm font-bold text-success">
                         Change: ৳{calculations.change.toFixed(2)}
                       </p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-warning shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs text-amber-700 font-semibold uppercase">Due Amount</p>
-                      <p className="text-sm font-bold text-amber-700">
+                      <p className="text-xs text-warning font-semibold uppercase">Due Amount</p>
+                      <p className="text-sm font-bold text-warning">
                         ৳{Math.abs(calculations.change).toFixed(2)} still due
                       </p>
                     </div>
@@ -336,47 +326,47 @@ export default function PlanMigrationPage() {
             {/* Additional Options */}
             <FormSection title="Additional Options">
               <div className="space-y-4">
-                <label className="flex items-center gap-3 p-3 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors">
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
                   <input
                     type="checkbox"
                     name="carryForwardBalance"
                     checked={formData.carryForwardBalance}
                     onChange={handleChange}
-                    className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+                    className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold flex items-center gap-1.5">
-                      <Gift className="w-3.5 h-3.5 text-signal" /> Carry Forward Balance
+                    <p className="text-sm font-semibold flex items-center gap-1.5 text-signal">
+                      <Gift className="w-3.5 h-3.5" /> Carry Forward Balance
                     </p>
-                    <p className="text-xs text-muted-foreground">If new plan is cheaper, keep remaining as balance</p>
+                    <p className="text-xs text-slate-500">If new plan is cheaper, keep remaining as balance</p>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 rounded-xl border border-input hover:bg-muted/30 cursor-pointer transition-colors">
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
                   <input
                     type="checkbox"
                     name="sendSMS"
                     checked={formData.sendSMS}
                     onChange={handleChange}
-                    className="w-4 h-4 rounded border-input text-signal focus:ring-signal cursor-pointer"
+                    className="w-4 h-4 rounded border-slate-300 text-signal focus:ring-signal cursor-pointer accent-signal"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold flex items-center gap-1.5">
+                    <p className="text-sm font-semibold flex items-center gap-1.5 text-signal">
                       <Zap className="w-3.5 h-3.5 text-violet-accent" /> Send SMS Notification
                     </p>
-                    <p className="text-xs text-muted-foreground">Notify client about plan change</p>
+                    <p className="text-xs text-slate-500">Notify client about plan change</p>
                   </div>
                 </label>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs text-muted-foreground font-semibold uppercase">Remarks</label>
+                  <label className="text-xs text-slate-500 font-semibold uppercase">Remarks</label>
                   <textarea
                     name="remarks"
                     value={formData.remarks}
                     onChange={handleChange}
                     placeholder="Optional note about this migration..."
                     rows={3}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none resize-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none resize-none"
                   />
                 </div>
               </div>
@@ -387,13 +377,13 @@ export default function PlanMigrationPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="rounded-2xl font-semibold h-12 px-8 order-2 sm:order-1"
+                className="rounded-2xl font-semibold h-12 px-8 order-2 sm:order-1 border-slate-200 text-slate-600 hover:bg-slate-50"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="rounded-2xl font-semibold h-12 px-8 bg-gradient-to-r from-signal to-violet-accent border-0 shadow-lg hover:shadow-xl transition-shadow order-1 sm:order-2"
+                className="rounded-2xl font-semibold h-12 px-8 bg-signal hover:bg-signal-hover text-white border-0 shadow-lg hover:shadow-xl transition-all order-1 sm:order-2"
               >
                 <CheckCircle2 className="w-4 h-4 mr-2" /> Confirm Migration
               </Button>

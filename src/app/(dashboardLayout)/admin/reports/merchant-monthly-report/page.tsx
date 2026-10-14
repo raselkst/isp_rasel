@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// 🎯 ডেটা টাইপ
 interface ReportRow {
   id: number;
   year: string;
@@ -21,7 +20,6 @@ interface ReportRow {
   amount: number;
 }
 
-// 🎯 ডামি ডেটা
 const initialData: ReportRow[] = [
   { id: 1, year: "2026", month: "September", reseller: "Poli Network Pop", count: 152, amount: 75453.33 },
   { id: 2, year: "2026", month: "September", reseller: "Poli Network", count: 2, amount: 698.0 },
@@ -65,7 +63,6 @@ export default function MerchantMonthlyReportPage() {
   const [editModal, setEditModal] = useState<ReportRow | null>(null);
   const [newRow, setNewRow] = useState<ReportRow>({ ...emptyRow });
 
-  // 🎯 ফিল্টার + সার্চ + সর্ট
   const filteredData = useMemo(() => {
     let filtered = data.filter((item) => {
       const matchesSearch =
@@ -90,7 +87,6 @@ export default function MerchantMonthlyReportPage() {
     return filtered;
   }, [data, searchTerm, yearFilter, monthFilter, resellerFilter, sortKey, sortOrder]);
 
-  // 🎯 Stat Cards
   const stats = useMemo(() => {
     const totalAmount = filteredData.reduce((acc, r) => acc + r.amount, 0);
     const totalCount = filteredData.reduce((acc, r) => acc + r.count, 0);
@@ -99,13 +95,11 @@ export default function MerchantMonthlyReportPage() {
     return { totalAmount, totalCount, totalMerchants, avgAmount, totalRecords: filteredData.length };
   }, [filteredData]);
 
-  // 🎯 পেজিনেশন
   const totalEntries = filteredData.length;
   const totalPages = Math.ceil(totalEntries / entriesPerPage) || 1;
   const startIndex = (currentPage - 1) * entriesPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + entriesPerPage);
 
-  // 🎯 সিলেক্ট
   const allSelected = paginatedData.length > 0 && paginatedData.every((r) => selectedRows.includes(r.id));
   const toggleSelectAll = () => {
     if (allSelected) {
@@ -118,13 +112,11 @@ export default function MerchantMonthlyReportPage() {
     setSelectedRows((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
-  // 🎯 সর্ট
   const handleSort = (key: string) => {
     if (sortKey === key) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     else { setSortKey(key); setSortOrder("asc"); }
   };
 
-  // 🎯 Reset Filters
   const handleResetFilters = () => {
     setSearchTerm("");
     setYearFilter("All Years");
@@ -133,7 +125,6 @@ export default function MerchantMonthlyReportPage() {
     setCurrentPage(1);
   };
 
-  // 🎯 Add Record
   const handleAddRecord = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRow.month || !newRow.reseller) {
@@ -147,7 +138,6 @@ export default function MerchantMonthlyReportPage() {
     alert(`✅ Record added successfully!`);
   };
 
-  // 🎯 Edit Save
   const handleSaveEdit = () => {
     if (!editModal) return;
     setData((prev) => prev.map((r) => (r.id === editModal.id ? editModal : r)));
@@ -155,7 +145,6 @@ export default function MerchantMonthlyReportPage() {
     alert("Record updated successfully!");
   };
 
-  // 🎯 Delete
   const handleDelete = (id: number) => {
     if (confirm("Delete this record? This cannot be undone.")) {
       setData((prev) => prev.filter((r) => r.id !== id));
@@ -164,7 +153,6 @@ export default function MerchantMonthlyReportPage() {
     }
   };
 
-  // 🎯 Bulk Delete
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) {
       alert("Please select at least one record.");
@@ -177,7 +165,6 @@ export default function MerchantMonthlyReportPage() {
     }
   };
 
-  // 🎯 Export Functions
   const triggerDownload = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -204,10 +191,10 @@ export default function MerchantMonthlyReportPage() {
       <html><head><title>Merchant Monthly Report</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
-        h1 { color: #0F8B8D; }
+        h1 { color: #066F6F; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-        th { background: #0F8B8D; color: white; }
+        th { background: #066F6F; color: white; }
         tr:nth-child(even) { background: #f9f9f9; }
       </style></head><body>
       <h1>Merchant Monthly Report</h1>
@@ -239,7 +226,7 @@ export default function MerchantMonthlyReportPage() {
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
       <head><meta charset="UTF-8"></head><body>
       <table border="1">
-        <thead><tr style="background:#0F8B8D;color:#fff;">${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+        <thead><tr style="background:#066F6F;color:#fff;">${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
         <tbody>${rows.map((row) => `<tr>${row.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>
       </table></body></html>`;
     triggerDownload(new Blob([tableHTML], { type: "application/vnd.ms-excel" }), `merchant-monthly-report-${Date.now()}.xls`);
@@ -253,7 +240,7 @@ export default function MerchantMonthlyReportPage() {
   const formatNumber = (num: number) => num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -266,74 +253,74 @@ export default function MerchantMonthlyReportPage() {
               <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1">
                 Reports · Merchant Analytics
               </p>
-              <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
                 Merchant Monthly Report
               </h1>
             </div>
             <button
               onClick={() => setAddModal(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
             >
               <Plus className="h-4 w-4" /> Add Record
             </button>
           </div>
 
-          {/* Compact Stat Cards - এক লাইনে */}
+          {/* Compact Stat Cards - Theme Connected */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                <BarChart3 className="w-4 h-4 text-blue-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <BarChart3 className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Records</p>
-                <p className="text-lg font-heading font-bold">{stats.totalRecords}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Records</p>
+                <p className="text-lg font-heading font-bold text-signal">{stats.totalRecords}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                <DollarSign className="w-4 h-4 text-emerald-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4 text-success" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Amount</p>
-                <p className="text-lg font-heading font-bold text-emerald-600">৳{formatNumber(stats.totalAmount)}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Amount</p>
+                <p className="text-lg font-heading font-bold text-success">৳{formatNumber(stats.totalAmount)}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0">
-                <Building2 className="w-4 h-4 text-violet-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-violet-accent-tint flex items-center justify-center shrink-0">
+                <Building2 className="w-4 h-4 text-violet-accent" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Merchants</p>
-                <p className="text-lg font-heading font-bold text-violet-600">{stats.totalMerchants}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Merchants</p>
+                <p className="text-lg font-heading font-bold text-violet-accent">{stats.totalMerchants}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-4 h-4 text-amber-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4 text-warning" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Avg</p>
-                <p className="text-lg font-heading font-bold text-amber-600">৳{formatNumber(stats.avgAmount)}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Avg</p>
+                <p className="text-lg font-heading font-bold text-warning">৳{formatNumber(stats.avgAmount)}</p>
               </div>
             </div>
           </div>
 
           {/* Filters Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-5 flex flex-wrap items-center gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-5 flex flex-wrap items-center gap-3 shadow-sm">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 placeholder="Search by reseller, month, year…"
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30"
               />
             </div>
             <select
               value={yearFilter}
               onChange={(e) => { setYearFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option>All Years</option>
               {yearsList.map((y) => <option key={y}>{y}</option>)}
@@ -341,7 +328,7 @@ export default function MerchantMonthlyReportPage() {
             <select
               value={monthFilter}
               onChange={(e) => { setMonthFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option>All Months</option>
               {monthsList.map((m) => <option key={m}>{m}</option>)}
@@ -349,14 +336,14 @@ export default function MerchantMonthlyReportPage() {
             <select
               value={resellerFilter}
               onChange={(e) => { setResellerFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option>All Resellers</option>
               {resellersList.map((r) => <option key={r}>{r}</option>)}
             </select>
             <button
               onClick={handleResetFilters}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border bg-background text-muted-foreground text-sm font-semibold hover:bg-muted transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-500 text-sm font-semibold hover:bg-slate-50 transition-all"
             >
               <RefreshCw className="h-3.5 w-3.5" /> Reset
             </button>
@@ -376,42 +363,42 @@ export default function MerchantMonthlyReportPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-card border border-input rounded-lg hover:bg-muted transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg text-signal hover:bg-slate-50 transition-colors"
               >
                 <Copy className="w-3.5 h-3.5" /> Copy
               </button>
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-card border border-input rounded-lg hover:bg-muted transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg text-signal hover:bg-slate-50 transition-colors"
               >
                 <Printer className="w-3.5 h-3.5" /> Print
               </button>
               <button
                 onClick={handleExportPDF}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-card border border-input rounded-lg hover:bg-muted transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg text-signal hover:bg-slate-50 transition-colors"
               >
                 <FileText className="w-3.5 h-3.5" /> PDF
               </button>
               <button
                 onClick={handleExportExcel}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-card border border-input rounded-lg hover:bg-muted transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg text-signal hover:bg-slate-50 transition-colors"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" /> Excel
               </button>
               <button
                 onClick={handleExportCSV}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-card border border-input rounded-lg hover:bg-muted transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg text-signal hover:bg-slate-50 transition-colors"
               >
                 <Download className="w-3.5 h-3.5" /> CSV
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
               <span>Show</span>
               <select
                 value={entriesPerPage}
                 onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border rounded-lg px-2 py-1 bg-background text-xs"
+                className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs text-signal"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -423,10 +410,10 @@ export default function MerchantMonthlyReportPage() {
           </div>
 
           {/* Table */}
-          <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="bg-gradient-to-r from-signal to-violet-accent text-white">
+                <thead className="bg-signal text-white">
                   <tr>
                     <th className="px-4 py-3.5 w-12">
                       <input
@@ -458,7 +445,7 @@ export default function MerchantMonthlyReportPage() {
                     <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-y divide-slate-100">
                   {paginatedData.length > 0 ? (
                     paginatedData.map((row, index) => {
                       const isSelected = selectedRows.includes(row.id);
@@ -466,8 +453,8 @@ export default function MerchantMonthlyReportPage() {
                         <tr
                           key={row.id}
                           className={cn(
-                            "hover:bg-signal-tint/20 transition-colors",
-                            isSelected && "bg-signal/5"
+                            "hover:bg-slate-50 transition-colors",
+                            isSelected && "bg-signal-tint"
                           )}
                         >
                           <td className="px-4 py-3">
@@ -475,19 +462,19 @@ export default function MerchantMonthlyReportPage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelect(row.id)}
-                              className="rounded cursor-pointer"
+                              className="rounded cursor-pointer accent-signal"
                             />
                           </td>
-                          <td className="px-4 py-3 font-medium text-muted-foreground">{startIndex + index + 1}</td>
+                          <td className="px-4 py-3 font-medium text-slate-500">{startIndex + index + 1}</td>
                           <td className="px-4 py-3">
-                            <span className="bg-blue-500/10 text-blue-600 text-xs font-bold px-2 py-1 rounded-md border border-blue-500/20">
+                            <span className="bg-signal-tint text-signal text-xs font-bold px-2 py-1 rounded-md border border-signal/30">
                               {row.year}
                             </span>
                           </td>
-                          <td className="px-4 py-3 font-semibold">{row.month}</td>
-                          <td className="px-4 py-3 font-semibold text-foreground">{row.reseller}</td>
+                          <td className="px-4 py-3 font-semibold text-signal">{row.month}</td>
+                          <td className="px-4 py-3 font-semibold text-signal">{row.reseller}</td>
                           <td className="px-4 py-3 text-center">
-                            <span className="bg-violet-500/10 text-violet-600 text-xs font-bold px-2 py-1 rounded-md border border-violet-500/20">
+                            <span className="bg-violet-accent-tint text-violet-accent text-xs font-bold px-2 py-1 rounded-md border border-violet-accent/30">
                               {row.count}
                             </span>
                           </td>
@@ -496,14 +483,14 @@ export default function MerchantMonthlyReportPage() {
                             <div className="flex items-center gap-1">
                               <button
                                 onClick={() => setEditModal({ ...row })}
-                                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-signal transition-colors"
+                                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal transition-colors"
                                 title="Edit"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 onClick={() => handleDelete(row.id)}
-                                className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                                className="p-1.5 rounded-lg hover:bg-destructive/10 text-slate-500 hover:text-destructive transition-colors"
                                 title="Delete"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -515,9 +502,9 @@ export default function MerchantMonthlyReportPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={8} className="px-4 py-16 text-center text-muted-foreground">
+                      <td colSpan={8} className="px-4 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No data available in table</p>
+                        <p className="font-semibold text-signal">No data available in table</p>
                         <p className="text-xs mt-1">Try adjusting your search or filters</p>
                       </td>
                     </tr>
@@ -527,15 +514,15 @@ export default function MerchantMonthlyReportPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t gap-4 text-sm">
-              <div className="text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-100 gap-4 text-sm">
+              <div className="text-slate-500">
                 Showing {totalEntries > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + entriesPerPage, totalEntries)} of {totalEntries} entries
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1 || totalEntries === 0}
-                  className="p-1.5 rounded-lg border border-input hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -549,7 +536,7 @@ export default function MerchantMonthlyReportPage() {
                         "w-8 h-8 rounded-lg font-semibold text-xs transition-all",
                         currentPage === page
                           ? "bg-signal text-white shadow-md"
-                          : "border border-input hover:bg-muted"
+                          : "border border-slate-200 bg-white hover:bg-slate-50 text-signal"
                       )}
                     >
                       {page}
@@ -559,7 +546,7 @@ export default function MerchantMonthlyReportPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages || totalEntries === 0}
-                  className="p-1.5 rounded-lg border border-input hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -572,18 +559,18 @@ export default function MerchantMonthlyReportPage() {
       {/* Add Record Modal */}
       {addModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setAddModal(false)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setAddModal(false)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                <h3 className="font-heading text-2xl font-bold text-signal">
                   Add Record
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">Add new merchant monthly record.</p>
+                <p className="text-xs text-slate-500 mt-1">Add new merchant monthly record.</p>
               </div>
               <button
                 onClick={() => setAddModal(false)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -592,23 +579,23 @@ export default function MerchantMonthlyReportPage() {
             <form onSubmit={handleAddRecord} className="space-y-5">
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Year</label>
+                  <label className="font-semibold text-sm block text-signal">Year</label>
                   <select
                     value={newRow.year}
                     onChange={(e) => setNewRow({ ...newRow, year: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   >
                     {yearsList.map((y) => <option key={y}>{y}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">
-                    Month <span className="text-red-500">*</span>
+                  <label className="font-semibold text-sm block text-signal">
+                    Month <span className="text-destructive">*</span>
                   </label>
                   <select
                     value={newRow.month}
                     onChange={(e) => setNewRow({ ...newRow, month: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   >
                     <option value="">Select Month</option>
                     {monthsList.map((m) => <option key={m}>{m}</option>)}
@@ -617,13 +604,13 @@ export default function MerchantMonthlyReportPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">
-                  Reseller <span className="text-red-500">*</span>
+                <label className="font-semibold text-sm block text-signal">
+                  Reseller <span className="text-destructive">*</span>
                 </label>
                 <select
                   value={newRow.reseller}
                   onChange={(e) => setNewRow({ ...newRow, reseller: e.target.value })}
-                  className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                 >
                   <option value="">Select Reseller</option>
                   {resellersList.map((r) => <option key={r}>{r}</option>)}
@@ -632,22 +619,22 @@ export default function MerchantMonthlyReportPage() {
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Count</label>
+                  <label className="font-semibold text-sm block text-signal">Count</label>
                   <input
                     type="number"
                     value={newRow.count}
                     onChange={(e) => setNewRow({ ...newRow, count: Number(e.target.value) })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Amount (৳)</label>
+                  <label className="font-semibold text-sm block text-signal">Amount (৳)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={newRow.amount}
                     onChange={(e) => setNewRow({ ...newRow, amount: Number(e.target.value) })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   />
                 </div>
               </div>
@@ -656,13 +643,13 @@ export default function MerchantMonthlyReportPage() {
                 <button
                   type="button"
                   onClick={() => setAddModal(false)}
-                  className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                  className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Add Record
                 </button>
@@ -675,15 +662,15 @@ export default function MerchantMonthlyReportPage() {
       {/* Edit Record Modal */}
       {editModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-6">
-              <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h3 className="font-heading text-2xl font-bold text-signal">
                 Edit Record
               </h3>
               <button
                 onClick={() => setEditModal(null)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -692,21 +679,21 @@ export default function MerchantMonthlyReportPage() {
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Year</label>
+                  <label className="font-semibold text-sm block text-signal">Year</label>
                   <select
                     value={editModal.year}
                     onChange={(e) => setEditModal({ ...editModal, year: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   >
                     {yearsList.map((y) => <option key={y}>{y}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Month</label>
+                  <label className="font-semibold text-sm block text-signal">Month</label>
                   <select
                     value={editModal.month}
                     onChange={(e) => setEditModal({ ...editModal, month: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   >
                     {monthsList.map((m) => <option key={m}>{m}</option>)}
                   </select>
@@ -714,11 +701,11 @@ export default function MerchantMonthlyReportPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Reseller</label>
+                <label className="font-semibold text-sm block text-signal">Reseller</label>
                 <select
                   value={editModal.reseller}
                   onChange={(e) => setEditModal({ ...editModal, reseller: e.target.value })}
-                  className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                 >
                   {resellersList.map((r) => <option key={r}>{r}</option>)}
                 </select>
@@ -726,22 +713,22 @@ export default function MerchantMonthlyReportPage() {
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Count</label>
+                  <label className="font-semibold text-sm block text-signal">Count</label>
                   <input
                     type="number"
                     value={editModal.count}
                     onChange={(e) => setEditModal({ ...editModal, count: Number(e.target.value) })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Amount (৳)</label>
+                  <label className="font-semibold text-sm block text-signal">Amount (৳)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={editModal.amount}
                     onChange={(e) => setEditModal({ ...editModal, amount: Number(e.target.value) })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none text-signal"
                   />
                 </div>
               </div>
@@ -749,13 +736,13 @@ export default function MerchantMonthlyReportPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setEditModal(null)}
-                  className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                  className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                 >
                   <Save className="w-4 h-4" /> Save Changes
                 </button>

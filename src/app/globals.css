@@ -4,41 +4,54 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ═══════════════════════════════════════════════════════════
+   TAILWIND THEME TOKENS
+   এখান থেকে Tailwind ক্লাস জেনারেট হয় (bg-signal, text-signal ইত্যাদি)
+   ═══════════════════════════════════════════════════════════ */
 @theme inline {
+  /* ===== Base Colors ===== */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* ===== Charts ===== */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ===== Sidebar ===== */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ===== Typography ===== */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
+
+  /* ===== Border Radius ===== */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -47,22 +60,44 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ---- Dashboard semantic tokens ---- */
+  /* ═══════════════════════════════════════════════════════════
+     🎯 DASHBOARD SEMANTIC TOKENS
+     এগুলো ব্যবহার করলে যেকোনো পেজে অটো থিম-ভিত্তিক কালার পাবেন
+     ═══════════════════════════════════════════════════════════ */
+
+  /* --- Primary Brand (Signal) --- */
   --color-signal: var(--signal);
   --color-signal-foreground: var(--signal-foreground);
   --color-signal-tint: var(--signal-tint);
+  --color-signal-hover: var(--signal-hover);       /* 👈 নতুন */
+  --color-signal-active: var(--signal-active);     /* 👈 নতুন */
+  --color-signal-light: var(--signal-light);       /* 👈 নতুন */
+
+  /* --- Success --- */
   --color-success: var(--success);
   --color-success-tint: var(--success-tint);
+
+  /* --- Warning --- */
   --color-warning: var(--warning);
   --color-warning-tint: var(--warning-tint);
+
+  /* --- Caution --- */
   --color-caution: var(--caution);
   --color-caution-tint: var(--caution-tint);
+
+  /* --- Violet Accent --- */
   --color-violet-accent: var(--violet-accent);
   --color-violet-accent-tint: var(--violet-accent-tint);
+
+  /* --- Neutral --- */
   --color-neutral-accent: var(--neutral-accent);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   LIGHT MODE (Default)
+   ═══════════════════════════════════════════════════════════ */
 :root {
+  /* ===== Base Tokens ===== */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -81,12 +116,16 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+
+  /* ===== Charts ===== */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+
+  /* ===== Sidebar ===== */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -96,22 +135,44 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* ---- Dashboard semantic tokens (light) ---- */
-  --signal: oklch(0.51 0.09 195);              /* deep teal — primary/network accent */
-  --signal-foreground: oklch(0.985 0 0);
-  --signal-tint: oklch(0.95 0.03 195);
-  --success: oklch(0.6 0.15 145);              /* green — active/online */
+  /* ═══════════════════════════════════════════════════════════
+     🎯 DASHBOARD SEMANTIC TOKENS (LIGHT)
+     ═══════════════════════════════════════════════════════════ */
+
+  /* --- Primary Brand: Deep Teal (#066F6F) --- */
+  --signal: oklch(0.51 0.09 195);                  /* মূল ব্র্যান্ড কালার */
+  --signal-foreground: oklch(0.985 0 0);           /* টেক্সট অন প্রাইমারি (সাদা) */
+  --signal-tint: oklch(0.95 0.03 195);             /* হালকা ব্যাকগ্রাউন্ড */
+  --signal-hover: oklch(0.45 0.09 195);            /* হোভার স্টেট (গাঢ়) */
+  --signal-active: oklch(0.40 0.09 195);           /* অ্যাক্টিভ স্টেট (আরও গাঢ়) */
+  --signal-light: oklch(0.60 0.10 195);            /* হালকা ভার্সন */
+  --signal-shadow: oklch(0.51 0.09 195 / 0.45);    /* শ্যাডো */        /* 👈 নতুন */
+
+  /* --- Success: Green --- */
+  --success: oklch(0.6 0.15 145);
   --success-tint: oklch(0.96 0.04 145);
-  --warning: oklch(0.68 0.14 75);              /* amber — suspended/expired */
+
+  /* --- Warning: Amber --- */
+  --warning: oklch(0.68 0.14 75);
   --warning-tint: oklch(0.96 0.05 85);
-  --caution: oklch(0.65 0.17 45);              /* orange — due/attention */
+
+  /* --- Caution: Orange --- */
+  --caution: oklch(0.65 0.17 45);
   --caution-tint: oklch(0.96 0.05 55);
-  --violet-accent: oklch(0.55 0.19 290);       /* violet — pending */
+
+  /* --- Violet Accent --- */
+  --violet-accent: oklch(0.55 0.19 290);
   --violet-accent-tint: oklch(0.95 0.04 290);
-  --neutral-accent: oklch(0.7 0.02 260);       /* slate — offline/left/inactive */
+
+  /* --- Neutral --- */
+  --neutral-accent: oklch(0.7 0.02 260);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE
+   ═══════════════════════════════════════════════════════════ */
 .dark {
+  /* ===== Base Tokens ===== */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -130,11 +191,15 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
+  /* ===== Charts ===== */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
+
+  /* ===== Sidebar ===== */
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -144,21 +209,42 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 
-  /* ---- Dashboard semantic tokens (dark) ---- */
+  /* ═══════════════════════════════════════════════════════════
+     🎯 DASHBOARD SEMANTIC TOKENS (DARK)
+     ═══════════════════════════════════════════════════════════ */
+
+  /* --- Primary Brand: Lighter Teal for dark mode --- */
   --signal: oklch(0.68 0.1 195);
   --signal-foreground: oklch(0.145 0 0);
   --signal-tint: oklch(0.28 0.05 195);
+  --signal-hover: oklch(0.75 0.10 195);            /* 👈 নতুন */
+  --signal-active: oklch(0.80 0.10 195);           /* 👈 নতুন */
+  --signal-light: oklch(0.60 0.09 195);            /* 👈 নতুন */
+  --signal-shadow: oklch(0.68 0.10 195 / 0.45);    /* 👈 নতুন */
+
+  /* --- Success --- */
   --success: oklch(0.68 0.15 145);
   --success-tint: oklch(0.28 0.06 145);
+
+  /* --- Warning --- */
   --warning: oklch(0.75 0.14 75);
   --warning-tint: oklch(0.3 0.06 85);
+
+  /* --- Caution --- */
   --caution: oklch(0.7 0.16 45);
   --caution-tint: oklch(0.3 0.06 55);
+
+  /* --- Violet Accent --- */
   --violet-accent: oklch(0.68 0.17 290);
   --violet-accent-tint: oklch(0.3 0.07 290);
+
+  /* --- Neutral --- */
   --neutral-accent: oklch(0.55 0.02 260);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   BASE LAYER
+   ═══════════════════════════════════════════════════════════ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -168,5 +254,22 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   🎯 CUSTOM UTILITIES (Optional — নিচের ক্লাসগুলো তৈরি হবে)
+   ═══════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* Signal Shadow */
+  .shadow-signal {
+    box-shadow: 0 8px 20px -8px var(--signal-shadow);
+  }
+  .shadow-signal-sm {
+    box-shadow: 0 4px 12px -4px var(--signal-shadow);
+  }
+  /* Signal Gradient */
+  .bg-signal-gradient {
+    background: linear-gradient(135deg, var(--signal) 0%, var(--signal-light) 100%);
   }
 }

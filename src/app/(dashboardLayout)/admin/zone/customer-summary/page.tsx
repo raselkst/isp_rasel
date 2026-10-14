@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardTopbar } from "@/components/dashboard/dashboard-topbar";
 import { ListTopbar } from "@/components/dashboard/list-topbar";
@@ -9,10 +9,9 @@ import {
   Search, Users, Wifi, WifiOff, Gift, Crown, AlertTriangle, Lock,
   Ban, DollarSign, Phone, MapPin, CreditCard, Camera, X,
   ChevronLeft, ChevronRight, Copy, Printer, FileText, FileSpreadsheet,
-  Download, Filter, Eye, CheckCircle2, Building2, Hash,
+  Eye, CheckCircle2, Building2, Hash,
 } from "lucide-react";
 
-// 🎯 ডেটা টাইপ
 interface SummaryRow {
   id: number;
   owner: string;
@@ -48,6 +47,11 @@ const initialRows: SummaryRow[] = [
   { id: 27, owner: "Metro Net [MN]", total: 900, ok: 830, online: 750, offline: 80, free: 21, vip: 15, expired: 70, locked: 0, grace: 4, disabled: 22, blocked: 0, approxBill: 90000, nid: 160, mobile: 300, photo: 1, location: 5 },
 ];
 
+// 🎯 Teal & White Palette
+const TEAL = "#066F6F";
+const TEAL_TINT = "rgba(6, 111, 111, 0.08)";
+const TEAL_BORDER = "rgba(6, 111, 111, 0.15)";
+
 // 🎯 মেট্রিক কনফিগ
 const metricConfig = {
   online: { color: "text-emerald-600", bg: "bg-emerald-500/10", icon: Wifi, label: "Online" },
@@ -69,12 +73,12 @@ export default function ZoneCustomerSummaryPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   // 🎯 টোস্ট অটো হাইড
-  useState(() => {
+  useEffect(() => {
     if (toast) {
       const t = setTimeout(() => setToast(null), 2500);
       return () => clearTimeout(t);
     }
-  });
+  }, [toast]);
 
   // 🎯 স্ট্যাট
   const stats = useMemo(() => {
@@ -114,11 +118,11 @@ export default function ZoneCustomerSummaryPage() {
     let result = rows;
     if (filterTab !== "All") {
       const key = filterTab.toLowerCase() as keyof SummaryRow;
-      result = result.filter(r => (r[key] as number) > 0);
+      result = result.filter((r) => (r[key] as number) > 0);
     }
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
-      result = result.filter(r => r.owner.toLowerCase().includes(q) || String(r.id).includes(q));
+      result = result.filter((r) => r.owner.toLowerCase().includes(q) || String(r.id).includes(q));
     }
     return result;
   }, [rows, searchTerm, filterTab]);
@@ -127,19 +131,19 @@ export default function ZoneCustomerSummaryPage() {
   const totalPages = Math.ceil(filteredRows.length / pageSize);
   const paginatedRows = filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  // 🎯 Export Functions
+  // 🎯 Export
   const exportCSV = () => {
     const headers = ["ID", "Owner", "Total", "OK", "Online", "Offline", "Free", "VIP", "Expired", "Locked", "Grace", "Disabled", "NO-NID Blocked", "Approx Bill", "NID", "Mobile", "Photo", "Location"];
-    const csvRows = filteredRows.map(r => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
-    const csv = [headers, ...csvRows].map(row => row.map(c => `"${c}"`).join(",")).join("\n");
+    const csvRows = filteredRows.map((r) => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
+    const csv = [headers, ...csvRows].map((row) => row.map((c) => `"${c}"`).join(",")).join("\n");
     downloadFile(csv, `zone-customer-summary-${Date.now()}.csv`, "text/csv");
     setToast("CSV downloaded!");
   };
 
   const exportExcel = () => {
     const headers = ["ID", "Owner", "Total", "OK", "Online", "Offline", "Free", "VIP", "Expired", "Locked", "Grace", "Disabled", "NO-NID Blocked", "Approx Bill", "NID", "Mobile", "Photo", "Location"];
-    const tsvRows = filteredRows.map(r => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
-    const tsv = [headers, ...tsvRows].map(r => r.join("\t")).join("\n");
+    const tsvRows = filteredRows.map((r) => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
+    const tsv = [headers, ...tsvRows].map((r) => r.join("\t")).join("\n");
     downloadFile(tsv, `zone-customer-summary-${Date.now()}.xls`, "application/vnd.ms-excel");
     setToast("Excel downloaded!");
   };
@@ -149,11 +153,11 @@ export default function ZoneCustomerSummaryPage() {
     if (!printWindow) return;
     printWindow.document.write(`
       <html><head><title>Zone Customer Summary</title>
-      <style>body{font-family:Arial;padding:20px}h1{color:#0F8B8D}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:6px;font-size:11px}th{background:#0F8B8D;color:white}tr:nth-child(even){background:#f9f9f9}</style>
+      <style>body{font-family:Arial;padding:20px}h1{color:${TEAL}}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:6px;font-size:11px}th{background:${TEAL};color:white}tr:nth-child(even){background:#f9f9f9}</style>
       </head><body>
       <h1>Zone Customer Summary</h1><p>Generated: ${new Date().toLocaleString()}</p>
-      <table><thead><tr>${["ID","Owner","Total","OK","Online","Offline","Free","VIP","Expired","Locked","Disabled","Approx Bill"].map(h => `<th>${h}</th>`).join("")}</tr></thead>
-      <tbody>${filteredRows.map(r => `<tr><td>${r.id}</td><td>${r.owner}</td><td>${r.total}</td><td>${r.ok}</td><td>${r.online}</td><td>${r.offline}</td><td>${r.free}</td><td>${r.vip}</td><td>${r.expired}</td><td>${r.locked}</td><td>${r.disabled}</td><td>${r.approxBill}</td></tr>`).join("")}</tbody></table>
+      <table><thead><tr>${["ID","Owner","Total","OK","Online","Offline","Free","VIP","Expired","Locked","Disabled","Approx Bill"].map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+      <tbody>${filteredRows.map((r) => `<tr><td>${r.id}</td><td>${r.owner}</td><td>${r.total}</td><td>${r.ok}</td><td>${r.online}</td><td>${r.offline}</td><td>${r.free}</td><td>${r.vip}</td><td>${r.expired}</td><td>${r.locked}</td><td>${r.disabled}</td><td>${r.approxBill}</td></tr>`).join("")}</tbody></table>
       </body></html>
     `);
     printWindow.document.close();
@@ -163,7 +167,7 @@ export default function ZoneCustomerSummaryPage() {
 
   const handleCopy = () => {
     const headers = ["ID", "Owner", "Total", "OK", "Online", "Offline", "Free", "VIP", "Expired", "Locked", "Disabled", "Approx Bill"];
-    const tsv = [headers, ...filteredRows.map(r => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.disabled, r.approxBill])].map(r => r.join("\t")).join("\n");
+    const tsv = [headers, ...filteredRows.map((r) => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.disabled, r.approxBill])].map((r) => r.join("\t")).join("\n");
     navigator.clipboard.writeText(tsv);
     setToast("Copied to clipboard!");
   };
@@ -172,16 +176,16 @@ export default function ZoneCustomerSummaryPage() {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = filename; a.click();
+    a.href = url;
+    a.download = filename;
+    a.click();
     URL.revokeObjectURL(url);
   };
 
-  // 🎯 মেট্রিক ক্লিক
   const handleMetricClick = (owner: string, metric: string) => {
     setDetailModal({ open: true, owner, metric });
   };
 
-  // 🎯 কলাম ডেফিনিশন
   const columns = [
     { key: "id", label: "ID", icon: Hash, sticky: false },
     { key: "owner", label: "Owner", icon: Building2, sticky: true },
@@ -204,7 +208,7 @@ export default function ZoneCustomerSummaryPage() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -212,88 +216,65 @@ export default function ZoneCustomerSummaryPage() {
         <ListTopbar />
 
         <div className="px-4 sm:px-8 py-7">
-          {/* 🎯 Hero Header */}
+          {/* Hero Header */}
           <div className="mb-6">
-            <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1 flex items-center gap-1.5">
+            <p
+              className="text-xs font-semibold tracking-widest uppercase mb-1 flex items-center gap-1.5"
+              style={{ color: TEAL }}
+            >
               <Users className="h-3 w-3" /> Zone Analytics
             </p>
-            <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1
+              className="font-heading text-[28px] font-bold tracking-tight"
+              style={{ color: TEAL }}
+            >
               Zone Customer Summary
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               Complete breakdown of customers across all zones.
             </p>
           </div>
 
-          {/* 🎯 Stat Cards - Compact এক লাইনে */}
-<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-      <Users className="w-4 h-4 text-blue-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Total</p>
-      <p className="text-lg font-heading font-bold">{stats.total.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-      <Wifi className="w-4 h-4 text-emerald-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Online</p>
-      <p className="text-lg font-heading font-bold text-emerald-600">{stats.online.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-      <WifiOff className="w-4 h-4 text-red-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Offline</p>
-      <p className="text-lg font-heading font-bold text-red-600">{stats.offline.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-      <AlertTriangle className="w-4 h-4 text-amber-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Expired</p>
-      <p className="text-lg font-heading font-bold text-amber-600">{stats.expired.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-      <Lock className="w-4 h-4 text-orange-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Locked</p>
-      <p className="text-lg font-heading font-bold text-orange-600">{stats.locked.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0">
-      <DollarSign className="w-4 h-4 text-violet-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Bill</p>
-      <p className="text-lg font-heading font-bold text-violet-600">৳{stats.approxBill.toLocaleString()}</p>
-    </div>
-  </div>
-</div>
+          {/* Compact Stat Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+            {[
+              { label: "Total", value: stats.total.toLocaleString(), icon: Users },
+              { label: "Online", value: stats.online.toLocaleString(), icon: Wifi },
+              { label: "Offline", value: stats.offline.toLocaleString(), icon: WifiOff },
+              { label: "Expired", value: stats.expired.toLocaleString(), icon: AlertTriangle },
+              { label: "Locked", value: stats.locked.toLocaleString(), icon: Lock },
+              { label: "Bill", value: `৳${stats.approxBill.toLocaleString()}`, icon: DollarSign },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all"
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: TEAL_TINT }}
+                >
+                  <s.icon className="w-4 h-4" style={{ color: TEAL }} />
+                </div>
+                <div className="flex items-baseline gap-2 min-w-0">
+                  <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">{s.label}</p>
+                  <p className="text-lg font-heading font-bold" style={{ color: TEAL }}>{s.value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-          {/* 🎯 Filter Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-6 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-xl flex-wrap">
+          {/* Filter Bar */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 flex flex-wrap items-center gap-3 shadow-sm">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 flex-wrap">
               {(["All", "Online", "Offline", "Free", "Locked", "Disabled"] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setFilterTab(tab)}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all",
-                    filterTab === tab ? "bg-card shadow-sm text-signal" : "text-muted-foreground hover:text-foreground"
+                    filterTab === tab ? "bg-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                   )}
+                  style={filterTab === tab ? { color: TEAL } : {}}
                 >
                   {tab}
                 </button>
@@ -301,38 +282,54 @@ export default function ZoneCustomerSummaryPage() {
             </div>
 
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search by owner or ID…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-teal-200"
               />
             </div>
 
             {/* Export Buttons */}
             <div className="flex items-center gap-2">
-              <button onClick={handleCopy} className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold hover:shadow-md transition-all"
+                style={{ color: TEAL }}
+              >
                 <Copy className="h-3.5 w-3.5" /> Copy
               </button>
-              <button onClick={exportPDF} className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all">
+              <button
+                onClick={exportPDF}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold hover:shadow-md transition-all"
+                style={{ color: TEAL }}
+              >
                 <Printer className="h-3.5 w-3.5" /> Print
               </button>
-              <button onClick={exportExcel} className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all">
+              <button
+                onClick={exportExcel}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold hover:shadow-md transition-all"
+                style={{ color: TEAL }}
+              >
                 <FileSpreadsheet className="h-3.5 w-3.5" /> Excel
               </button>
-              <button onClick={exportCSV} className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold hover:shadow-md transition-all">
+              <button
+                onClick={exportCSV}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold hover:shadow-md transition-all"
+                style={{ color: TEAL }}
+              >
                 <FileText className="h-3.5 w-3.5" /> CSV
               </button>
             </div>
           </div>
 
-          {/* 🎯 Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden">
+          {/* Table */}
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[1600px]">
                 <thead>
-                  <tr className="bg-gradient-to-r from-signal to-violet-accent text-white">
+                  <tr className="text-white" style={{ background: TEAL }}>
                     {columns.map((c) => {
                       const Icon = c.icon;
                       return (
@@ -340,8 +337,9 @@ export default function ZoneCustomerSummaryPage() {
                           key={c.key}
                           className={cn(
                             "text-left px-3.5 py-4 font-semibold text-[11px] uppercase tracking-wider whitespace-nowrap",
-                            c.sticky && "sticky left-0 bg-gradient-to-r from-signal to-signal z-10"
+                            c.sticky && "sticky left-0 z-10"
                           )}
+                          style={c.sticky ? { background: TEAL } : {}}
                         >
                           <div className="flex items-center gap-1.5">
                             <Icon className="h-3.5 w-3.5 opacity-70" />
@@ -355,17 +353,16 @@ export default function ZoneCustomerSummaryPage() {
                 <tbody>
                   {paginatedRows.length > 0 ? (
                     paginatedRows.map((r) => (
-                      <tr key={r.id} className="border-t hover:bg-signal-tint/20 transition-colors">
-                        <td className="px-3.5 py-3 font-mono font-bold text-signal">#{r.id}</td>
-                        <td className="px-3.5 py-3 whitespace-nowrap sticky left-0 bg-card z-10">
-                          <span className="font-semibold">{r.owner}</span>
+                      <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td className="px-3.5 py-3 font-mono font-bold" style={{ color: TEAL }}>#{r.id}</td>
+                        <td className="px-3.5 py-3 whitespace-nowrap sticky left-0 bg-white z-10 border-r border-slate-100">
+                          <span className="font-semibold" style={{ color: TEAL }}>{r.owner}</span>
                         </td>
-                        <td className="px-3.5 py-3 font-mono font-bold">{r.total}</td>
+                        <td className="px-3.5 py-3 font-mono font-bold text-slate-800">{r.total}</td>
                         <td className="px-3.5 py-3">
-                          <button className="font-mono font-bold text-signal hover:underline">{r.ok}</button>
+                          <button className="font-mono font-bold hover:underline" style={{ color: TEAL }}>{r.ok}</button>
                         </td>
 
-                        {/* Online */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "online")}
@@ -375,7 +372,6 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        {/* Offline */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "offline")}
@@ -385,7 +381,6 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        {/* Free */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "free")}
@@ -395,7 +390,6 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        {/* VIP */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "vip")}
@@ -405,7 +399,6 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        {/* Expired */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "expired")}
@@ -415,7 +408,6 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        {/* Locked */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "locked")}
@@ -425,9 +417,8 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        <td className="px-3.5 py-3 font-mono text-muted-foreground">{r.grace}</td>
+                        <td className="px-3.5 py-3 font-mono text-slate-500">{r.grace}</td>
 
-                        {/* Disabled */}
                         <td className="px-3.5 py-3">
                           <button
                             onClick={() => handleMetricClick(r.owner, "disabled")}
@@ -437,23 +428,26 @@ export default function ZoneCustomerSummaryPage() {
                           </button>
                         </td>
 
-                        <td className="px-3.5 py-3 font-mono text-muted-foreground">{r.blocked}</td>
-                        <td className="px-3.5 py-3 font-mono font-bold text-signal">৳{r.approxBill.toLocaleString()}</td>
-                        <td className="px-3.5 py-3 font-mono">{r.nid}</td>
-                        <td className="px-3.5 py-3 font-mono">{r.mobile}</td>
-                        <td className="px-3.5 py-3 font-mono">{r.photo}</td>
-                        <td className="px-3.5 py-3 font-mono">{r.location}</td>
+                        <td className="px-3.5 py-3 font-mono text-slate-500">{r.blocked}</td>
+                        <td className="px-3.5 py-3 font-mono font-bold" style={{ color: TEAL }}>৳{r.approxBill.toLocaleString()}</td>
+                        <td className="px-3.5 py-3 font-mono text-slate-600">{r.nid}</td>
+                        <td className="px-3.5 py-3 font-mono text-slate-600">{r.mobile}</td>
+                        <td className="px-3.5 py-3 font-mono text-slate-600">{r.photo}</td>
+                        <td className="px-3.5 py-3 font-mono text-slate-600">{r.location}</td>
                       </tr>
                     ))
                   ) : (
                     <tr>
                       <td colSpan={18} className="px-4 py-16 text-center">
                         <div className="flex flex-col items-center gap-3">
-                          <div className="w-16 h-16 rounded-full bg-signal/10 flex items-center justify-center">
-                            <Users className="h-8 w-8 text-signal" />
+                          <div
+                            className="w-16 h-16 rounded-full flex items-center justify-center"
+                            style={{ background: TEAL_TINT }}
+                          >
+                            <Users className="h-8 w-8" style={{ color: TEAL }} />
                           </div>
-                          <p className="font-semibold">No records found</p>
-                          <p className="text-xs text-muted-foreground">Try adjusting your filters or search term.</p>
+                          <p className="font-semibold" style={{ color: TEAL }}>No records found</p>
+                          <p className="text-xs text-slate-500">Try adjusting your filters or search term.</p>
                         </div>
                       </td>
                     </tr>
@@ -462,39 +456,40 @@ export default function ZoneCustomerSummaryPage() {
 
                 {/* Totals Footer */}
                 <tfoot>
-                  <tr className="bg-gradient-to-r from-signal/10 to-violet-accent/10 font-heading font-bold border-t-2 border-signal/30">
+                  <tr className="font-heading font-bold border-t-2" style={{ background: TEAL_TINT, borderColor: TEAL_BORDER }}>
                     <td className="px-3.5 py-4" colSpan={2}>
-                      <span className="text-signal">TOTAL</span>
+                      <span style={{ color: TEAL }}>TOTAL</span>
                     </td>
-                    <td className="px-3.5 py-4 font-mono">{totals.total.toLocaleString()}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.ok.toLocaleString()}</td>
+                    <td className="px-3.5 py-4 font-mono" style={{ color: TEAL }}>{totals.total.toLocaleString()}</td>
+                    <td className="px-3.5 py-4 font-mono" style={{ color: TEAL }}>{totals.ok.toLocaleString()}</td>
                     <td className="px-3.5 py-4 font-mono text-emerald-600">{totals.online.toLocaleString()}</td>
                     <td className="px-3.5 py-4 font-mono text-red-600">{totals.offline.toLocaleString()}</td>
                     <td className="px-3.5 py-4 font-mono text-blue-600">{totals.free.toLocaleString()}</td>
                     <td className="px-3.5 py-4 font-mono text-violet-600">{totals.vip.toLocaleString()}</td>
                     <td className="px-3.5 py-4 font-mono text-amber-600">{totals.expired.toLocaleString()}</td>
                     <td className="px-3.5 py-4 font-mono text-orange-600">{totals.locked.toLocaleString()}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.grace}</td>
+                    <td className="px-3.5 py-4 font-mono text-slate-500">{totals.grace}</td>
                     <td className="px-3.5 py-4 font-mono text-slate-600">{totals.disabled.toLocaleString()}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.blocked}</td>
-                    <td className="px-3.5 py-4 font-mono text-signal">৳{totals.approxBill.toLocaleString()}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.nid}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.mobile}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.photo}</td>
-                    <td className="px-3.5 py-4 font-mono">{totals.location}</td>
+                    <td className="px-3.5 py-4 font-mono text-slate-500">{totals.blocked}</td>
+                    <td className="px-3.5 py-4 font-mono" style={{ color: TEAL }}>৳{totals.approxBill.toLocaleString()}</td>
+                    <td className="px-3.5 py-4 font-mono text-slate-600">{totals.nid}</td>
+                    <td className="px-3.5 py-4 font-mono text-slate-600">{totals.mobile}</td>
+                    <td className="px-3.5 py-4 font-mono text-slate-600">{totals.photo}</td>
+                    <td className="px-3.5 py-4 font-mono text-slate-600">{totals.location}</td>
                   </tr>
                 </tfoot>
               </table>
             </div>
 
-            {/* 🎯 Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-t text-sm text-muted-foreground">
+            {/* Pagination */}
+            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-t border-slate-100 text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <span>Show Entities</span>
                 <select
                   value={pageSize}
                   onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
-                  className="border rounded-md px-2 py-1 bg-background font-semibold"
+                  className="border border-slate-200 rounded-md px-2 py-1 bg-white font-semibold"
+                  style={{ color: TEAL }}
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -502,37 +497,38 @@ export default function ZoneCustomerSummaryPage() {
                   <option value={100}>100</option>
                 </select>
                 <span>•</span>
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold" style={{ color: TEAL }}>
                   {filteredRows.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, filteredRows.length)}
                 </span>
                 <span>of</span>
-                <span className="font-semibold text-foreground">{filteredRows.length}</span>
+                <span className="font-semibold" style={{ color: TEAL }}>{filteredRows.length}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>Page {currentPage} of {totalPages || 1}</span>
                 <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(p => (
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
                     onClick={() => setCurrentPage(p)}
                     className={cn(
                       "w-8 h-8 rounded-lg font-bold text-xs transition-all",
-                      currentPage === p ? "bg-signal text-white shadow-md" : "border bg-card hover:bg-muted"
+                      currentPage === p ? "text-white shadow-md" : "border border-slate-200 bg-white hover:bg-slate-50"
                     )}
+                    style={currentPage === p ? { background: TEAL } : { color: TEAL }}
                   >
                     {p}
                   </button>
                 ))}
                 <button
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -542,7 +538,7 @@ export default function ZoneCustomerSummaryPage() {
         </div>
       </div>
 
-      {/* 🎯 Detail Modal */}
+      {/* Detail Modal */}
       {detailModal.open && (
         <DetailModal
           owner={detailModal.owner!}
@@ -551,9 +547,12 @@ export default function ZoneCustomerSummaryPage() {
         />
       )}
 
-      {/* 🎯 Toast */}
+      {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl bg-emerald-500 text-white animate-in slide-in-from-bottom-2 duration-300">
+        <div
+          className="fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl text-white animate-in slide-in-from-bottom-2 duration-300"
+          style={{ background: TEAL }}
+        >
           <CheckCircle2 className="h-5 w-5" />
           <span className="text-sm font-bold">{toast}</span>
         </div>
@@ -563,7 +562,7 @@ export default function ZoneCustomerSummaryPage() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🎯 Detail Modal
+// Detail Modal (Teal & White)
 // ═══════════════════════════════════════════════════════════════
 function DetailModal({ owner, metric, onClose }: { owner: string; metric: string; onClose: () => void }) {
   const metricLabels: Record<string, string> = {
@@ -576,7 +575,6 @@ function DetailModal({ owner, metric, onClose }: { owner: string; metric: string
     disabled: "Disabled Customers",
   };
 
-  // ডেমো ডেটা
   const mockCustomers = Array.from({ length: 5 }).map((_, i) => ({
     id: `C-${String(1000 + i).padStart(4, "0")}`,
     name: ["Rahim Uddin", "Karim Ali", "Jamal Hossain", "Sultana Begum", "Rafiq Islam"][i],
@@ -588,42 +586,50 @@ function DetailModal({ owner, metric, onClose }: { owner: string; metric: string
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-2xl bg-card rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className="h-1.5 bg-gradient-to-r from-signal to-violet-accent" />
-        <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between">
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        <div className="h-1.5" style={{ background: TEAL }} />
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-signal to-violet-accent flex items-center justify-center text-white shadow-md">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md"
+              style={{ background: TEAL }}
+            >
               <Eye className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-heading text-base font-bold">{metricLabels[metric] || "Customers"}</h3>
-              <p className="text-xs text-muted-foreground">{owner}</p>
+              <h3 className="font-heading text-base font-bold" style={{ color: TEAL }}>
+                {metricLabels[metric] || "Customers"}
+              </h3>
+              <p className="text-xs text-slate-500">{owner}</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="p-6 max-h-[60vh] overflow-y-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="text-left px-4 py-3 text-xs font-bold">ID</th>
-                <th className="text-left px-4 py-3 text-xs font-bold">Customer</th>
-                <th className="text-left px-4 py-3 text-xs font-bold">Mobile</th>
-                <th className="text-left px-4 py-3 text-xs font-bold">Package</th>
-                <th className="text-left px-4 py-3 text-xs font-bold">Status</th>
+              <tr className="border-b border-slate-100 bg-slate-50">
+                <th className="text-left px-4 py-3 text-xs font-bold" style={{ color: TEAL }}>ID</th>
+                <th className="text-left px-4 py-3 text-xs font-bold" style={{ color: TEAL }}>Customer</th>
+                <th className="text-left px-4 py-3 text-xs font-bold" style={{ color: TEAL }}>Mobile</th>
+                <th className="text-left px-4 py-3 text-xs font-bold" style={{ color: TEAL }}>Package</th>
+                <th className="text-left px-4 py-3 text-xs font-bold" style={{ color: TEAL }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {mockCustomers.map((c, i) => (
-                <tr key={i} className="border-b hover:bg-muted/30">
-                  <td className="px-4 py-3 font-mono text-xs text-signal font-bold">{c.id}</td>
-                  <td className="px-4 py-3 font-semibold">{c.name}</td>
-                  <td className="px-4 py-3 font-mono text-xs">{c.mobile}</td>
-                  <td className="px-4 py-3 text-xs">{c.package}</td>
+                <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="px-4 py-3 font-mono text-xs font-bold" style={{ color: TEAL }}>{c.id}</td>
+                  <td className="px-4 py-3 font-semibold text-slate-800">{c.name}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-600">{c.mobile}</td>
+                  <td className="px-4 py-3 text-xs text-slate-600">{c.package}</td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-signal/10 text-signal">
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold"
+                      style={{ background: TEAL_TINT, color: TEAL }}
+                    >
                       {c.status}
                     </span>
                   </td>
@@ -631,13 +637,19 @@ function DetailModal({ owner, metric, onClose }: { owner: string; metric: string
               ))}
             </tbody>
           </table>
-          <p className="text-xs text-muted-foreground text-center mt-4">Showing first 5 of many customers…</p>
+          <p className="text-xs text-slate-500 text-center mt-4">Showing first 5 of many customers…</p>
         </div>
-        <div className="px-6 py-4 border-t flex justify-end gap-3">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold bg-muted text-muted-foreground hover:bg-muted/80">
+        <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200"
+          >
             Close
           </button>
-          <button className="px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg">
+          <button
+            className="px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-lg"
+            style={{ background: TEAL }}
+          >
             View All
           </button>
         </div>

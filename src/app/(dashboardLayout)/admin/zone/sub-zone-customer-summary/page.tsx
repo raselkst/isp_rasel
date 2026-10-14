@@ -13,7 +13,12 @@ import {
   Camera, IdCard, Layers, BarChart3,
 } from "lucide-react";
 
-// 🎯 ডেটা টাইপ
+// 🎯 Teal & White Palette
+const TEAL = "#066F6F";
+const TEAL_TINT = "rgba(6, 111, 111, 0.08)";
+const TEAL_BORDER = "rgba(6, 111, 111, 0.15)";
+const TEAL_SHADOW = "rgba(6, 111, 111, 0.45)";
+
 interface CustomerSummaryRow {
   id: number;
   owner: string;
@@ -83,49 +88,47 @@ export default function SubZoneCustomerSummaryPage() {
     }
   }, [toast]);
 
-  // 🎯 ফিল্টার
   const filteredRows = useMemo(() => {
     if (!searchTerm.trim()) return rows;
     const q = searchTerm.toLowerCase();
-    return rows.filter(r =>
-      r.owner.toLowerCase().includes(q) ||
-      String(r.id).includes(q)
+    return rows.filter((r) =>
+      r.owner.toLowerCase().includes(q) || String(r.id).includes(q)
     );
   }, [rows, searchTerm]);
 
-  // 🎯 পেজিনেশন
   const totalPages = Math.ceil(filteredRows.length / pageSize);
   const paginatedRows = filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => { setCurrentPage(1); }, [searchTerm, pageSize]);
 
-  // 🎯 Auto Total
   const totals = useMemo(() => {
-    return filteredRows.reduce((acc, r) => ({
-      total: acc.total + r.total,
-      ok: acc.ok + r.ok,
-      online: acc.online + r.online,
-      offline: acc.offline + r.offline,
-      free: acc.free + r.free,
-      vip: acc.vip + r.vip,
-      expired: acc.expired + r.expired,
-      locked: acc.locked + r.locked,
-      grace: acc.grace + r.grace,
-      disabled: acc.disabled + r.disabled,
-      blocked: acc.blocked + r.blocked,
-      approxBill: acc.approxBill + r.approxBill,
-      nid: acc.nid + r.nid,
-      mobile: acc.mobile + r.mobile,
-      photo: acc.photo + r.photo,
-      location: acc.location + r.location,
-    }), {
-      total: 0, ok: 0, online: 0, offline: 0, free: 0, vip: 0, expired: 0,
-      locked: 0, grace: 0, disabled: 0, blocked: 0, approxBill: 0,
-      nid: 0, mobile: 0, photo: 0, location: 0,
-    });
+    return filteredRows.reduce(
+      (acc, r) => ({
+        total: acc.total + r.total,
+        ok: acc.ok + r.ok,
+        online: acc.online + r.online,
+        offline: acc.offline + r.offline,
+        free: acc.free + r.free,
+        vip: acc.vip + r.vip,
+        expired: acc.expired + r.expired,
+        locked: acc.locked + r.locked,
+        grace: acc.grace + r.grace,
+        disabled: acc.disabled + r.disabled,
+        blocked: acc.blocked + r.blocked,
+        approxBill: acc.approxBill + r.approxBill,
+        nid: acc.nid + r.nid,
+        mobile: acc.mobile + r.mobile,
+        photo: acc.photo + r.photo,
+        location: acc.location + r.location,
+      }),
+      {
+        total: 0, ok: 0, online: 0, offline: 0, free: 0, vip: 0, expired: 0,
+        locked: 0, grace: 0, disabled: 0, blocked: 0, approxBill: 0,
+        nid: 0, mobile: 0, photo: 0, location: 0,
+      }
+    );
   }, [filteredRows]);
 
-  // 🎯 Stat Cards
   const stats = useMemo(() => ({
     totalZones: filteredRows.length,
     totalCustomers: totals.total,
@@ -133,12 +136,13 @@ export default function SubZoneCustomerSummaryPage() {
     expired: totals.expired,
   }), [filteredRows, totals]);
 
-  // 🎯 এক্সপোর্ট
   const downloadFile = (content: string, filename: string, type: string) => {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = filename; a.click();
+    a.href = url;
+    a.download = filename;
+    a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -149,10 +153,10 @@ export default function SubZoneCustomerSummaryPage() {
       <html><head><title>Sub-Zone Customer Summary</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
-        h1 { color: #F97316; }
+        h1 { color: ${TEAL}; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 10px; }
-        th { background: #F97316; color: white; }
+        th { background: ${TEAL}; color: white; }
         tr:nth-child(even) { background: #f9f9f9; }
       </style></head><body>
       <h1>Sub-Zone Customer Summary</h1>
@@ -162,7 +166,7 @@ export default function SubZoneCustomerSummaryPage() {
         <th>Free</th><th>VIP</th><th>Expired</th><th>Locked</th><th>Disabled</th>
         <th>Approx Bill</th><th>NID</th><th>Mobile</th>
       </tr></thead><tbody>
-      ${filteredRows.map(r => `<tr>
+      ${filteredRows.map((r) => `<tr>
         <td>${r.id}</td><td>${r.owner}</td><td>${r.total}</td><td>${r.ok}</td>
         <td>${r.online}</td><td>${r.offline}</td><td>${r.free}</td><td>${r.vip}</td>
         <td>${r.expired}</td><td>${r.locked}</td><td>${r.disabled}</td>
@@ -179,8 +183,8 @@ export default function SubZoneCustomerSummaryPage() {
 
   const exportExcel = () => {
     const headers = ["ID", "Owner", "Total", "OK", "Online", "Offline", "Free", "VIP", "Expired", "Locked", "Grace", "Disabled", "Blocked", "Approx Bill", "NID", "Mobile", "Photo", "Location"];
-    const data = filteredRows.map(r => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
-    const tsv = [headers, ...data].map(row => row.join("\t")).join("\n");
+    const data = filteredRows.map((r) => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
+    const tsv = [headers, ...data].map((row) => row.join("\t")).join("\n");
     downloadFile(tsv, `sub-zone-customer-summary-${Date.now()}.xls`, "application/vnd.ms-excel");
     setToast({ message: "Excel downloaded!", type: "success" });
     setExportMenuOpen(false);
@@ -188,8 +192,8 @@ export default function SubZoneCustomerSummaryPage() {
 
   const exportCSV = () => {
     const headers = ["ID", "Owner", "Total", "OK", "Online", "Offline", "Free", "VIP", "Expired", "Locked", "Grace", "Disabled", "Blocked", "Approx Bill", "NID", "Mobile", "Photo", "Location"];
-    const data = filteredRows.map(r => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
-    const csv = [headers, ...data].map(row => row.map(c => `"${c}"`).join(",")).join("\n");
+    const data = filteredRows.map((r) => [r.id, r.owner, r.total, r.ok, r.online, r.offline, r.free, r.vip, r.expired, r.locked, r.grace, r.disabled, r.blocked, r.approxBill, r.nid, r.mobile, r.photo, r.location]);
+    const csv = [headers, ...data].map((row) => row.map((c) => `"${c}"`).join(",")).join("\n");
     downloadFile(csv, `sub-zone-customer-summary-${Date.now()}.csv`, "text/csv");
     setToast({ message: "CSV downloaded!", type: "success" });
     setExportMenuOpen(false);
@@ -201,17 +205,20 @@ export default function SubZoneCustomerSummaryPage() {
     setExportMenuOpen(false);
   };
 
-  const handlePrint = () => { window.print(); setExportMenuOpen(false); };
+  const handlePrint = () => {
+    window.print();
+    setExportMenuOpen(false);
+  };
 
   const handleCopy = () => {
-    const text = filteredRows.map(r => `${r.id}\t${r.owner}\t${r.total}\t${r.ok}\t${r.online}\t${r.offline}\t${r.expired}`).join("\n");
+    const text = filteredRows.map((r) => `${r.id}\t${r.owner}\t${r.total}\t${r.ok}\t${r.online}\t${r.offline}\t${r.expired}`).join("\n");
     navigator.clipboard.writeText(text);
     setToast({ message: `${filteredRows.length} rows copied!`, type: "success" });
     setExportMenuOpen(false);
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -219,109 +226,129 @@ export default function SubZoneCustomerSummaryPage() {
         <ListSubZoneTopbar />
 
         <div className="px-4 sm:px-8 py-7">
-          {/* 🎯 Hero Header */}
+          {/* Hero Header */}
           <div className="mb-6">
-            <p className="text-xs font-semibold tracking-widest uppercase text-orange-500 mb-1 flex items-center gap-1.5">
+            <p
+              className="text-xs font-semibold tracking-widest uppercase mb-1 flex items-center gap-1.5"
+              style={{ color: TEAL }}
+            >
               <BarChart3 className="h-3 w-3" /> Analytics Dashboard
             </p>
-            <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
+            <h1
+              className="font-heading text-[28px] font-bold tracking-tight"
+              style={{ color: TEAL }}
+            >
               Sub-Zone Customer Summary
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               Comprehensive breakdown of customer statistics across all sub-zones.
             </p>
           </div>
 
-         {/* 🎯 Stat Cards - Compact এক লাইনে */}
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-      <Layers className="w-4 h-4 text-orange-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Sub-Zones</p>
-      <p className="text-lg font-heading font-bold text-orange-600">{stats.totalZones}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-      <Users className="w-4 h-4 text-blue-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Customers</p>
-      <p className="text-lg font-heading font-bold text-blue-600">{stats.totalCustomers.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-      <Wifi className="w-4 h-4 text-emerald-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Online</p>
-      <p className="text-lg font-heading font-bold text-emerald-600">{stats.online.toLocaleString()}</p>
-    </div>
-  </div>
-  <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-    <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-      <Clock className="w-4 h-4 text-red-600" />
-    </div>
-    <div className="flex items-baseline gap-2 min-w-0">
-      <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Expired</p>
-      <p className="text-lg font-heading font-bold text-red-600">{stats.expired.toLocaleString()}</p>
-    </div>
-  </div>
-</div>
+          {/* Compact Stat Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: TEAL_TINT }}
+              >
+                <Layers className="w-4 h-4" style={{ color: TEAL }} />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Sub-Zones</p>
+                <p className="text-lg font-heading font-bold" style={{ color: TEAL }}>{stats.totalZones}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: TEAL_TINT }}
+              >
+                <Users className="w-4 h-4" style={{ color: TEAL }} />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Customers</p>
+                <p className="text-lg font-heading font-bold" style={{ color: TEAL }}>{stats.totalCustomers.toLocaleString()}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: TEAL_TINT }}
+              >
+                <Wifi className="w-4 h-4" style={{ color: TEAL }} />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Online</p>
+                <p className="text-lg font-heading font-bold" style={{ color: TEAL }}>{stats.online.toLocaleString()}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: TEAL_TINT }}
+              >
+                <Clock className="w-4 h-4" style={{ color: TEAL }} />
+              </div>
+              <div className="flex items-baseline gap-2 min-w-0">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Expired</p>
+                <p className="text-lg font-heading font-bold" style={{ color: TEAL }}>{stats.expired.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
 
-          {/* 🎯 Search + Export Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-6 flex flex-wrap items-center gap-3">
+          {/* Search + Export Bar */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 flex flex-wrap items-center gap-3 shadow-sm">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search by sub-zone name or ID…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-orange-500/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-slate-300"
               />
             </div>
 
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border bg-card text-xs font-semibold hover:bg-muted transition-all"
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold hover:bg-slate-50 transition-all"
+                style={{ color: TEAL }}
               >
                 <X className="h-3.5 w-3.5" /> Clear
               </button>
             )}
 
-            {/* Export Dropdown */}
             <div className="relative" ref={exportMenuRef}>
               <button
                 onClick={() => setExportMenuOpen(!exportMenuOpen)}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 text-white text-sm font-bold shadow-md shadow-orange-500/20 hover:scale-105 transition-all"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-md hover:scale-105 transition-all"
+                style={{ background: TEAL, boxShadow: `0 8px 20px -8px ${TEAL_SHADOW}` }}
               >
                 <Download className="h-4 w-4" /> Export
               </button>
 
               {exportMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-52 bg-card border rounded-xl shadow-xl overflow-hidden z-40 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-40 animate-in fade-in slide-in-from-top-2 duration-200">
                   {[
-                    { label: "Export as PDF", icon: FileDown, action: exportPDF, color: "text-red-500" },
-                    { label: "Export as Excel", icon: FileSpreadsheet, action: exportExcel, color: "text-emerald-500" },
-                    { label: "Export as CSV", icon: FileDown, action: exportCSV, color: "text-blue-500" },
-                    { label: "Export as JSON", icon: FileJson, action: exportJSON, color: "text-violet-500" },
+                    { label: "Export as PDF", icon: FileDown, action: exportPDF },
+                    { label: "Export as Excel", icon: FileSpreadsheet, action: exportExcel },
+                    { label: "Export as CSV", icon: FileDown, action: exportCSV },
+                    { label: "Export as JSON", icon: FileJson, action: exportJSON },
                     { divider: true },
-                    { label: "Print", icon: Printer, action: handlePrint, color: "text-slate-500" },
-                    { label: "Copy to Clipboard", icon: Copy, action: handleCopy, color: "text-amber-500" },
-                  ].map((item, idx) => {
-                    if ("divider" in item) return <div key={idx} className="border-t my-1" />;
+                    { label: "Print", icon: Printer, action: handlePrint },
+                    { label: "Copy to Clipboard", icon: Copy, action: handleCopy },
+                  ].map((item: any, idx) => {
+                    if ("divider" in item) return <div key={idx} className="border-t border-slate-100 my-1" />;
                     const Icon = item.icon!;
                     return (
                       <button
                         key={item.label}
                         onClick={item.action}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold hover:bg-muted transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold hover:bg-slate-50 transition-colors text-left"
+                        style={{ color: TEAL }}
                       >
-                        <Icon className={cn("h-4 w-4", item.color)} />
+                        <Icon className="h-4 w-4" style={{ color: TEAL }} />
                         {item.label}
                       </button>
                     );
@@ -331,12 +358,12 @@ export default function SubZoneCustomerSummaryPage() {
             </div>
           </div>
 
-          {/* 🎯 Table */}
-          <div className="bg-card rounded-2xl border overflow-hidden overflow-x-auto">
+          {/* Table */}
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden overflow-x-auto shadow-sm">
             <table className="w-full text-sm min-w-[1600px]">
               <thead>
                 {/* Group Header Row */}
-                <tr className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
+                <tr className="text-white" style={{ background: TEAL }}>
                   <th colSpan={2} className="text-left px-3.5 py-3 font-semibold text-[11px] uppercase tracking-wider border-r border-white/20">
                     Owner Info
                   </th>
@@ -353,7 +380,7 @@ export default function SubZoneCustomerSummaryPage() {
                     KYC Data
                   </th>
                 </tr>
-                <tr className="bg-orange-500/90 text-white">
+                <tr style={{ background: TEAL }}>
                   {[
                     { label: "ID", icon: Layers },
                     { label: "Owner", icon: Users },
@@ -376,7 +403,7 @@ export default function SubZoneCustomerSummaryPage() {
                   ].map((c) => {
                     const Icon = c.icon;
                     return (
-                      <th key={c.label} className="text-left px-3.5 py-3 font-semibold text-[11px] whitespace-nowrap">
+                      <th key={c.label} className="text-left px-3.5 py-3 font-semibold text-[11px] whitespace-nowrap text-white">
                         <div className="flex items-center gap-1.5">
                           <Icon className="h-3 w-3 opacity-70" />
                           {c.label}
@@ -389,25 +416,26 @@ export default function SubZoneCustomerSummaryPage() {
               <tbody>
                 {paginatedRows.length > 0 ? (
                   paginatedRows.map((r) => (
-                    <tr key={r.id} className="border-t hover:bg-orange-500/5 transition-colors">
-                      <td className="px-3.5 py-3 font-mono font-bold text-orange-500">#{r.id}</td>
-                      <td className="px-3.5 py-3 font-semibold whitespace-nowrap">{r.owner}</td>
-                      <td className="px-3.5 py-3 font-mono font-bold">{r.total}</td>
+                    <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-3.5 py-3 font-mono font-bold" style={{ color: TEAL }}>#{r.id}</td>
+                      <td className="px-3.5 py-3 font-semibold whitespace-nowrap" style={{ color: TEAL }}>{r.owner}</td>
+                      <td className="px-3.5 py-3 font-mono font-bold" style={{ color: TEAL }}>{r.total}</td>
                       <td className="px-3.5 py-3">
                         <button
                           onClick={() => setDetailModal({ open: true, row: r, field: "OK" })}
-                          className="font-mono font-bold text-emerald-600 hover:underline"
+                          className="font-mono font-bold hover:underline"
+                          style={{ color: TEAL }}
                         >
                           {r.ok}
                         </button>
                       </td>
                       <td className="px-3.5 py-3">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-emerald-600">{r.online}</span>
-                          <div className="w-12 h-1 rounded-full bg-muted overflow-hidden">
+                          <span className="font-mono font-bold" style={{ color: TEAL }}>{r.online}</span>
+                          <div className="w-12 h-1 rounded-full bg-slate-100 overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-emerald-500"
-                              style={{ width: `${(r.online / r.total) * 100}%` }}
+                              className="h-full rounded-full"
+                              style={{ width: `${(r.online / r.total) * 100}%`, background: TEAL }}
                             />
                           </div>
                         </div>
@@ -416,7 +444,8 @@ export default function SubZoneCustomerSummaryPage() {
                       <td className="px-3.5 py-3">
                         <button
                           onClick={() => setDetailModal({ open: true, row: r, field: "Free" })}
-                          className="font-mono font-bold text-cyan-600 hover:underline"
+                          className="font-mono font-bold hover:underline"
+                          style={{ color: TEAL }}
                         >
                           {r.free}
                         </button>
@@ -424,7 +453,8 @@ export default function SubZoneCustomerSummaryPage() {
                       <td className="px-3.5 py-3">
                         <button
                           onClick={() => setDetailModal({ open: true, row: r, field: "VIP" })}
-                          className="font-mono font-bold text-violet-600 hover:underline"
+                          className="font-mono font-bold hover:underline"
+                          style={{ color: TEAL }}
                         >
                           {r.vip}
                         </button>
@@ -440,12 +470,13 @@ export default function SubZoneCustomerSummaryPage() {
                       <td className="px-3.5 py-3">
                         <button
                           onClick={() => setDetailModal({ open: true, row: r, field: "Locked" })}
-                          className="font-mono font-bold text-amber-600 hover:underline"
+                          className="font-mono font-bold hover:underline"
+                          style={{ color: TEAL }}
                         >
                           {r.locked}
                         </button>
                       </td>
-                      <td className="px-3.5 py-3 font-mono">{r.grace}</td>
+                      <td className="px-3.5 py-3 font-mono text-slate-600">{r.grace}</td>
                       <td className="px-3.5 py-3">
                         <button
                           onClick={() => setDetailModal({ open: true, row: r, field: "Disabled" })}
@@ -454,38 +485,49 @@ export default function SubZoneCustomerSummaryPage() {
                           {r.disabled}
                         </button>
                       </td>
-                      <td className="px-3.5 py-3 font-mono">{r.blocked}</td>
-                      <td className="px-3.5 py-3 font-mono font-bold text-orange-500">৳{r.approxBill.toLocaleString()}</td>
-                      <td className="px-3.5 py-3 font-mono">{r.nid}</td>
-                      <td className="px-3.5 py-3 font-mono">{r.mobile}</td>
+                      <td className="px-3.5 py-3 font-mono text-slate-600">{r.blocked}</td>
+                      <td className="px-3.5 py-3 font-mono font-bold" style={{ color: TEAL }}>
+                        ৳{r.approxBill.toLocaleString()}
+                      </td>
+                      <td className="px-3.5 py-3 font-mono text-slate-600">{r.nid}</td>
+                      <td className="px-3.5 py-3 font-mono text-slate-600">{r.mobile}</td>
                       <td className="px-3.5 py-3">
-                        <span className={cn(
-                          "inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-bold",
-                          r.photo > 0 ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"
-                        )}>
+                        <span
+                          className={cn(
+                            "inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-bold border"
+                          )}
+                          style={
+                            r.photo > 0
+                              ? { background: TEAL_TINT, color: TEAL, borderColor: TEAL_BORDER }
+                              : { background: "#f1f5f9", color: "#64748b", borderColor: "#e2e8f0" }
+                          }
+                        >
                           {r.photo}
                         </span>
                       </td>
-                      <td className="px-3.5 py-3 font-mono">{r.location}</td>
+                      <td className="px-3.5 py-3 font-mono text-slate-600">{r.location}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td colSpan={18} className="px-3.5 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center">
-                          <Users className="h-8 w-8 text-orange-500" />
+                        <div
+                          className="w-16 h-16 rounded-full flex items-center justify-center"
+                          style={{ background: TEAL_TINT }}
+                        >
+                          <Users className="h-8 w-8" style={{ color: TEAL }} />
                         </div>
-                        <p className="font-semibold">No sub-zones found</p>
-                        <p className="text-xs text-muted-foreground">Try adjusting your search term.</p>
+                        <p className="font-semibold" style={{ color: TEAL }}>No sub-zones found</p>
+                        <p className="text-xs text-slate-500">Try adjusting your search term.</p>
                       </div>
                     </td>
                   </tr>
                 )}
               </tbody>
-              {/* 🎯 Total Footer */}
+              {/* Total Footer */}
               <tfoot>
-                <tr className="bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold">
+                <tr className="text-white font-bold" style={{ background: TEAL }}>
                   <td className="px-3.5 py-3.5" colSpan={2}>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4" />
@@ -512,14 +554,15 @@ export default function SubZoneCustomerSummaryPage() {
               </tfoot>
             </table>
 
-            {/* 🎯 Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-t text-sm text-muted-foreground">
+            {/* Pagination */}
+            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-t border-slate-100 text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <span>Show Entities</span>
                 <select
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="border rounded-md px-2 py-1 bg-background font-semibold"
+                  className="border border-slate-200 rounded-md px-2 py-1 bg-white font-semibold"
+                  style={{ color: TEAL }}
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -527,38 +570,39 @@ export default function SubZoneCustomerSummaryPage() {
                   <option value={100}>100</option>
                 </select>
                 <span>•</span>
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold" style={{ color: TEAL }}>
                   {filteredRows.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, filteredRows.length)}
                 </span>
                 <span>of</span>
-                <span className="font-semibold text-foreground">{filteredRows.length}</span>
+                <span className="font-semibold" style={{ color: TEAL }}>{filteredRows.length}</span>
                 <span>items</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>Page {currentPage} of {totalPages || 1}</span>
                 <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(p => (
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
                     onClick={() => setCurrentPage(p)}
                     className={cn(
                       "w-8 h-8 rounded-lg font-bold text-xs transition-all",
-                      currentPage === p ? "bg-orange-500 text-white shadow-md" : "border bg-card hover:bg-muted"
+                      currentPage === p ? "text-white shadow-md" : "border border-slate-200 bg-white hover:bg-slate-50"
                     )}
+                    style={currentPage === p ? { background: TEAL } : { color: TEAL }}
                   >
                     {p}
                   </button>
                 ))}
                 <button
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -568,7 +612,7 @@ export default function SubZoneCustomerSummaryPage() {
         </div>
       </div>
 
-      {/* 🎯 Detail Modal */}
+      {/* Detail Modal */}
       {detailModal.open && detailModal.row && (
         <DetailModal
           row={detailModal.row}
@@ -577,12 +621,15 @@ export default function SubZoneCustomerSummaryPage() {
         />
       )}
 
-      {/* 🎯 Toast */}
+      {/* Toast */}
       {toast && (
-        <div className={cn(
-          "fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl animate-in slide-in-from-bottom-2 duration-300",
-          toast.type === "success" ? "bg-emerald-500 text-white" : "bg-red-500 text-white"
-        )}>
+        <div
+          className={cn(
+            "fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl animate-in slide-in-from-bottom-2 duration-300 text-white",
+            toast.type === "success" ? "" : "bg-red-500"
+          )}
+          style={toast.type === "success" ? { background: TEAL } : {}}
+        >
           {toast.type === "success" ? <CheckCircle2 className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
           <span className="text-sm font-bold">{toast.message}</span>
         </div>
@@ -592,7 +639,7 @@ export default function SubZoneCustomerSummaryPage() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🎯 Detail Modal
+// Detail Modal (Teal & White)
 // ═══════════════════════════════════════════════════════════════
 function DetailModal({
   row, field, onClose,
@@ -606,50 +653,64 @@ function DetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-card rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className="h-1.5 bg-gradient-to-r from-orange-500 to-pink-500" />
-        <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between">
+      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        <div className="h-1.5" style={{ background: TEAL }} />
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white shadow-md">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md"
+              style={{ background: TEAL }}
+            >
               <Eye className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-heading text-base font-bold">{field} Customers</h3>
-              <p className="text-xs text-muted-foreground">{row.owner}</p>
+              <h3 className="font-heading text-base font-bold" style={{ color: TEAL }}>
+                {field} Customers
+              </h3>
+              <p className="text-xs text-slate-500">{row.owner}</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="p-6 space-y-4">
-          <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 text-center">
-            <p className="text-xs font-semibold text-orange-700 uppercase tracking-wider">Total {field}</p>
-            <p className="text-4xl font-heading font-bold text-orange-700 mt-1">{value}</p>
+          <div
+            className="rounded-xl p-4 text-center border"
+            style={{ background: TEAL_TINT, borderColor: TEAL_BORDER }}
+          >
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: TEAL }}>
+              Total {field}
+            </p>
+            <p className="text-4xl font-heading font-bold mt-1" style={{ color: TEAL }}>{value}</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-muted/40 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase">Sub-Zone ID</p>
-              <p className="font-mono font-bold text-sm mt-1">#{row.id}</p>
+            <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+              <p className="text-[10px] font-bold text-slate-500 uppercase">Sub-Zone ID</p>
+              <p className="font-mono font-bold text-sm mt-1" style={{ color: TEAL }}>#{row.id}</p>
             </div>
-            <div className="bg-muted/40 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase">Total Users</p>
-              <p className="font-mono font-bold text-sm mt-1">{row.total}</p>
+            <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+              <p className="text-[10px] font-bold text-slate-500 uppercase">Total Users</p>
+              <p className="font-mono font-bold text-sm mt-1" style={{ color: TEAL }}>{row.total}</p>
             </div>
-            <div className="bg-muted/40 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase">Online</p>
-              <p className="font-mono font-bold text-sm mt-1 text-emerald-600">{row.online}</p>
+            <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+              <p className="text-[10px] font-bold text-slate-500 uppercase">Online</p>
+              <p className="font-mono font-bold text-sm mt-1" style={{ color: TEAL }}>{row.online}</p>
             </div>
           </div>
 
-          <div className="pt-4 border-t">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Available Actions</p>
+          <div className="pt-4 border-t border-slate-100">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Available Actions</p>
             <div className="flex flex-wrap gap-2">
               {["View List", "Export", "Send SMS", "Tag Users"].map((action) => (
                 <button
                   key={action}
-                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-card border border-border hover:border-orange-500/40 hover:text-orange-500 transition-all"
+                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-white border border-slate-200 hover:border-teal-500/40 transition-all"
+                  style={{ color: TEAL }}
                 >
                   {action}
                 </button>
@@ -657,7 +718,11 @@ function DetailModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="w-full px-4 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg">
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg"
+            style={{ background: TEAL }}
+          >
             Close
           </button>
         </div>
