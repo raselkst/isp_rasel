@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 import {
   Upload, Download, Plus, Waypoints, Search, LayoutGrid, List,
   Edit3, Trash2, Server, Router, Network, Box, ChevronLeft,
-  ChevronRight, ArrowUpDown, X, Save, CheckCircle2, AlertCircle,
-  Boxes, Wifi, WifiOff, AlertTriangle, Filter, RefreshCw
+  ChevronRight, ArrowUpDown, X, Save, Boxes, WifiOff, AlertTriangle,
+  RefreshCw
 } from "lucide-react";
 
 // ডামি ডেটা
@@ -32,17 +32,19 @@ const initialDiagrams = [
   { id: 17, name: "Poli Network OLT", type: "OLT", description: "Mikrotik to OLT", status: "active" },
 ];
 
+// 🎯 Theme-connected type config
 const typeConfig: Record<string, { icon: any; color: string; bg: string }> = {
-  ONU: { icon: Box, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-  Router: { icon: Router, color: "text-blue-500", bg: "bg-blue-500/10" },
-  OLT: { icon: Server, color: "text-violet-500", bg: "bg-violet-500/10" },
-  Default: { icon: Network, color: "text-slate-500", bg: "bg-slate-500/10" },
+  ONU: { icon: Box, color: "text-signal", bg: "bg-signal-tint" },
+  Router: { icon: Router, color: "text-violet-accent", bg: "bg-violet-accent-tint" },
+  OLT: { icon: Server, color: "text-caution", bg: "bg-caution-tint" },
+  Default: { icon: Network, color: "text-slate-500", bg: "bg-slate-100" },
 };
 
+// 🎯 Theme-connected status config
 const statusConfig: Record<string, { dot: string; label: string; badge: string }> = {
-  active: { dot: "bg-emerald-500", label: "Active", badge: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
-  warning: { dot: "bg-amber-500", label: "Warning", badge: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
-  offline: { dot: "bg-red-500", label: "Offline", badge: "bg-red-500/10 text-red-600 border-red-500/20" },
+  active: { dot: "bg-success", label: "Active", badge: "bg-success-tint text-success border-success/30" },
+  warning: { dot: "bg-warning", label: "Warning", badge: "bg-warning-tint text-warning border-warning/30" },
+  offline: { dot: "bg-destructive", label: "Offline", badge: "bg-destructive/10 text-destructive border-destructive/30" },
 };
 
 const emptyDiagram = { id: 0, name: "", type: "ONU", description: "", status: "active" };
@@ -60,23 +62,17 @@ export default function NetworkDiagramPage() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(12);
   const [currentPage, setCurrentPage] = useState(1);
-
-  // নতুন ডায়াগ্রাম ফর্ম
   const [newDiagram, setNewDiagram] = useState({ ...emptyDiagram });
 
-  // Stat Cards
-  const stats = useMemo(() => {
-    return {
-      total: diagrams.length,
-      onu: diagrams.filter((d) => d.type === "ONU").length,
-      router: diagrams.filter((d) => d.type === "Router").length,
-      olt: diagrams.filter((d) => d.type === "OLT").length,
-      warning: diagrams.filter((d) => d.status === "warning").length,
-      offline: diagrams.filter((d) => d.status === "offline").length,
-    };
-  }, [diagrams]);
+  const stats = useMemo(() => ({
+    total: diagrams.length,
+    onu: diagrams.filter((d) => d.type === "ONU").length,
+    router: diagrams.filter((d) => d.type === "Router").length,
+    olt: diagrams.filter((d) => d.type === "OLT").length,
+    warning: diagrams.filter((d) => d.status === "warning").length,
+    offline: diagrams.filter((d) => d.status === "offline").length,
+  }), [diagrams]);
 
-  // ফিল্টার + সার্চ + সর্ট
   const filteredData = useMemo(() => {
     let filtered = diagrams.filter((item) => {
       const matchesSearch =
@@ -100,12 +96,10 @@ export default function NetworkDiagramPage() {
     return filtered;
   }, [diagrams, searchTerm, typeFilter, statusFilter, sortKey, sortOrder]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + rowsPerPage);
 
-  // সিলেক্ট
   const allSelected =
     paginatedData.length > 0 && paginatedData.every((d) => selectedRows.includes(d.id));
   const toggleSelectAll = () => {
@@ -119,13 +113,11 @@ export default function NetworkDiagramPage() {
     setSelectedRows((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
-  // সর্ট হ্যান্ডলার
   const handleSort = (key: string) => {
     if (sortKey === key) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     else { setSortKey(key); setSortOrder("asc"); }
   };
 
-  // Reset Filters
   const handleResetFilters = () => {
     setSearchTerm("");
     setTypeFilter("All");
@@ -133,7 +125,6 @@ export default function NetworkDiagramPage() {
     setCurrentPage(1);
   };
 
-  // Add Diagram
   const handleAddDiagram = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newDiagram.name.trim()) {
@@ -148,7 +139,6 @@ export default function NetworkDiagramPage() {
     alert(`✅ Diagram "${toAdd.name}" added successfully!`);
   };
 
-  // Edit Save
   const handleSaveEdit = () => {
     if (!editModal.name.trim()) {
       alert("Name is required.");
@@ -159,7 +149,6 @@ export default function NetworkDiagramPage() {
     alert("Diagram updated successfully!");
   };
 
-  // Delete
   const handleDelete = (id: number, name: string) => {
     if (confirm(`Delete diagram "${name}"? This cannot be undone.`)) {
       setDiagrams((prev) => prev.filter((d) => d.id !== id));
@@ -168,7 +157,6 @@ export default function NetworkDiagramPage() {
     }
   };
 
-  // Bulk Delete
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) {
       alert("Please select at least one diagram.");
@@ -181,7 +169,6 @@ export default function NetworkDiagramPage() {
     }
   };
 
-  // Export CSV
   const handleExport = () => {
     const dataToExport = selectedRows.length > 0
       ? diagrams.filter((d) => selectedRows.includes(d.id))
@@ -199,7 +186,6 @@ export default function NetworkDiagramPage() {
     alert(`Exported ${dataToExport.length} diagram(s) to CSV.`);
   };
 
-  // Import (Mock)
   const handleImport = () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -214,42 +200,42 @@ export default function NetworkDiagramPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         {/* Sticky Quick Actions Bar */}
-        <div className="border-b bg-gradient-to-r from-card via-card/80 to-muted/20 backdrop-blur-md sticky top-[64px] z-30">
+        <div className="border-b border-slate-200 sticky top-[64px] z-30 bg-white/85 backdrop-blur-md">
           <div className="px-4 sm:px-8 py-3 flex items-center justify-between gap-3 overflow-x-auto">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105"
               >
                 <Plus className="h-4 w-4" /> Add Diagram
               </button>
               <button
                 onClick={handleImport}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-card border border-border text-muted-foreground hover:text-foreground hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white border border-slate-200 text-slate-600 hover:text-signal hover:border-signal/30 hover:shadow-md"
               >
                 <Upload className="h-4 w-4" /> Import
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-card border border-border text-muted-foreground hover:text-foreground hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white border border-slate-200 text-slate-600 hover:text-signal hover:border-signal/30 hover:shadow-md"
               >
                 <Download className="h-4 w-4" /> Export
               </button>
             </div>
 
-            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-xl">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
               <button
                 onClick={() => setViewMode("grid")}
                 className={cn(
                   "p-2 rounded-lg transition-all",
-                  viewMode === "grid" ? "bg-card shadow-sm text-signal" : "text-muted-foreground hover:text-foreground"
+                  viewMode === "grid" ? "bg-white shadow-sm text-signal" : "text-slate-500 hover:text-signal"
                 )}
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -258,7 +244,7 @@ export default function NetworkDiagramPage() {
                 onClick={() => setViewMode("list")}
                 className={cn(
                   "p-2 rounded-lg transition-all",
-                  viewMode === "list" ? "bg-card shadow-sm text-signal" : "text-muted-foreground hover:text-foreground"
+                  viewMode === "list" ? "bg-white shadow-sm text-signal" : "text-slate-500 hover:text-signal"
                 )}
               >
                 <List className="h-4 w-4" />
@@ -274,85 +260,85 @@ export default function NetworkDiagramPage() {
               <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1">
                 Infrastructure
               </p>
-              <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[28px] font-bold tracking-tight text-signal">
                 Network Diagram List
               </h1>
             </div>
           </div>
 
-          {/* Compact Stat Cards */}
+          {/* Compact Stat Cards — Theme Connected */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-signal/10 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
                 <Boxes className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Total</p>
-                <p className="text-lg font-heading font-bold">{stats.total}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Total</p>
+                <p className="text-lg font-heading font-bold text-signal">{stats.total}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                <Box className="w-4 h-4 text-emerald-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <Box className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">ONU</p>
-                <p className="text-lg font-heading font-bold text-emerald-600">{stats.onu}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">ONU</p>
+                <p className="text-lg font-heading font-bold text-signal">{stats.onu}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                <Router className="w-4 h-4 text-blue-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-violet-accent-tint flex items-center justify-center shrink-0">
+                <Router className="w-4 h-4 text-violet-accent" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Router</p>
-                <p className="text-lg font-heading font-bold text-blue-600">{stats.router}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Router</p>
+                <p className="text-lg font-heading font-bold text-violet-accent">{stats.router}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0">
-                <Server className="w-4 h-4 text-violet-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-caution-tint flex items-center justify-center shrink-0">
+                <Server className="w-4 h-4 text-caution" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">OLT</p>
-                <p className="text-lg font-heading font-bold text-violet-600">{stats.olt}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">OLT</p>
+                <p className="text-lg font-heading font-bold text-caution">{stats.olt}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-4 h-4 text-warning" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Warning</p>
-                <p className="text-lg font-heading font-bold text-amber-600">{stats.warning}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Warning</p>
+                <p className="text-lg font-heading font-bold text-warning">{stats.warning}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-                <WifiOff className="w-4 h-4 text-red-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                <WifiOff className="w-4 h-4 text-destructive" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Offline</p>
-                <p className="text-lg font-heading font-bold text-red-600">{stats.offline}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Offline</p>
+                <p className="text-lg font-heading font-bold text-destructive">{stats.offline}</p>
               </div>
             </div>
           </div>
 
           {/* Filters Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-6 flex flex-wrap items-center gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 flex flex-wrap items-center gap-3 shadow-sm">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search diagrams by name, type or description…"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30"
               />
             </div>
             <select
               value={typeFilter}
               onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option value="All">All Types</option>
               <option value="ONU">ONU</option>
@@ -362,7 +348,7 @@ export default function NetworkDiagramPage() {
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option value="All">All Status</option>
               <option value="active">Active</option>
@@ -371,7 +357,7 @@ export default function NetworkDiagramPage() {
             </select>
             <button
               onClick={handleResetFilters}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border bg-background text-muted-foreground text-sm font-semibold hover:bg-muted transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-500 text-sm font-semibold hover:bg-slate-50 transition-all"
             >
               <RefreshCw className="h-3.5 w-3.5" /> Reset
             </button>
@@ -389,12 +375,12 @@ export default function NetworkDiagramPage() {
 
           {/* Sort Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
               <span>Show</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border rounded-lg px-2 py-1 bg-background text-xs"
+                className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs"
               >
                 <option value={12}>12</option>
                 <option value={24}>24</option>
@@ -408,7 +394,7 @@ export default function NetworkDiagramPage() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground font-semibold">Sort:</span>
+              <span className="text-xs text-slate-500 font-semibold">Sort:</span>
               {[
                 { key: "name", label: "Name" },
                 { key: "type", label: "Type" },
@@ -421,7 +407,7 @@ export default function NetworkDiagramPage() {
                     "px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1",
                     sortKey === s.key
                       ? "bg-signal text-white border-signal"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {s.label}
@@ -433,33 +419,32 @@ export default function NetworkDiagramPage() {
 
           {/* Empty State */}
           {filteredData.length === 0 && (
-            <div className="bg-card rounded-2xl border border-dashed p-12 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-full bg-signal/10 flex items-center justify-center mb-4">
+            <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 rounded-full bg-signal-tint flex items-center justify-center mb-4">
                 <Waypoints className="h-8 w-8 text-signal" />
               </div>
-              <h3 className="font-heading text-lg font-bold mb-1">No diagrams found</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mb-4">
+              <h3 className="font-heading text-lg font-bold mb-1 text-signal">No diagrams found</h3>
+              <p className="text-sm text-slate-500 max-w-sm mb-4">
                 {searchTerm || typeFilter !== "All" || statusFilter !== "All"
                   ? "Try adjusting your search or filters."
                   : "Add your first network node to start visualizing your infrastructure."}
               </p>
               <button
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
               >
                 <Plus className="h-4 w-4" /> Add Diagram
               </button>
             </div>
           )}
 
-          {/* Select All */}
           {paginatedData.length > 0 && (
-            <div className="flex items-center gap-3 px-4 py-2 mb-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-3 px-4 py-2 mb-2 text-xs text-slate-500">
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={toggleSelectAll}
-                className="rounded cursor-pointer"
+                className="rounded cursor-pointer accent-signal"
               />
               <span className="font-semibold">Select All on this page</span>
             </div>
@@ -477,48 +462,45 @@ export default function NetworkDiagramPage() {
                   <div
                     key={item.id}
                     className={cn(
-                      "group relative bg-card rounded-2xl border p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden",
-                      isSelected && "border-signal/50 bg-signal/5"
+                      "group relative bg-white rounded-2xl border border-slate-200 p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden",
+                      isSelected && "border-signal/50 bg-signal-tint"
                     )}
                   >
-                    {/* Checkbox */}
                     <div className="absolute top-4 left-4 z-10">
                       <input
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelect(item.id)}
-                        className="rounded cursor-pointer"
+                        className="rounded cursor-pointer accent-signal"
                       />
                     </div>
 
-                    {/* Status Indicator */}
                     <div className={cn("absolute top-4 right-4 w-2.5 h-2.5 rounded-full animate-pulse", statusCfg.dot)} />
 
-                    {/* Icon */}
                     <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-4 mt-6 transition-transform group-hover:scale-110", config.bg)}>
                       <Icon className={cn("h-6 w-6", config.color)} />
                     </div>
 
-                    <h3 className="font-bold text-base mb-1 truncate">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-4 truncate">
+                    <h3 className="font-bold text-base mb-1 truncate text-signal">{item.name}</h3>
+                    <p className="text-xs text-slate-500 mb-4 truncate">
                       {item.description || "No description"}
                     </p>
 
-                    <div className="flex items-center justify-between pt-4 border-t">
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                       <span className={cn("text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider", config.bg, config.color)}>
                         {item.type}
                       </span>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => setEditModal({ ...item })}
-                          className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-signal transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal transition-colors"
                           title="Edit"
                         >
                           <Edit3 className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(item.id, item.name)}
-                          className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-destructive/10 text-slate-500 hover:text-destructive transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -533,16 +515,16 @@ export default function NetworkDiagramPage() {
 
           {/* List View */}
           {viewMode === "list" && paginatedData.length > 0 && (
-            <div className="bg-card rounded-2xl border overflow-hidden overflow-x-auto">
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden overflow-x-auto shadow-sm">
               <table className="w-full text-sm min-w-[900px]">
                 <thead>
-                  <tr className="bg-gradient-to-r from-signal to-violet-accent text-white">
+                  <tr className="bg-signal text-white">
                     <th className="px-4 py-4 w-12">
                       <input
                         type="checkbox"
                         checked={allSelected}
                         onChange={toggleSelectAll}
-                        className="rounded cursor-pointer"
+                        className="rounded cursor-pointer accent-white"
                       />
                     </th>
                     {["SL", "Name", "Type", "Description", "Status", "Action"].map((h) => (
@@ -562,8 +544,8 @@ export default function NetworkDiagramPage() {
                       <tr
                         key={item.id}
                         className={cn(
-                          "border-t hover:bg-muted/40 transition-colors",
-                          isSelected && "bg-signal/5"
+                          "border-t border-slate-100 hover:bg-slate-50 transition-colors",
+                          isSelected && "bg-signal-tint"
                         )}
                       >
                         <td className="px-4 py-4">
@@ -571,18 +553,18 @@ export default function NetworkDiagramPage() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleSelect(item.id)}
-                            className="rounded cursor-pointer"
+                            className="rounded cursor-pointer accent-signal"
                           />
                         </td>
-                        <td className="px-6 py-4 font-mono text-muted-foreground">{startIndex + index + 1}</td>
-                        <td className="px-6 py-4 font-semibold">{item.name}</td>
+                        <td className="px-6 py-4 font-mono text-slate-500">{startIndex + index + 1}</td>
+                        <td className="px-6 py-4 font-semibold text-signal">{item.name}</td>
                         <td className="px-6 py-4">
                           <span className={cn("inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md", config.bg, config.color)}>
                             <Icon className="h-3 w-3" />
                             {item.type}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-muted-foreground">{item.description || "—"}</td>
+                        <td className="px-6 py-4 text-slate-500">{item.description || "—"}</td>
                         <td className="px-6 py-4">
                           <span className={cn("inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border", statusCfg.badge)}>
                             <span className={cn("w-1.5 h-1.5 rounded-full", statusCfg.dot)} />
@@ -593,14 +575,14 @@ export default function NetworkDiagramPage() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setEditModal({ ...item })}
-                              className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-signal transition-colors"
+                              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal transition-colors"
                               title="Edit"
                             >
                               <Edit3 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(item.id, item.name)}
-                              className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                              className="p-2 rounded-lg hover:bg-destructive/10 text-slate-500 hover:text-destructive transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -617,17 +599,17 @@ export default function NetworkDiagramPage() {
 
           {/* Pagination */}
           {filteredData.length > 0 && (
-            <div className="flex flex-wrap items-center justify-between gap-4 mt-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-4 mt-6 text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <span>Page</span>
-                <span className="font-semibold text-foreground">{currentPage}</span>
+                <span className="font-semibold text-signal">{currentPage}</span>
                 <span>of {totalPages}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" /> Previous
                 </button>
@@ -641,7 +623,7 @@ export default function NetworkDiagramPage() {
                         "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all",
                         currentPage === page
                           ? "bg-signal text-white shadow-md"
-                          : "border bg-card hover:bg-muted"
+                          : "border border-slate-200 bg-white hover:bg-slate-50 text-signal"
                       )}
                     >
                       {page}
@@ -651,7 +633,7 @@ export default function NetworkDiagramPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1"
                 >
                   Next <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -661,27 +643,27 @@ export default function NetworkDiagramPage() {
         </div>
       </div>
 
-      {/* Add Diagram Modal (Working) */}
+      {/* Add Diagram Modal */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setOpen(false)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setOpen(false)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-[9px] bg-gradient-to-br from-signal to-violet-accent" />
-                  <span className="font-heading font-bold text-sm">LOGO ICON ONLY</span>
+                  <div className="w-8 h-8 rounded-[9px] bg-signal" />
+                  <span className="font-heading font-bold text-sm text-signal">LOGO ICON ONLY</span>
                 </div>
-                <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                <h3 className="font-heading text-2xl font-bold text-signal">
                   Add Diagram
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Add a new network node to your infrastructure.
                 </p>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -689,24 +671,24 @@ export default function NetworkDiagramPage() {
 
             <form onSubmit={handleAddDiagram} className="space-y-5">
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">
-                  Name <span className="text-red-500">*</span>
+                <label className="font-semibold text-sm block text-signal">
+                  Name <span className="text-destructive">*</span>
                 </label>
                 <input
                   value={newDiagram.name}
                   onChange={(e) => setNewDiagram({ ...newDiagram, name: e.target.value })}
                   placeholder="e.g. Chorpara"
-                  className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Type</label>
+                  <label className="font-semibold text-sm block text-signal">Type</label>
                   <select
                     value={newDiagram.type}
                     onChange={(e) => setNewDiagram({ ...newDiagram, type: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="ONU">ONU</option>
                     <option value="Router">Router</option>
@@ -714,11 +696,11 @@ export default function NetworkDiagramPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Status</label>
+                  <label className="font-semibold text-sm block text-signal">Status</label>
                   <select
                     value={newDiagram.status}
                     onChange={(e) => setNewDiagram({ ...newDiagram, status: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="active">Active</option>
                     <option value="warning">Warning</option>
@@ -728,13 +710,13 @@ export default function NetworkDiagramPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Description</label>
+                <label className="font-semibold text-sm block text-signal">Description</label>
                 <textarea
                   value={newDiagram.description}
                   onChange={(e) => setNewDiagram({ ...newDiagram, description: e.target.value })}
                   placeholder="Optional description..."
                   rows={3}
-                  className="w-full bg-background border border-input rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-signal outline-none resize-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-signal focus:ring-2 focus:ring-signal outline-none resize-none"
                 />
               </div>
 
@@ -742,13 +724,13 @@ export default function NetworkDiagramPage() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                  className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Add Diagram
                 </button>
@@ -758,23 +740,23 @@ export default function NetworkDiagramPage() {
         </div>
       )}
 
-      {/* Edit Modal (Working) */}
+      {/* Edit Modal */}
       {editModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                <h3 className="font-heading text-2xl font-bold text-signal">
                   Edit Diagram
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Update the diagram details.
                 </p>
               </div>
               <button
                 onClick={() => setEditModal(null)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -782,21 +764,21 @@ export default function NetworkDiagramPage() {
 
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Name</label>
+                <label className="font-semibold text-sm block text-signal">Name</label>
                 <input
                   value={editModal.name}
                   onChange={(e) => setEditModal({ ...editModal, name: e.target.value })}
-                  className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Type</label>
+                  <label className="font-semibold text-sm block text-signal">Type</label>
                   <select
                     value={editModal.type}
                     onChange={(e) => setEditModal({ ...editModal, type: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="ONU">ONU</option>
                     <option value="Router">Router</option>
@@ -804,11 +786,11 @@ export default function NetworkDiagramPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Status</label>
+                  <label className="font-semibold text-sm block text-signal">Status</label>
                   <select
                     value={editModal.status}
                     onChange={(e) => setEditModal({ ...editModal, status: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="active">Active</option>
                     <option value="warning">Warning</option>
@@ -818,25 +800,25 @@ export default function NetworkDiagramPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Description</label>
+                <label className="font-semibold text-sm block text-signal">Description</label>
                 <textarea
                   value={editModal.description}
                   onChange={(e) => setEditModal({ ...editModal, description: e.target.value })}
                   rows={3}
-                  className="w-full bg-background border border-input rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-signal outline-none resize-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-signal focus:ring-2 focus:ring-signal outline-none resize-none"
                 />
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setEditModal(null)}
-                  className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                  className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                 >
                   <Save className="w-4 h-4" /> Save Changes
                 </button>

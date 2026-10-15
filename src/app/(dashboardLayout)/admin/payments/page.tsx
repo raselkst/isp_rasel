@@ -37,18 +37,20 @@ const initialPayments: PaymentData[] = [
   { id: "PAY-5008", client: "Sabbir Ahmed", clientId: "C-108", amount: 490, method: "Nagad", status: "Success", date: "2025-09-26 22:10", reference: "NGD3P4Q5R", collectedBy: "Support B" },
 ];
 
+// 🎯 Payment Methods — থিম-ভিত্তিক কালার
 const paymentMethods = [
-  { id: "cash", label: "Cash", icon: Wallet, color: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20" },
-  { id: "bkash", label: "bKash", icon: Smartphone, color: "text-pink-600 bg-pink-500/10 border-pink-500/20" },
-  { id: "nagad", label: "Nagad", icon: Smartphone, color: "text-orange-600 bg-orange-500/10 border-orange-500/20" },
-  { id: "rocket", label: "Rocket", icon: Smartphone, color: "text-purple-600 bg-purple-500/10 border-purple-500/20" },
-  { id: "bank", label: "Bank", icon: Building2, color: "text-blue-600 bg-blue-500/10 border-blue-500/20" },
+  { id: "cash", label: "Cash", icon: Wallet, color: "bg-success-tint text-success border border-success/30" },
+  { id: "bkash", label: "bKash", icon: Smartphone, color: "bg-signal-tint text-signal border border-signal/30" },
+  { id: "nagad", label: "Nagad", icon: Smartphone, color: "bg-warning-tint text-warning border border-warning/30" },
+  { id: "rocket", label: "Rocket", icon: Smartphone, color: "bg-violet-accent-tint text-violet-accent border border-violet-accent/30" },
+  { id: "bank", label: "Bank", icon: Building2, color: "bg-signal-tint text-signal border border-signal/30" },
 ];
 
+// 🎯 Status Colors — থিম-ভিত্তিক
 const statusColors: Record<string, string> = {
-  Success: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  Pending: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  Failed: "bg-red-500/10 text-red-600 border-red-500/20",
+  Success: "bg-success-tint text-success border-success/30",
+  Pending: "bg-warning-tint text-warning border-warning/30",
+  Failed: "bg-destructive/10 text-destructive border-destructive/30",
 };
 
 export default function PaymentsPage() {
@@ -201,7 +203,7 @@ export default function PaymentsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-muted/40 to-muted/10">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
@@ -213,88 +215,88 @@ export default function PaymentsPage() {
               <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1">
                 Finance
               </p>
-              <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h1 className="font-heading text-[28px] font-bold tracking-tight text-signal">
                 Payments
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Track all incoming payments and manage transactions.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-card border border-border text-muted-foreground hover:text-foreground hover:shadow-md transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-500 hover:text-signal hover:border-signal/30 hover:shadow-md transition-all"
               >
                 <Download className="h-4 w-4" /> Export
               </button>
               <button
                 onClick={handleOpen}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
               >
                 <Plus className="h-4 w-4" /> New Payment
               </button>
             </div>
           </div>
 
-          {/* Compact Stat Cards */}
+          {/* Compact Stat Cards — Theme Connected */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-signal/10 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
                 <DollarSign className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Total</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Total</p>
                 <p className="text-lg font-heading font-bold text-signal">
                   ৳{stats.total.toLocaleString()}
                 </p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4 text-success" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Today</p>
-                <p className="text-lg font-heading font-bold text-emerald-600">
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Today</p>
+                <p className="text-lg font-heading font-bold text-success">
                   ৳{stats.today.toLocaleString()}
                 </p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4 text-amber-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <Clock className="w-4 h-4 text-warning" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Pending</p>
-                <p className="text-lg font-heading font-bold text-amber-600">{stats.pending}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Pending</p>
+                <p className="text-lg font-heading font-bold text-warning">{stats.pending}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-                <AlertCircle className="w-4 h-4 text-red-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                <AlertCircle className="w-4 h-4 text-destructive" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Failed</p>
-                <p className="text-lg font-heading font-bold text-red-600">{stats.failed}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Failed</p>
+                <p className="text-lg font-heading font-bold text-destructive">{stats.failed}</p>
               </div>
             </div>
           </div>
 
           {/* Filters Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-6 flex flex-wrap items-center gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 flex flex-wrap items-center gap-3 shadow-sm">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search by client, payment ID or reference…"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option value="All">All Status</option>
               <option value="Success">Success</option>
@@ -304,7 +306,7 @@ export default function PaymentsPage() {
             <select
               value={methodFilter}
               onChange={(e) => { setMethodFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option value="All">All Methods</option>
               <option value="Cash">Cash</option>
@@ -315,7 +317,7 @@ export default function PaymentsPage() {
             </select>
             <button
               onClick={handleResetFilters}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border bg-background text-muted-foreground text-sm font-semibold hover:bg-muted transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-500 text-sm font-semibold hover:bg-slate-50 transition-all"
             >
               <RefreshCw className="h-3.5 w-3.5" /> Reset
             </button>
@@ -323,12 +325,12 @@ export default function PaymentsPage() {
 
           {/* Sort Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
               <span>Show</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border rounded-lg px-2 py-1 bg-background text-xs"
+                className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs text-signal"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -342,7 +344,7 @@ export default function PaymentsPage() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground font-semibold">Sort:</span>
+              <span className="text-xs text-slate-500 font-semibold">Sort:</span>
               {[
                 { key: "date", label: "Date" },
                 { key: "amount", label: "Amount" },
@@ -354,8 +356,8 @@ export default function PaymentsPage() {
                   className={cn(
                     "px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1",
                     sortKey === s.key
-                      ? "bg-signal text-white border-signal"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      ? "bg-signal text-white border-signal shadow-md"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                   )}
                 >
                   {s.label}
@@ -367,11 +369,11 @@ export default function PaymentsPage() {
 
           {/* Table */}
           {filteredPayments.length > 0 ? (
-            <div className="bg-card rounded-2xl border overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm min-w-[1100px]">
                   <thead>
-                    <tr className="bg-gradient-to-r from-signal to-violet-accent text-white">
+                    <tr className="bg-signal text-white">
                       {["Payment ID", "Client", "Amount", "Method", "Status", "Reference", "Date", "Collected By", "Actions"].map((c) => (
                         <th key={c} className="text-left px-5 py-4 font-semibold text-xs tracking-wide whitespace-nowrap">
                           {c}
@@ -381,26 +383,26 @@ export default function PaymentsPage() {
                   </thead>
                   <tbody>
                     {paginatedPayments.map((p) => (
-                      <tr key={p.id} className="border-t hover:bg-muted/40 transition-colors">
+                      <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
                         <td className="px-5 py-4">
-                          <span className="font-mono text-xs font-semibold">{p.id}</span>
+                          <span className="font-mono text-xs font-semibold text-signal">{p.id}</span>
                         </td>
                         <td className="px-5 py-4">
                           <div>
-                            <p className="font-semibold">{p.client}</p>
-                            <p className="text-[10px] text-muted-foreground">{p.clientId}</p>
+                            <p className="font-semibold text-signal">{p.client}</p>
+                            <p className="text-[10px] text-slate-500">{p.clientId}</p>
                           </div>
                         </td>
                         <td className="px-5 py-4 font-heading font-bold text-signal">
                           ৳{p.amount.toLocaleString()}
                         </td>
                         <td className="px-5 py-4">
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold">
-                            {p.method === "Cash" && <Wallet className="w-3 h-3 text-emerald-600" />}
-                            {p.method === "bKash" && <Smartphone className="w-3 h-3 text-pink-600" />}
-                            {p.method === "Nagad" && <Smartphone className="w-3 h-3 text-orange-600" />}
-                            {p.method === "Rocket" && <Smartphone className="w-3 h-3 text-purple-600" />}
-                            {p.method === "Bank" && <Building2 className="w-3 h-3 text-blue-600" />}
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-signal">
+                            {p.method === "Cash" && <Wallet className="w-3 h-3 text-success" />}
+                            {p.method === "bKash" && <Smartphone className="w-3 h-3 text-signal" />}
+                            {p.method === "Nagad" && <Smartphone className="w-3 h-3 text-warning" />}
+                            {p.method === "Rocket" && <Smartphone className="w-3 h-3 text-violet-accent" />}
+                            {p.method === "Bank" && <Building2 className="w-3 h-3 text-signal" />}
                             {p.method}
                           </span>
                         </td>
@@ -415,14 +417,14 @@ export default function PaymentsPage() {
                             {p.status}
                           </span>
                         </td>
-                        <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{p.reference}</td>
-                        <td className="px-5 py-4 text-xs text-muted-foreground whitespace-nowrap">{p.date}</td>
-                        <td className="px-5 py-4 text-xs">{p.collectedBy}</td>
+                        <td className="px-5 py-4 font-mono text-xs text-slate-500">{p.reference}</td>
+                        <td className="px-5 py-4 text-xs text-slate-500 whitespace-nowrap">{p.date}</td>
+                        <td className="px-5 py-4 text-xs text-slate-600">{p.collectedBy}</td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-1">
                             <button
                               onClick={() => handleView(p)}
-                              className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-signal transition-colors"
+                              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal transition-colors"
                               title="View"
                             >
                               <Eye className="h-4 w-4" />
@@ -430,7 +432,7 @@ export default function PaymentsPage() {
                             {p.status === "Success" && (
                               <button
                                 onClick={() => handleRefund(p.id)}
-                                className="p-2 rounded-lg hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 transition-colors"
+                                className="p-2 rounded-lg hover:bg-warning-tint text-slate-500 hover:text-warning transition-colors"
                                 title="Refund"
                               >
                                 <RotateCcw className="h-4 w-4" />
@@ -445,15 +447,15 @@ export default function PaymentsPage() {
               </div>
 
               {/* Pagination */}
-              <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t text-sm">
-                <div className="text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t border-slate-100 text-sm">
+                <div className="text-slate-500">
                   Page {currentPage} of {totalPages}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1 text-signal"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" /> Previous
                   </button>
@@ -467,7 +469,7 @@ export default function PaymentsPage() {
                           "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all",
                           currentPage === page
                             ? "bg-signal text-white shadow-md"
-                            : "border bg-card hover:bg-muted"
+                            : "border border-slate-200 bg-white hover:bg-slate-50 text-signal"
                         )}
                       >
                         {page}
@@ -477,7 +479,7 @@ export default function PaymentsPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1 text-signal"
                   >
                     Next <ChevronRight className="w-3.5 h-3.5" />
                   </button>
@@ -485,19 +487,19 @@ export default function PaymentsPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-card rounded-2xl border border-dashed p-16 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-full bg-signal/10 flex items-center justify-center mb-4">
+            <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-16 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 rounded-full bg-signal-tint flex items-center justify-center mb-4">
                 <Receipt className="h-8 w-8 text-signal" />
               </div>
-              <h3 className="font-heading text-lg font-bold mb-1">No payments found</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mb-5">
+              <h3 className="font-heading text-lg font-bold mb-1 text-signal">No payments found</h3>
+              <p className="text-sm text-slate-500 max-w-sm mb-5">
                 {searchTerm || statusFilter !== "All" || methodFilter !== "All"
                   ? "Try adjusting your search or filters."
                   : "Create your first payment to get started."}
               </p>
               <button
                 onClick={handleOpen}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
               >
                 <Plus className="h-4 w-4" /> New Payment
               </button>
@@ -509,25 +511,25 @@ export default function PaymentsPage() {
       {/* ============ PAYMENT MODAL ============ */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={handleClose} />
-          <div className="relative bg-card w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={handleClose} />
+          <div className="relative bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
 
             {/* Header */}
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-[9px] bg-gradient-to-br from-signal to-violet-accent flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-[9px] bg-signal flex items-center justify-center">
                     <Wallet className="w-4 h-4 text-white" />
                   </div>
-                  <span className="font-heading font-bold text-sm">PAYMENTS</span>
+                  <span className="font-heading font-bold text-sm text-signal">PAYMENTS</span>
                 </div>
-                <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                <h3 className="font-heading text-2xl font-bold text-signal">
                   {step === "select-method" && "Select Payment Method"}
                   {step === "details" && "Payment Details"}
                   {step === "confirm" && "Confirm Payment"}
                   {step === "success" && "Payment Successful"}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   {step === "select-method" && "Choose how you want to receive the payment."}
                   {step === "details" && "Enter client and payment information."}
                   {step === "confirm" && "Review the details before submitting."}
@@ -536,7 +538,7 @@ export default function PaymentsPage() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-100"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -554,17 +556,17 @@ export default function PaymentsPage() {
                     <div key={s} className="flex items-center gap-2 flex-1">
                       <div className={cn(
                         "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shrink-0",
-                        isDone ? "bg-emerald-500 text-white" :
+                        isDone ? "bg-success text-white" :
                         isActive ? "bg-signal text-white shadow-md" :
-                        "bg-muted text-muted-foreground"
+                        "bg-slate-100 text-slate-400"
                       )}>
                         {isDone ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
                       </div>
                       <span className={cn(
                         "text-xs font-semibold whitespace-nowrap",
-                        isActive ? "text-signal" : "text-muted-foreground"
+                        isActive ? "text-signal" : "text-slate-500"
                       )}>{s}</span>
-                      {i < 2 && <div className={cn("flex-1 h-0.5", isDone ? "bg-emerald-500" : "bg-muted")} />}
+                      {i < 2 && <div className={cn("flex-1 h-0.5", isDone ? "bg-success" : "bg-slate-100")} />}
                     </div>
                   );
                 })}
@@ -574,7 +576,7 @@ export default function PaymentsPage() {
             {/* STEP 1: Select Method */}
             {step === "select-method" && (
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-slate-500 mb-2">
                   Select the payment method used by the client:
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -584,15 +586,12 @@ export default function PaymentsPage() {
                       <button
                         key={m.id}
                         onClick={() => handleSelectMethod(m.id)}
-                        className={cn(
-                          "flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all hover:shadow-lg hover:-translate-y-0.5",
-                          "bg-card border-border hover:border-signal/50"
-                        )}
+                        className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all hover:shadow-lg hover:-translate-y-0.5 bg-white border-slate-200 hover:border-signal/50"
                       >
                         <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", m.color)}>
                           <Icon className="w-6 h-6" />
                         </div>
-                        <span className="font-bold text-sm">{m.label}</span>
+                        <span className="font-bold text-sm text-signal">{m.label}</span>
                       </button>
                     );
                   })}
@@ -603,7 +602,7 @@ export default function PaymentsPage() {
             {/* STEP 2: Details */}
             {step === "details" && (
               <div className="space-y-5">
-                <div className="bg-signal/5 rounded-xl p-3 flex items-center gap-2 border border-signal/20">
+                <div className="bg-signal-tint rounded-xl p-3 flex items-center gap-2 border border-signal/20">
                   {(() => {
                     const m = paymentMethods.find(pm => pm.id === method);
                     const Icon = m?.icon || Wallet;
@@ -612,8 +611,8 @@ export default function PaymentsPage() {
                         <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", m?.color)}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <span className="font-semibold text-sm">
-                          Payment via <span className="text-signal">{m?.label}</span>
+                        <span className="font-semibold text-sm text-signal">
+                          Payment via <span className="font-bold">{m?.label}</span>
                         </span>
                       </>
                     );
@@ -622,78 +621,78 @@ export default function PaymentsPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="font-semibold text-sm block">
-                      Client Name <span className="text-red-500">*</span>
+                    <label className="font-semibold text-sm block text-signal">
+                      Client Name <span className="text-destructive">*</span>
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input
                         value={formData.client}
                         onChange={(e) => setFormData({ ...formData, client: e.target.value })}
                         placeholder="e.g. Rahim Uddin"
-                        className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-signal outline-none focus:ring-2 focus:ring-signal/30"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="font-semibold text-sm block">Client ID</label>
+                    <label className="font-semibold text-sm block text-signal">Client ID</label>
                     <div className="relative">
-                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input
                         value={formData.clientId}
                         onChange={(e) => setFormData({ ...formData, clientId: e.target.value })}
                         placeholder="e.g. C-101"
-                        className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-signal outline-none focus:ring-2 focus:ring-signal/30"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="font-semibold text-sm block">
-                      Amount (৳) <span className="text-red-500">*</span>
+                    <label className="font-semibold text-sm block text-signal">
+                      Amount (৳) <span className="text-destructive">*</span>
                     </label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input
                         type="number"
                         value={formData.amount}
                         onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
                         placeholder="0"
-                        className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm font-semibold outline-none focus:ring-2 focus:ring-signal/30"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal outline-none focus:ring-2 focus:ring-signal/30"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="font-semibold text-sm block">Reference / TrxID</label>
+                    <label className="font-semibold text-sm block text-signal">Reference / TrxID</label>
                     <input
                       value={formData.reference}
                       onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
                       placeholder="e.g. TRX8H9K2L"
-                      className="w-full px-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30 font-mono"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30 font-mono text-signal"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Remarks</label>
+                  <label className="font-semibold text-sm block text-signal">Remarks</label>
                   <textarea
                     value={formData.remarks}
                     onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
                     rows={2}
                     placeholder="Optional notes..."
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-signal/30 resize-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal outline-none focus:ring-2 focus:ring-signal/30 resize-none"
                   />
                 </div>
 
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setStep("select-method")}
-                    className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                    className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleConfirmDetails}
-                    className="flex-[2] rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="flex-[2] rounded-xl font-semibold h-12 bg-signal text-white shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                   >
                     Review <ArrowRight className="w-4 h-4" />
                   </button>
@@ -704,23 +703,23 @@ export default function PaymentsPage() {
             {/* STEP 3: Confirm */}
             {step === "confirm" && (
               <div className="space-y-5">
-                <div className="bg-gradient-to-br from-signal-tint/60 to-violet-accent-tint/60 rounded-2xl border border-signal/20 p-5">
-                  <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-3">Payment Summary</p>
+                <div className="bg-signal-tint rounded-2xl border border-signal/20 p-5">
+                  <p className="text-[10px] text-slate-500 font-semibold uppercase mb-3">Payment Summary</p>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Client</span>
-                      <span className="font-semibold">{formData.client}</span>
+                      <span className="text-sm text-slate-500">Client</span>
+                      <span className="font-semibold text-signal">{formData.client}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Method</span>
-                      <span className="font-semibold capitalize">{paymentMethods.find(pm => pm.id === method)?.label}</span>
+                      <span className="text-sm text-slate-500">Method</span>
+                      <span className="font-semibold text-signal capitalize">{paymentMethods.find(pm => pm.id === method)?.label}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Reference</span>
-                      <span className="font-mono text-sm">{formData.reference || "Auto-generated"}</span>
+                      <span className="text-sm text-slate-500">Reference</span>
+                      <span className="font-mono text-sm text-signal">{formData.reference || "Auto-generated"}</span>
                     </div>
                     <div className="border-t border-signal/20 pt-3 flex justify-between items-baseline">
-                      <span className="font-semibold">Total Amount</span>
+                      <span className="font-semibold text-signal">Total Amount</span>
                       <span className="font-heading text-2xl font-bold text-signal">৳{formData.amount}</span>
                     </div>
                   </div>
@@ -729,13 +728,13 @@ export default function PaymentsPage() {
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setStep("details")}
-                    className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                    className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleSubmitPayment}
-                    className="flex-[2] rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="flex-[2] rounded-xl font-semibold h-12 bg-signal text-white shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                   >
                     <BadgeCheck className="w-4 h-4" /> Confirm Payment
                   </button>
@@ -747,34 +746,34 @@ export default function PaymentsPage() {
             {step === "success" && (
               <div className="text-center py-4">
                 <div className="relative w-20 h-20 mx-auto mb-5">
-                  <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping" />
-                  <div className="relative w-full h-full rounded-full bg-emerald-500 flex items-center justify-center shadow-lg">
+                  <div className="absolute inset-0 rounded-full bg-success/20 animate-ping" />
+                  <div className="relative w-full h-full rounded-full bg-success flex items-center justify-center shadow-lg">
                     <CheckCircle2 className="w-10 h-10 text-white" />
                   </div>
                 </div>
 
-                <h3 className="font-heading text-xl font-bold mb-1">Payment Received!</h3>
-                <p className="text-sm text-muted-foreground mb-6">
+                <h3 className="font-heading text-xl font-bold mb-1 text-signal">Payment Received!</h3>
+                <p className="text-sm text-slate-500 mb-6">
                   Transaction has been saved to the payment history.
                 </p>
 
-                <div className="bg-gradient-to-br from-signal-tint/60 to-violet-accent-tint/60 rounded-2xl border border-signal/20 p-5 mb-6 text-left">
+                <div className="bg-signal-tint rounded-2xl border border-signal/20 p-5 mb-6 text-left">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Client</p>
-                      <p className="font-semibold">{formData.client}</p>
+                      <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Client</p>
+                      <p className="font-semibold text-signal">{formData.client}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Amount</p>
+                      <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Amount</p>
                       <p className="font-bold text-signal">৳{formData.amount}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Method</p>
-                      <p className="font-semibold capitalize">{paymentMethods.find(pm => pm.id === method)?.label}</p>
+                      <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Method</p>
+                      <p className="font-semibold text-signal capitalize">{paymentMethods.find(pm => pm.id === method)?.label}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground font-semibold uppercase mb-1">Reference</p>
-                      <p className="font-mono text-xs">{formData.reference || "Auto-generated"}</p>
+                      <p className="text-[10px] text-slate-500 font-semibold uppercase mb-1">Reference</p>
+                      <p className="font-mono text-xs text-signal">{formData.reference || "Auto-generated"}</p>
                     </div>
                   </div>
                 </div>
@@ -782,7 +781,7 @@ export default function PaymentsPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleClose}
-                    className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                    className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
                   >
                     Close
                   </button>
@@ -792,7 +791,7 @@ export default function PaymentsPage() {
                       setMethod("cash");
                       setFormData({ client: "", clientId: "", amount: 0, reference: "", remarks: "" });
                     }}
-                    className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                   >
                     <Plus className="w-4 h-4" /> New Payment
                   </button>

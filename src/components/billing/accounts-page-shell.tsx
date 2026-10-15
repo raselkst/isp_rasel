@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
+import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardTopbar } from "@/components/dashboard/dashboard-topbar";
 import { AllAccountsTopbar } from "@/components/dashboard/all-accounts-topbar";
@@ -89,7 +90,7 @@ const pillTone: Record<string, string> = {
 
 const mockRows = Array.from({ length: 25 }).map((_, i) => ({
   id: `19726${i}`,
-  cid: "01878574612",
+  cid: `0187857461${i}`,   // ← প্রতিটির জন্য ইউনিক
   name: i % 2 === 0 ? "Shorup Ahmed" : "Karim Uddin",
   mobile: "01878574612",
   pkg: i % 2 === 0 ? "150Tk@3Mb30Day" : "500Tk@10Mb30Day",
@@ -483,13 +484,19 @@ export function AccountsPageShell({ title, statusFilter, topbar }: AccountsPageS
                             </span>
                           </td>
                           <td className="px-4 py-3.5">
-                            <div className="flex items-center gap-2.5">
-                              <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-[10px] shadow-sm", r.avatarColor)}>
-                                {r.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
-                              </div>
-                              <span className="font-semibold text-signal">{r.name}</span>
-                            </div>
-                          </td>
+  {/* 🎯 নাম → View Information পেজে যাবে */}
+  <Link
+    href={`/admin/clients/view-information?clientId=${r.cid}`}
+    className="flex items-center gap-2.5 group text-left"
+  >
+    <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-[10px] shadow-sm", r.avatarColor)}>
+      {r.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
+    </div>
+    <span className="font-semibold text-signal group-hover:underline">
+      {r.name}
+    </span>
+  </Link>
+</td>
                           <td className="px-4 py-3.5 font-mono text-xs text-slate-600">{r.mobile}</td>
                           <td className="px-4 py-3.5">
                             <span className="inline-flex px-2 py-1 rounded-md bg-signal-tint text-signal text-[10px] font-bold">{r.pkg}</span>

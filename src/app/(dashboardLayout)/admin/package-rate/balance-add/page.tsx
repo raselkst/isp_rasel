@@ -98,11 +98,10 @@ export default function BalanceAddPage() {
     alert(
       `Balance Added!\n\nClient: ${selectedClient.name} (${selectedClient.cid})\nAmount: ৳${formData.amount}\nDiscount: ৳${calculations.discountAmount.toFixed(2)}\nBonus: ৳${formData.bonusAmount}\nMethod: ${formData.paymentMethod.toUpperCase()}\n\nNew Balance: ৳${calculations.newBalance.toFixed(2)}`
     );
-    // এখানে API কল বসবে
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-muted/40 to-muted/10">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -111,10 +110,10 @@ export default function BalanceAddPage() {
         <div className="px-4 sm:px-8 py-8 max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="font-heading text-[26px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1 className="font-heading text-[26px] font-bold tracking-tight text-signal">
               Balance Add
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               Add balance to a client account quickly and securely.
             </p>
           </div>
@@ -123,58 +122,58 @@ export default function BalanceAddPage() {
             {/* LEFT: Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Client Selection */}
-              <div className="bg-card rounded-2xl border shadow-sm p-6">
-                <div className="flex items-center gap-2 border-b pb-3 mb-5">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-5">
                   <User className="w-5 h-5 text-signal" />
-                  <h2 className="font-heading text-lg font-bold">Client Selection</h2>
+                  <h2 className="font-heading text-lg font-bold text-signal">Client Selection</h2>
                 </div>
 
                 {selectedClient && (
-                  <div className="flex items-center gap-4 mb-4 p-4 rounded-xl bg-signal-tint/50 border border-signal/20">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-signal to-violet-accent text-white flex items-center justify-center font-heading font-bold text-lg shrink-0">
+                  <div className="flex items-center gap-4 mb-4 p-4 rounded-xl bg-signal-tint border border-signal/20">
+                    <div className="w-12 h-12 rounded-xl bg-signal text-white flex items-center justify-center font-heading font-bold text-lg shrink-0">
                       {selectedClient.name.charAt(0)}
                     </div>
                     <div className="flex-1">
-                      <p className="font-heading font-bold">{selectedClient.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="font-heading font-bold text-signal">{selectedClient.name}</p>
+                      <p className="text-xs text-slate-500">
                         {selectedClient.cid} · {selectedClient.mobile} · {selectedClient.package}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] text-muted-foreground uppercase font-semibold">Current Balance</p>
-                      <p className="font-heading font-bold text-lg">৳{selectedClient.balance.toFixed(2)}</p>
+                      <p className="text-[10px] text-slate-500 uppercase font-semibold">Current Balance</p>
+                      <p className="font-heading font-bold text-lg text-signal">৳{selectedClient.balance.toFixed(2)}</p>
                     </div>
                   </div>
                 )}
 
                 <div className="space-y-2 relative">
-                  <label className="text-sm font-semibold block">Search Client</label>
+                  <label className="text-sm font-semibold block text-signal">Search Client</label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       value={searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); setShowClientList(true); }}
                       onFocus={() => setShowClientList(true)}
                       placeholder="Search by Name, Mobile, or CID..."
-                      className="pl-9 rounded-xl h-11"
+                      className="pl-9 rounded-xl h-11 border-slate-200 text-signal"
                     />
                   </div>
 
                   {showClientList && filteredClients.length > 0 && searchTerm && (
-                    <div className="absolute left-0 right-0 top-full mt-2 bg-card border rounded-xl shadow-xl z-20 overflow-hidden max-h-64 overflow-y-auto">
+                    <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-20 overflow-hidden max-h-64 overflow-y-auto">
                       {filteredClients.map((c) => (
                         <button
                           key={c.id}
                           type="button"
                           onClick={() => handleSelectClient(c)}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-muted text-left border-b last:border-b-0 transition-colors"
+                          className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 text-left border-b border-slate-100 last:border-b-0 transition-colors"
                         >
-                          <div className="w-9 h-9 rounded-lg bg-signal/10 text-signal flex items-center justify-center font-bold text-sm shrink-0">
+                          <div className="w-9 h-9 rounded-lg bg-signal-tint text-signal flex items-center justify-center font-bold text-sm shrink-0">
                             {c.name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-sm truncate">{c.name}</p>
-                            <p className="text-xs text-muted-foreground truncate">{c.cid} · {c.mobile}</p>
+                            <p className="font-semibold text-sm truncate text-signal">{c.name}</p>
+                            <p className="text-xs text-slate-500 truncate">{c.cid} · {c.mobile}</p>
                           </div>
                           <p className="font-semibold text-xs text-signal">৳{c.balance}</p>
                         </button>
@@ -185,62 +184,64 @@ export default function BalanceAddPage() {
               </div>
 
               {/* Amount & Payment */}
-              <div className="bg-card rounded-2xl border shadow-sm p-6">
-                <div className="flex items-center gap-2 border-b pb-3 mb-5">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-5">
                   <Calculator className="w-5 h-5 text-signal" />
-                  <h2 className="font-heading text-lg font-bold">Amount & Payment</h2>
+                  <h2 className="font-heading text-lg font-bold text-signal">Amount & Payment</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold block">Amount <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-semibold block text-signal">
+                      Amount <span className="text-destructive">*</span>
+                    </label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">৳</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">৳</span>
                       <Input
                         name="amount"
                         type="number"
                         value={formData.amount}
                         onChange={handleChange}
-                        className="pl-8 rounded-xl h-11 text-lg font-semibold"
+                        className="pl-8 rounded-xl h-11 text-lg font-semibold border-slate-200 text-signal"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold block">Discount (%)</label>
+                    <label className="text-sm font-semibold block text-signal">Discount (%)</label>
                     <div className="relative">
-                      <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
                         name="discount"
                         type="number"
                         value={formData.discount}
                         onChange={handleChange}
-                        className="pl-9 rounded-xl h-11"
+                        className="pl-9 rounded-xl h-11 border-slate-200 text-signal"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold block">Bonus Amount (৳)</label>
+                    <label className="text-sm font-semibold block text-signal">Bonus Amount (৳)</label>
                     <div className="relative">
-                      <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
                         name="bonusAmount"
                         type="number"
                         value={formData.bonusAmount}
                         onChange={handleChange}
-                        className="pl-9 rounded-xl h-11"
+                        className="pl-9 rounded-xl h-11 border-slate-200 text-signal"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold block">Payment Method</label>
+                    <label className="text-sm font-semibold block text-signal">Payment Method</label>
                     <select
                       name="paymentMethod"
                       value={formData.paymentMethod}
                       onChange={handleChange}
-                      className="w-full border rounded-xl px-4 py-2.5 bg-background text-sm h-11 focus:ring-2 focus:ring-signal outline-none"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white text-sm h-11 text-signal focus:ring-2 focus:ring-signal outline-none"
                     >
                       {paymentMethods.map((m) => (
                         <option key={m.id} value={m.id}>{m.label}</option>
@@ -250,8 +251,8 @@ export default function BalanceAddPage() {
                 </div>
 
                 {/* Quick Amount Presets */}
-                <div className="mt-5 pt-5 border-t">
-                  <label className="text-xs font-semibold uppercase text-muted-foreground block mb-3">
+                <div className="mt-5 pt-5 border-t border-slate-100">
+                  <label className="text-xs font-semibold uppercase text-slate-500 block mb-3">
                     Quick Amounts
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -264,7 +265,7 @@ export default function BalanceAddPage() {
                           "px-4 py-2 rounded-full text-xs font-semibold border transition-all",
                           formData.amount === amt
                             ? "bg-signal text-white border-signal shadow-sm"
-                            : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                            : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                         )}
                       >
                         ৳{amt.toLocaleString()}
@@ -274,14 +275,14 @@ export default function BalanceAddPage() {
                 </div>
 
                 <div className="mt-5">
-                  <label className="text-sm font-semibold block mb-2">Remarks</label>
+                  <label className="text-sm font-semibold block mb-2 text-signal">Remarks</label>
                   <textarea
                     name="remarks"
                     value={formData.remarks}
                     onChange={handleChange}
                     placeholder="Optional note about this balance addition..."
                     rows={3}
-                    className="w-full bg-muted/40 border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none resize-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none resize-none"
                   />
                 </div>
 
@@ -294,8 +295,8 @@ export default function BalanceAddPage() {
                     className="w-4 h-4 rounded accent-signal"
                   />
                   <div>
-                    <p className="text-sm font-semibold">Send SMS Notification</p>
-                    <p className="text-xs text-muted-foreground">Notify client about balance addition</p>
+                    <p className="text-sm font-semibold text-signal">Send SMS Notification</p>
+                    <p className="text-xs text-slate-500">Notify client about balance addition</p>
                   </div>
                 </label>
               </div>
@@ -306,13 +307,13 @@ export default function BalanceAddPage() {
                   type="button"
                   onClick={() => router.back()}
                   variant="outline"
-                  className="rounded-xl font-semibold h-12 px-6"
+                  className="rounded-xl font-semibold h-12 px-6 border-slate-200 text-slate-600 hover:bg-slate-50"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  className="rounded-xl font-semibold h-12 px-8 bg-gradient-to-r from-signal to-violet-accent border-0 shadow-lg hover:shadow-xl transition-shadow"
+                  className="rounded-xl font-semibold h-12 px-8 bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" /> Add Balance
                 </Button>
@@ -321,7 +322,7 @@ export default function BalanceAddPage() {
 
             {/* RIGHT: Order Summary */}
             <div className="space-y-5 lg:sticky lg:top-24 h-fit">
-              <div className="bg-gradient-to-br from-signal to-violet-accent rounded-2xl p-6 text-white shadow-lg">
+              <div className="bg-signal rounded-2xl p-6 text-white shadow-lg">
                 <div className="flex items-center gap-2 mb-5">
                   <Wallet className="w-5 h-5" />
                   <h3 className="font-heading font-bold">Balance Preview</h3>
@@ -339,7 +340,7 @@ export default function BalanceAddPage() {
                   {formData.discount > 0 && (
                     <div className="flex justify-between">
                       <span className="opacity-90">Discount ({formData.discount}%)</span>
-                      <span className="font-semibold text-red-200">-৳{calculations.discountAmount.toFixed(2)}</span>
+                      <span className="font-semibold">-৳{calculations.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   {formData.bonusAmount > 0 && (
@@ -366,7 +367,7 @@ export default function BalanceAddPage() {
               </div>
 
               {/* Info Card */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint/50 border border-signal/20">
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-signal-tint border border-signal/20">
                 <Info className="w-5 h-5 text-signal shrink-0 mt-0.5" />
                 <p className="text-xs text-signal leading-relaxed">
                   Balance will be added immediately. SMS notification will be sent to the client if
@@ -375,10 +376,10 @@ export default function BalanceAddPage() {
               </div>
 
               {/* Recent History (Mock) */}
-              <div className="bg-card rounded-2xl border shadow-sm p-5">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <History className="w-4 h-4 text-signal" />
-                  <h4 className="font-heading font-bold text-sm">Recent Additions</h4>
+                  <h4 className="font-heading font-bold text-sm text-signal">Recent Additions</h4>
                 </div>
                 <div className="space-y-3 text-xs">
                   {[
@@ -386,10 +387,10 @@ export default function BalanceAddPage() {
                     { cid: "C-103", amount: 500, time: "1 hour ago" },
                     { cid: "C-101", amount: 1000, time: "3 hours ago" },
                   ].map((h, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b last:border-b-0">
-                      <span className="font-semibold text-foreground">{h.cid}</span>
-                      <span className="font-bold text-emerald-600">+৳{h.amount}</span>
-                      <span className="text-muted-foreground">{h.time}</span>
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0">
+                      <span className="font-semibold text-signal">{h.cid}</span>
+                      <span className="font-bold text-success">+৳{h.amount}</span>
+                      <span className="text-slate-500">{h.time}</span>
                     </div>
                   ))}
                 </div>
@@ -397,13 +398,13 @@ export default function BalanceAddPage() {
 
               {/* Savings Card */}
               {calculations.discountAmount > 0 && (
-                <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                  <TrendingUp className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-success-tint border border-success/30">
+                  <TrendingUp className="w-5 h-5 text-success shrink-0" />
                   <div>
-                    <p className="text-sm font-semibold text-emerald-700">
+                    <p className="text-sm font-semibold text-success">
                       Client saves ৳{calculations.discountAmount.toFixed(2)}
                     </p>
-                    <p className="text-xs text-emerald-600">
+                    <p className="text-xs text-success">
                       With {formData.discount}% discount
                     </p>
                   </div>

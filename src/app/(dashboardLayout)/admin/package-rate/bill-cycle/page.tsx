@@ -17,7 +17,6 @@ const columns = [
   { key: "day", label: "Day of Month" },
 ];
 
-// ডামি ডেটা (রিয়েল অ্যাপে API থেকে আসবে)
 const initialRows = [
   { id: 1, name: "Day 1", day: 1 },
   { id: 2, name: "Day 5", day: 5 },
@@ -159,7 +158,7 @@ export default function PackageRateBillCyclePage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-muted/40 to-muted/10">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -170,7 +169,7 @@ export default function PackageRateBillCyclePage() {
             <Button
               onClick={handleExport}
               variant="outline"
-              className="rounded-full gap-1.5 font-semibold text-signal border-signal/30"
+              className="rounded-full gap-1.5 font-semibold text-signal border-signal/30 hover:bg-signal-tint"
             >
               <Download className="h-4 w-4" /> Export
             </Button>
@@ -179,41 +178,41 @@ export default function PackageRateBillCyclePage() {
             </Button>
           </PageHeader>
 
-          {/* Compact Stat Cards */}
+          {/* Compact Stat Cards — Theme Connected */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            <div className="bg-card rounded-xl border p-3.5 shadow-sm flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-signal/10 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-xl border border-slate-200 p-3.5 shadow-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
                 <Calendar className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-xs text-muted-foreground font-semibold uppercase whitespace-nowrap">Total Cycles</p>
-                <p className="font-heading text-xl font-bold">{stats.total}</p>
+                <p className="text-xs text-slate-500 font-semibold uppercase whitespace-nowrap">Total Cycles</p>
+                <p className="font-heading text-xl font-bold text-signal">{stats.total}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3.5 shadow-sm flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3.5 shadow-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4 text-success" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-xs text-muted-foreground font-semibold uppercase whitespace-nowrap">Avg Day</p>
-                <p className="font-heading text-xl font-bold text-emerald-600">{stats.avg}</p>
+                <p className="text-xs text-slate-500 font-semibold uppercase whitespace-nowrap">Avg Day</p>
+                <p className="font-heading text-xl font-bold text-success">{stats.avg}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3.5 shadow-sm flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                <CalendarDays className="w-4 h-4 text-amber-600" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3.5 shadow-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <CalendarDays className="w-4 h-4 text-warning" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-xs text-muted-foreground font-semibold uppercase whitespace-nowrap">Earliest</p>
-                <p className="font-heading text-xl font-bold text-amber-600">Day {stats.earliest}</p>
+                <p className="text-xs text-slate-500 font-semibold uppercase whitespace-nowrap">Earliest</p>
+                <p className="font-heading text-xl font-bold text-warning">Day {stats.earliest}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3.5 shadow-sm flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-violet-accent/10 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-xl border border-slate-200 p-3.5 shadow-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-violet-accent-tint flex items-center justify-center shrink-0">
                 <Clock className="w-4 h-4 text-violet-accent" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-xs text-muted-foreground font-semibold uppercase whitespace-nowrap">Latest</p>
+                <p className="text-xs text-slate-500 font-semibold uppercase whitespace-nowrap">Latest</p>
                 <p className="font-heading text-xl font-bold text-violet-accent">Day {stats.latest}</p>
               </div>
             </div>
@@ -224,7 +223,7 @@ export default function PackageRateBillCyclePage() {
             <div className="flex items-center gap-2">
               {selectedRows.length > 0 && (
                 <>
-                  <span className="bg-signal/10 text-signal text-xs font-semibold px-3 py-1.5 rounded-full border border-signal/20 flex items-center gap-1">
+                  <span className="bg-signal-tint text-signal text-xs font-semibold px-3 py-1.5 rounded-full border border-signal/20 flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     {selectedRows.length} selected
                     <button onClick={() => setSelectedRows([])} className="ml-1 hover:bg-signal/20 rounded-full p-0.5">
@@ -243,12 +242,12 @@ export default function PackageRateBillCyclePage() {
               )}
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search bill cycle..."
-                className="pl-9 rounded-full w-64 h-9"
+                className="pl-9 rounded-full w-64 h-9 border-slate-200 text-signal"
               />
             </div>
           </div>
@@ -258,20 +257,20 @@ export default function PackageRateBillCyclePage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[600px]">
                 <thead>
-                  <tr className="bg-signal text-signal-foreground">
+                  <tr className="bg-signal text-white">
                     <th className="px-6 py-4 w-12">
                       <input
                         type="checkbox"
                         checked={allSelected}
                         onChange={toggleSelectAll}
-                        className="rounded cursor-pointer"
+                        className="rounded cursor-pointer accent-white"
                       />
                     </th>
                     {columns.map((c) => (
                       <th
                         key={c.key}
                         onClick={() => handleSort(c.key)}
-                        className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer hover:bg-signal/90 transition-colors select-none"
+                        className="text-left px-6 py-4 font-semibold text-xs whitespace-nowrap cursor-pointer hover:bg-white/10 transition-colors select-none"
                       >
                         <div className="flex items-center gap-1">
                           {c.label}
@@ -290,8 +289,8 @@ export default function PackageRateBillCyclePage() {
                         <tr
                           key={r.id}
                           className={cn(
-                            "border-t transition-colors",
-                            isSelected ? "bg-signal/5" : "hover:bg-signal-tint/30"
+                            "border-t border-slate-100 transition-colors",
+                            isSelected ? "bg-signal-tint" : "hover:bg-slate-50"
                           )}
                         >
                           <td className="px-6 py-4">
@@ -299,19 +298,19 @@ export default function PackageRateBillCyclePage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelectRow(r.id)}
-                              className="rounded cursor-pointer"
+                              className="rounded cursor-pointer accent-signal"
                             />
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-2 font-semibold">
-                              <span className="w-8 h-8 rounded-lg bg-signal/10 text-signal flex items-center justify-center text-xs font-bold">
+                            <span className="inline-flex items-center gap-2 font-semibold text-signal">
+                              <span className="w-8 h-8 rounded-lg bg-signal-tint text-signal flex items-center justify-center text-xs font-bold">
                                 {r.day}
                               </span>
                               {r.name}
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-signal bg-signal/10 px-3 py-1 rounded-full border border-signal/20">
+                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-signal bg-signal-tint px-3 py-1 rounded-full border border-signal/20">
                               <Calendar className="w-3.5 h-3.5" /> Day {r.day}
                             </span>
                           </td>
@@ -338,9 +337,9 @@ export default function PackageRateBillCyclePage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={columns.length + 2} className="px-6 py-16 text-center text-muted-foreground">
+                      <td colSpan={columns.length + 2} className="px-6 py-16 text-center text-slate-500">
                         <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="font-semibold">No bill cycles found</p>
+                        <p className="font-semibold text-signal">No bill cycles found</p>
                         <p className="text-xs mt-1">Try adjusting your search or add a new bill cycle</p>
                       </td>
                     </tr>
@@ -355,15 +354,15 @@ export default function PackageRateBillCyclePage() {
       {/* Edit / Add Modal */}
       {editModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-heading text-xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+              <h3 className="font-heading text-xl font-bold text-signal">
                 {isAddingNew ? "Add New Bill Cycle" : "Edit Bill Cycle"}
               </h3>
               <button
                 onClick={() => setEditModal(null)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -371,34 +370,37 @@ export default function PackageRateBillCyclePage() {
 
             <div className="space-y-5 mb-8">
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Bill Cycle Name <span className="text-red-500">*</span></label>
+                <label className="font-semibold text-sm block text-signal">
+                  Bill Cycle Name <span className="text-destructive">*</span>
+                </label>
                 <Input
                   value={editModal.name}
                   onChange={(e) => setEditModal({ ...editModal, name: e.target.value })}
                   placeholder="e.g. Day 1"
-                  className="rounded-xl"
+                  className="rounded-xl border-slate-200 text-signal"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Day of Month <span className="text-red-500">*</span></label>
+                <label className="font-semibold text-sm block text-signal">
+                  Day of Month <span className="text-destructive">*</span>
+                </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
                     type="number"
                     min={1}
                     max={31}
                     value={editModal.day}
                     onChange={(e) => setEditModal({ ...editModal, day: Number(e.target.value) })}
-                    className="rounded-xl pl-9"
+                    className="rounded-xl pl-9 border-slate-200 text-signal"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">Enter a day between 1 and 31</p>
+                <p className="text-xs text-slate-500">Enter a day between 1 and 31</p>
               </div>
 
-              {/* Quick Presets */}
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Quick Presets</label>
+                <label className="font-semibold text-sm block text-signal">Quick Presets</label>
                 <div className="flex flex-wrap gap-2">
                   {dayPresets.map((d) => (
                     <button
@@ -409,7 +411,7 @@ export default function PackageRateBillCyclePage() {
                         "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
                         editModal.day === d
                           ? "bg-signal text-white border-signal shadow-sm"
-                          : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                          : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                       )}
                     >
                       Day {d}
@@ -423,13 +425,13 @@ export default function PackageRateBillCyclePage() {
               <Button
                 onClick={() => setEditModal(null)}
                 variant="outline"
-                className="flex-1 rounded-xl font-semibold h-12"
+                className="flex-1 rounded-xl font-semibold h-12 border-slate-200 text-slate-600 hover:bg-slate-50"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSave}
-                className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent border-0"
+                className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white hover:bg-signal-hover border-0 shadow-md"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {isAddingNew ? "Add Bill Cycle" : "Save Changes"}

@@ -8,7 +8,7 @@ import {
   Plus, Search, RadioTower, Wifi, WifiOff, AlertTriangle, Activity,
   Edit3, Trash2, RefreshCw, Signal, SignalHigh, SignalLow, SignalZero,
   Clock, X, Save, ChevronLeft, ChevronRight, ArrowUpDown, Download,
-  CheckSquare, Filter, Server
+  Server
 } from "lucide-react";
 
 interface DeviceData {
@@ -32,17 +32,19 @@ const initialDevices: DeviceData[] = [
   { id: 5, name: "Router-Backup", status: "online", ip: "192.168.1.2", port: "8291", apMac: "AA:BB:CC:11:22:37", onuMac: "DD:EE:FF:44:55:70", onuPower: -16.8, lastChange: "5 mins ago", tmi: "OK" },
 ];
 
+// 🎯 Theme-connected status config
 const statusConfig = {
-  online: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/30", icon: Wifi, dot: "bg-emerald-500", label: "Online" },
-  offline: { color: "text-red-500", bg: "bg-red-500/10", border: "border-red-500/30", icon: WifiOff, dot: "bg-red-500", label: "Offline" },
-  warning: { color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/30", icon: AlertTriangle, dot: "bg-amber-500", label: "Warning" },
+  online: { color: "text-success", bg: "bg-success-tint", border: "border-success/30", icon: Wifi, dot: "bg-success", label: "Online" },
+  offline: { color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", icon: WifiOff, dot: "bg-destructive", label: "Offline" },
+  warning: { color: "text-warning", bg: "bg-warning-tint", border: "border-warning/30", icon: AlertTriangle, dot: "bg-warning", label: "Warning" },
 };
 
+// 🎯 Theme-connected signal strength
 const getSignalStrength = (power: number) => {
-  if (power >= -20) return { label: "Excellent", color: "text-emerald-500", bg: "bg-emerald-500", icon: SignalHigh };
-  if (power >= -25) return { label: "Good", color: "text-blue-500", bg: "bg-blue-500", icon: Signal };
-  if (power >= -30) return { label: "Weak", color: "text-amber-500", bg: "bg-amber-500", icon: SignalLow };
-  return { label: "Critical", color: "text-red-500", bg: "bg-red-500", icon: SignalZero };
+  if (power >= -20) return { label: "Excellent", color: "text-success", bg: "bg-success", icon: SignalHigh };
+  if (power >= -25) return { label: "Good", color: "text-signal", bg: "bg-signal", icon: Signal };
+  if (power >= -30) return { label: "Weak", color: "text-warning", bg: "bg-warning", icon: SignalLow };
+  return { label: "Critical", color: "text-destructive", bg: "bg-destructive", icon: SignalZero };
 };
 
 const emptyDevice: DeviceData = {
@@ -64,7 +66,6 @@ export default function ServerWatcherPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Stat Cards
   const stats = useMemo(() => {
     return {
       online: devices.filter(d => d.status === "online").length,
@@ -74,7 +75,6 @@ export default function ServerWatcherPage() {
     };
   }, [devices]);
 
-  // Filter + Search + Sort
   const filteredDevices = useMemo(() => {
     let filtered = devices.filter(d => {
       const matchesSearch =
@@ -98,12 +98,10 @@ export default function ServerWatcherPage() {
     return filtered;
   }, [devices, searchTerm, statusFilter, sortKey, sortOrder]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredDevices.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedDevices = filteredDevices.slice(startIndex, startIndex + rowsPerPage);
 
-  // Select
   const allSelected =
     paginatedDevices.length > 0 && paginatedDevices.every(d => selectedRows.includes(d.id));
   const toggleSelectAll = () => {
@@ -122,7 +120,6 @@ export default function ServerWatcherPage() {
     else { setSortKey(key); setSortOrder("asc"); }
   };
 
-  // Refresh
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => {
@@ -139,7 +136,6 @@ export default function ServerWatcherPage() {
     }, 1200);
   };
 
-  // Add Device
   const handleAddDevice = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newDevice.name.trim() || !newDevice.ip.trim()) {
@@ -154,7 +150,6 @@ export default function ServerWatcherPage() {
     alert(`✅ Device "${toAdd.name}" added successfully!`);
   };
 
-  // Edit Save
   const handleSaveEdit = () => {
     if (!editModal || !editModal.name.trim()) {
       alert("Name is required!");
@@ -165,7 +160,6 @@ export default function ServerWatcherPage() {
     alert("Device updated successfully!");
   };
 
-  // Delete
   const handleDelete = (id: number, name: string) => {
     if (confirm(`Delete device "${name}"? This cannot be undone.`)) {
       setDevices(prev => prev.filter(d => d.id !== id));
@@ -174,7 +168,6 @@ export default function ServerWatcherPage() {
     }
   };
 
-  // Bulk Delete
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) {
       alert("Please select at least one device.");
@@ -187,7 +180,6 @@ export default function ServerWatcherPage() {
     }
   };
 
-  // Export
   const handleExport = () => {
     const dataToExport = selectedRows.length > 0
       ? devices.filter(d => selectedRows.includes(d.id))
@@ -208,33 +200,33 @@ export default function ServerWatcherPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
         <DashboardTopbar />
 
         {/* Sticky Action Bar */}
-        <div className="border-b bg-gradient-to-r from-card via-card/80 to-muted/20 backdrop-blur-md sticky top-[64px] z-30">
+        <div className="border-b border-slate-200 bg-white/85 backdrop-blur-md sticky top-[64px] z-30">
           <div className="px-4 sm:px-8 py-3 flex items-center justify-between gap-3 overflow-x-auto">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setAddOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105 transition-all whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all whitespace-nowrap"
               >
                 <Plus className="h-4 w-4" /> Add Device
               </button>
               <button
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-card border border-border text-muted-foreground hover:text-foreground hover:shadow-md transition-all whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-600 hover:text-signal hover:border-signal/30 hover:shadow-md transition-all whitespace-nowrap"
               >
                 <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
                 {isRefreshing ? "Refreshing..." : "Refresh"}
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-card border border-border text-muted-foreground hover:text-foreground hover:shadow-md transition-all whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-600 hover:text-signal hover:border-signal/30 hover:shadow-md transition-all whitespace-nowrap"
               >
                 <Download className="h-4 w-4" /> Export
               </button>
@@ -248,67 +240,74 @@ export default function ServerWatcherPage() {
             <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1">
               Infrastructure Monitor
             </p>
-            <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+            <h1 className="font-heading text-[28px] font-bold tracking-tight text-signal">
               Device Watcher
             </h1>
           </div>
 
-          {/* Compact Stat Cards */}
+          {/* 🎯 Compact Stat Cards — Theme Connected */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 relative">
-                <Wifi className="w-4 h-4 text-emerald-600" />
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            {/* Online — Success */}
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0 relative">
+                <Wifi className="w-4 h-4 text-success" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-success animate-pulse" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Online</p>
-                <p className="text-lg font-heading font-bold text-emerald-600">{stats.online}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Online</p>
+                <p className="text-lg font-heading font-bold text-success">{stats.online}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-                <WifiOff className="w-4 h-4 text-red-600" />
+
+            {/* Offline — Destructive */}
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                <WifiOff className="w-4 h-4 text-destructive" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Offline</p>
-                <p className="text-lg font-heading font-bold text-red-600">{stats.offline}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Offline</p>
+                <p className="text-lg font-heading font-bold text-destructive">{stats.offline}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-4 h-4 text-amber-600" />
+
+            {/* Warning — Warning */}
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-4 h-4 text-warning" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Warning</p>
-                <p className="text-lg font-heading font-bold text-amber-600">{stats.warning}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Warning</p>
+                <p className="text-lg font-heading font-bold text-warning">{stats.warning}</p>
               </div>
             </div>
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                <RadioTower className="w-4 h-4 text-blue-600" />
+
+            {/* Total — Signal */}
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <RadioTower className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Total</p>
-                <p className="text-lg font-heading font-bold text-blue-600">{stats.total}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Total</p>
+                <p className="text-lg font-heading font-bold text-signal">{stats.total}</p>
               </div>
             </div>
           </div>
 
           {/* Filters Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-6 flex flex-wrap items-center gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 flex flex-wrap items-center gap-3 shadow-sm">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search by name, IP or MAC address…"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-signal/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm font-semibold focus:ring-2 focus:ring-signal/30 outline-none"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option>All Status</option>
               <option>Online</option>
@@ -328,12 +327,12 @@ export default function ServerWatcherPage() {
 
           {/* Sort Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
               <span>Show</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border rounded-lg px-2 py-1 bg-background text-xs"
+                className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs text-signal"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -347,7 +346,7 @@ export default function ServerWatcherPage() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground font-semibold">Sort:</span>
+              <span className="text-xs text-slate-500 font-semibold">Sort:</span>
               {[
                 { key: "name", label: "Name" },
                 { key: "ip", label: "IP" },
@@ -360,7 +359,7 @@ export default function ServerWatcherPage() {
                     "px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1",
                     sortKey === s.key
                       ? "bg-signal text-white border-signal"
-                      : "bg-background text-muted-foreground border-border hover:border-signal/50"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50 hover:text-signal"
                   )}
                 >
                   {s.label}
@@ -372,17 +371,17 @@ export default function ServerWatcherPage() {
 
           {/* Table (List View only) */}
           {filteredDevices.length > 0 ? (
-            <div className="bg-card rounded-2xl border overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm min-w-[1200px]">
                   <thead>
-                    <tr className="bg-gradient-to-r from-signal to-violet-accent text-white">
+                    <tr className="bg-signal text-white">
                       <th className="px-4 py-4 w-12">
                         <input
                           type="checkbox"
                           checked={allSelected}
                           onChange={toggleSelectAll}
-                          className="rounded cursor-pointer"
+                          className="rounded cursor-pointer accent-white"
                         />
                       </th>
                       {["SL", "Name", "Status", "IP", "Port", "AP Mac", "ONU Mac", "ONU Power", "Last Change", "TM.I", "Action"].map((c) => (
@@ -414,8 +413,8 @@ export default function ServerWatcherPage() {
                         <tr
                           key={device.id}
                           className={cn(
-                            "border-t hover:bg-muted/40 transition-colors",
-                            isSelected && "bg-signal/5"
+                            "border-t border-slate-100 hover:bg-slate-50 transition-colors",
+                            isSelected && "bg-signal-tint"
                           )}
                         >
                           <td className="px-4 py-4">
@@ -423,34 +422,34 @@ export default function ServerWatcherPage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelect(device.id)}
-                              className="rounded cursor-pointer"
+                              className="rounded cursor-pointer accent-signal"
                             />
                           </td>
-                          <td className="px-5 py-4 font-mono text-muted-foreground">{startIndex + index + 1}</td>
-                          <td className="px-5 py-4 font-semibold">{device.name}</td>
+                          <td className="px-5 py-4 font-mono text-slate-500">{startIndex + index + 1}</td>
+                          <td className="px-5 py-4 font-semibold text-signal">{device.name}</td>
                           <td className="px-5 py-4">
-                            <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold", sc.bg, sc.color)}>
+                            <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold border", sc.bg, sc.color, sc.border)}>
                               <StatusIcon className="h-3 w-3" />
                               {sc.label}
                             </span>
                           </td>
-                          <td className="px-5 py-4 font-mono">{device.ip}</td>
-                          <td className="px-5 py-4 font-mono">{device.port}</td>
-                          <td className="px-5 py-4 font-mono text-[10px]">{device.apMac}</td>
-                          <td className="px-5 py-4 font-mono text-[10px]">{device.onuMac}</td>
+                          <td className="px-5 py-4 font-mono text-slate-600">{device.ip}</td>
+                          <td className="px-5 py-4 font-mono text-slate-600">{device.port}</td>
+                          <td className="px-5 py-4 font-mono text-[10px] text-slate-500">{device.apMac}</td>
+                          <td className="px-5 py-4 font-mono text-[10px] text-slate-500">{device.onuMac}</td>
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-1.5">
                               <SignalIcon className={cn("h-3.5 w-3.5", signal.color)} />
                               <span className={cn("font-bold text-xs", signal.color)}>{device.onuPower} dBm</span>
                             </div>
-                            <div className="w-20 h-1 rounded-full bg-muted overflow-hidden mt-1">
+                            <div className="w-20 h-1 rounded-full bg-slate-100 overflow-hidden mt-1">
                               <div
                                 className={cn("h-full rounded-full", signal.bg)}
                                 style={{ width: `${Math.min(100, Math.max(0, ((device.onuPower + 40) / 25) * 100))}%` }}
                               />
                             </div>
                           </td>
-                          <td className="px-5 py-4 text-muted-foreground whitespace-nowrap text-xs">
+                          <td className="px-5 py-4 text-slate-500 whitespace-nowrap text-xs">
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
                               {device.lastChange}
@@ -458,10 +457,10 @@ export default function ServerWatcherPage() {
                           </td>
                           <td className="px-5 py-4">
                             <span className={cn(
-                              "text-[10px] font-bold px-2 py-0.5 rounded-md",
-                              device.tmi === "OK" ? "bg-emerald-500/10 text-emerald-600" :
-                              device.tmi === "WEAK" ? "bg-amber-500/10 text-amber-600" :
-                              "bg-red-500/10 text-red-600"
+                              "text-[10px] font-bold px-2 py-0.5 rounded-md border",
+                              device.tmi === "OK" ? "bg-success-tint text-success border-success/30" :
+                              device.tmi === "WEAK" ? "bg-warning-tint text-warning border-warning/30" :
+                              "bg-destructive/10 text-destructive border-destructive/30"
                             )}>
                               {device.tmi}
                             </span>
@@ -470,14 +469,14 @@ export default function ServerWatcherPage() {
                             <div className="flex items-center gap-1">
                               <button
                                 onClick={() => setEditModal({ ...device })}
-                                className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-signal transition-colors"
+                                className="p-2 rounded-lg hover:bg-signal-tint text-slate-500 hover:text-signal transition-colors"
                                 title="Edit"
                               >
                                 <Edit3 className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(device.id, device.name)}
-                                className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                                className="p-2 rounded-lg hover:bg-destructive/10 text-slate-500 hover:text-destructive transition-colors"
                                 title="Delete"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -492,15 +491,15 @@ export default function ServerWatcherPage() {
               </div>
 
               {/* Pagination */}
-              <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t text-sm">
-                <div className="text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t border-slate-100 text-sm">
+                <div className="text-slate-500">
                   Showing {filteredDevices.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + rowsPerPage, filteredDevices.length)} of {filteredDevices.length} entries
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1 text-slate-600"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" /> Previous
                   </button>
@@ -514,7 +513,7 @@ export default function ServerWatcherPage() {
                           "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all",
                           currentPage === page
                             ? "bg-signal text-white shadow-md"
-                            : "border bg-card hover:bg-muted"
+                            : "border border-slate-200 bg-white hover:bg-slate-50 text-signal"
                         )}
                       >
                         {page}
@@ -524,7 +523,7 @@ export default function ServerWatcherPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1 text-slate-600"
                   >
                     Next <ChevronRight className="w-3.5 h-3.5" />
                   </button>
@@ -532,7 +531,7 @@ export default function ServerWatcherPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-card rounded-2xl border border-dashed p-12 flex flex-col items-center justify-center text-center">
+            <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 flex flex-col items-center justify-center text-center">
               <div className="relative w-20 h-20 mb-5">
                 <div className="absolute inset-0 rounded-full border-2 border-signal/20" />
                 <div className="absolute inset-3 rounded-full border-2 border-signal/30" />
@@ -542,18 +541,18 @@ export default function ServerWatcherPage() {
                   <RadioTower className="h-7 w-7 text-signal" />
                 </div>
               </div>
-              <h3 className="font-heading text-lg font-bold mb-1 flex items-center gap-2">
+              <h3 className="font-heading text-lg font-bold mb-1 flex items-center gap-2 text-signal">
                 <Activity className="h-5 w-5 text-signal" />
                 No devices being watched yet
               </h3>
-              <p className="text-sm text-muted-foreground max-w-sm mb-5">
+              <p className="text-sm text-slate-500 max-w-sm mb-5">
                 {searchTerm || statusFilter !== "All Status"
                   ? "Try adjusting your search or filters."
                   : "Add a router, ONU, or access point to start monitoring its uptime and status in real time."}
               </p>
               <button
                 onClick={() => setAddOpen(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-signal to-violet-accent text-white shadow-lg shadow-signal/30 hover:scale-105 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
               >
                 <Plus className="h-4 w-4" /> Add your first device
               </button>
@@ -562,27 +561,27 @@ export default function ServerWatcherPage() {
         </div>
       </div>
 
-      {/* Add Device Modal (WORKING) */}
+      {/* Add Device Modal */}
       {addOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setAddOpen(false)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setAddOpen(false)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-[9px] bg-gradient-to-br from-signal to-violet-accent" />
-                  <span className="font-heading font-bold text-sm">LOGO ICON ONLY</span>
+                  <div className="w-8 h-8 rounded-[9px] bg-signal" />
+                  <span className="font-heading font-bold text-sm text-signal">LOGO ICON ONLY</span>
                 </div>
-                <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                <h3 className="font-heading text-2xl font-bold text-signal">
                   Add New Device
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Register a new device to start monitoring.
                 </p>
               </div>
               <button
                 onClick={() => setAddOpen(false)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -590,72 +589,72 @@ export default function ServerWatcherPage() {
 
             <form onSubmit={handleAddDevice} className="space-y-5">
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">
-                  Device Name <span className="text-red-500">*</span>
+                <label className="font-semibold text-sm block text-signal">
+                  Device Name <span className="text-destructive">*</span>
                 </label>
                 <input
                   value={newDevice.name}
                   onChange={(e) => setNewDevice({ ...newDevice, name: e.target.value })}
                   placeholder="e.g. Router-Main-02"
-                  className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">
-                    IP Address <span className="text-red-500">*</span>
+                  <label className="font-semibold text-sm block text-signal">
+                    IP Address <span className="text-destructive">*</span>
                   </label>
                   <input
                     value={newDevice.ip}
                     onChange={(e) => setNewDevice({ ...newDevice, ip: e.target.value })}
                     placeholder="192.168.1.100"
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Port</label>
+                  <label className="font-semibold text-sm block text-signal">Port</label>
                   <input
                     value={newDevice.port}
                     onChange={(e) => setNewDevice({ ...newDevice, port: e.target.value })}
                     placeholder="80"
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">AP Mac</label>
+                  <label className="font-semibold text-sm block text-signal">AP Mac</label>
                   <input
                     value={newDevice.apMac}
                     onChange={(e) => setNewDevice({ ...newDevice, apMac: e.target.value })}
                     placeholder="AA:BB:CC:..."
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">ONU Mac</label>
+                  <label className="font-semibold text-sm block text-signal">ONU Mac</label>
                   <input
                     value={newDevice.onuMac}
                     onChange={(e) => setNewDevice({ ...newDevice, onuMac: e.target.value })}
                     placeholder="DD:EE:FF:..."
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">ONU Power (dBm)</label>
+                  <label className="font-semibold text-sm block text-signal">ONU Power (dBm)</label>
                   <input
                     type="number"
                     step="0.1"
                     value={newDevice.onuPower}
                     onChange={(e) => setNewDevice({ ...newDevice, onuPower: Number(e.target.value) })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">TM.I Status</label>
+                  <label className="font-semibold text-sm block text-signal">TM.I Status</label>
                   <select
                     value={newDevice.tmi}
                     onChange={(e) => setNewDevice({ ...newDevice, tmi: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option>OK</option>
                     <option>WEAK</option>
@@ -668,13 +667,13 @@ export default function ServerWatcherPage() {
                 <button
                   type="button"
                   onClick={() => setAddOpen(false)}
-                  className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                  className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Add Device
                 </button>
@@ -684,23 +683,23 @@ export default function ServerWatcherPage() {
         </div>
       )}
 
-      {/* Edit Device Modal (WORKING) */}
+      {/* Edit Device Modal */}
       {editModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
-          <div className="relative bg-card w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setEditModal(null)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h3 className="font-heading text-2xl font-bold bg-gradient-to-r from-signal to-violet-accent bg-clip-text text-transparent">
+                <h3 className="font-heading text-2xl font-bold text-signal">
                   Edit Device
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Update device details.
                 </p>
               </div>
               <button
                 onClick={() => setEditModal(null)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -708,21 +707,21 @@ export default function ServerWatcherPage() {
 
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="font-semibold text-sm block">Device Name</label>
+                <label className="font-semibold text-sm block text-signal">Device Name</label>
                 <input
                   value={editModal.name}
                   onChange={(e) => setEditModal({ ...editModal, name: e.target.value })}
-                  className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Status</label>
+                  <label className="font-semibold text-sm block text-signal">Status</label>
                   <select
                     value={editModal.status}
                     onChange={(e) => setEditModal({ ...editModal, status: e.target.value as any })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option value="online">Online</option>
                     <option value="warning">Warning</option>
@@ -730,53 +729,53 @@ export default function ServerWatcherPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">IP Address</label>
+                  <label className="font-semibold text-sm block text-signal">IP Address</label>
                   <input
                     value={editModal.ip}
                     onChange={(e) => setEditModal({ ...editModal, ip: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">Port</label>
+                  <label className="font-semibold text-sm block text-signal">Port</label>
                   <input
                     value={editModal.port}
                     onChange={(e) => setEditModal({ ...editModal, port: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">AP Mac</label>
+                  <label className="font-semibold text-sm block text-signal">AP Mac</label>
                   <input
                     value={editModal.apMac}
                     onChange={(e) => setEditModal({ ...editModal, apMac: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">ONU Mac</label>
+                  <label className="font-semibold text-sm block text-signal">ONU Mac</label>
                   <input
                     value={editModal.onuMac}
                     onChange={(e) => setEditModal({ ...editModal, onuMac: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">ONU Power (dBm)</label>
+                  <label className="font-semibold text-sm block text-signal">ONU Power (dBm)</label>
                   <input
                     type="number"
                     step="0.1"
                     value={editModal.onuPower}
                     onChange={(e) => setEditModal({ ...editModal, onuPower: Number(e.target.value) })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-semibold text-sm block">TM.I</label>
+                  <label className="font-semibold text-sm block text-signal">TM.I</label>
                   <select
                     value={editModal.tmi}
                     onChange={(e) => setEditModal({ ...editModal, tmi: e.target.value })}
-                    className="w-full bg-background border border-input rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-signal outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-signal focus:ring-2 focus:ring-signal outline-none"
                   >
                     <option>OK</option>
                     <option>WEAK</option>
@@ -788,13 +787,13 @@ export default function ServerWatcherPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setEditModal(null)}
-                  className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                  className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-signal to-violet-accent text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
                 >
                   <Save className="w-4 h-4" /> Save Changes
                 </button>

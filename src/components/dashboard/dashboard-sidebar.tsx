@@ -33,161 +33,162 @@ interface NavLinkDef {
   href: string;
 }
 
-// Single Links
+// 🎯 Single Links (Dashboard সহ)
 const singleLinks: NavLinkDef[] = [
-  { key: "dashboard", label: "Control Room", icon: LayoutGrid, href: "/admin/dashboard" },
-  { key: "all-accounts", label: "Revenue Hub", icon: FileText, href: "/admin/billing/all-accounts" },
-  { key: "self-recharge", label: "Auto Top-Up", icon: Zap, href: "/admin/self-recharge" },
-  { key: "instant-pay", label: "Quick Settle", icon: Zap, href: "/admin/instant-pay" },
-  { key: "payments", label: "Money Stream", icon: Wallet, href: "/admin/payments" },
-  { key: "ticketing", label: "Help Desk", icon: Ticket, href: "/admin/ticketing" },
-  { key: "network-diagram", label: "Topology Map", icon: Waypoints, href: "/admin/network-diagram" },
-  { key: "package-plan", label: "Service Catalog", icon: Package, href: "/admin/package-plan" },
-  { key: "server-watcher", label: "Node Monitor", icon: ServerCog, href: "/admin/server-watcher" },
-  { key: "manage-users", label: "Team Control", icon: Users, href: "/admin/manage-users" },
+  { key: "dashboard", label: "Dashboard", icon: LayoutGrid, href: "/admin/dashboard" },
+  { key: "all-accounts", label: "Billing", icon: FileText, href: "/admin/billing/all-accounts" },
+  { key: "self-recharge", label: "Self Recharge", icon: Zap, href: "/admin/self-recharge" },
+  { key: "instant-pay", label: "Instant Pay", icon: Zap, href: "/admin/instant-pay" },
+  { key: "payments", label: "Payments", icon: Wallet, href: "/admin/payments" },
+  { key: "ticketing", label: "Ticketing", icon: Ticket, href: "/admin/ticketing" },
+  { key: "network-diagram", label: "Network Diagram", icon: Waypoints, href: "/admin/network-diagram" },
+  { key: "package-plan", label: "Package Plan", icon: Package, href: "/admin/package-plan" },
+  { key: "server-watcher", label: "Server Watcher", icon: ServerCog, href: "/admin/server-watcher" },
+  { key: "manage-users", label: "Manage Users", icon: Users, href: "/admin/manage-users" },
+  { key: "notifications", label: "Notifications", icon: Bell, href: "/admin/notifications" }
 ];
 
-// Groups
+// 🎯 Groups (Dashboard গ্রুপ বাদ দেওয়া হয়েছে)
 const groups: NavGroupDef[] = [
   {
-    key: "zone", label: "Territory Insights", icon: Radio, basePath: "/zone",
+    key: "zone", label: "Zone Reports", icon: Radio, basePath: "/zone",
     color: "text-blue-400", colorBg: "bg-blue-500/15",
     items: [
-      { label: "Add New Territory", href: "/admin/zone/create" },
-      { label: "All Territories", href: "/admin/zone/list" },
-      { label: "Sub-Territories", href: "/admin/zone/list-sub-zone" },
-      { label: "Subscriber Pay", href: "/admin/zone/customer-payment" },
+      { label: "Create Zone/Sub-Zone", href: "/admin/zone/create" },
+      { label: "List Zone", href: "/admin/zone/list" },
+      { label: "List Sub-Zone", href: "/admin/zone/list-sub-zone" },
+      { label: "Customer Payment", href: "/admin/zone/customer-payment" },
     ],
   },
   {
-    key: "reports", label: "Data Chronicles", icon: BarChart3, basePath: "/reports",
+    key: "reports", label: "Reports", icon: BarChart3, basePath: "/reports",
     color: "text-cyan-400", colorBg: "bg-cyan-500/15",
     items: [
-      { label: "PoP Subscriber View", href: "/admin/reports/report-pop-wise" },
-      { label: "PoP Revenue Flow", href: "/admin/reports/pop-wise-sales" },
-      { label: "Reseller Subscribers", href: "/admin/reports/reseller-wise-client" },
-      { label: "Sub-Zone Subscribers", href: "/admin/reports/sub-zone-wise-client" },
-      { label: "Server Uptime", href: "/admin/reports/server-wise-online" },
-      { label: "Invoices Archive", href: "/admin/reports/invoices" },
-      { label: "Online Ledger", href: "/admin/reports/online-transactions" },
-      { label: "Merchant Ledger", href: "/admin/reports/merchant-payments" },
-      { label: "Merchant Monthly", href: "/admin/reports/merchant-monthly-report" },
-      { label: "Monthly Sales Flow", href: "/admin/reports/month-wise-sales" },
-      { label: "Server Sales Split", href: "/admin/reports/server-wise-sales" },
-      { label: "Reseller Sales Split", href: "/admin/reports/reseller-wise-sales" },
-      { label: "Top-Up Chronicles", href: "/admin/reports/recharge-history" },
-      { label: "Message Chronicles", href: "/admin/reports/sms-history" },
-      { label: "Monthly Active Pulse", href: "/admin/reports/monthly-active-user" },
+      { label: "Report PoP Client", href: "/admin/reports/report-pop-wise" },
+      { label: "POP Wise Sales", href: "/admin/reports/pop-wise-sales" },
+      { label: "Reseller Client", href: "/admin/reports/reseller-wise-client" },
+      { label: "Sub Zone Client", href: "/admin/reports/sub-zone-wise-client" },
+      { label: "Server Online", href: "/admin/reports/server-wise-online" },
+      { label: "Invoices", href: "/admin/reports/invoices" },
+      { label: "Online Transactions", href: "/admin/reports/online-transactions" },
+      { label: "Merchant Payments", href: "/admin/reports/merchant-payments" },
+      { label: "Merchant Monthly Report", href: "/admin/reports/merchant-monthly-report" },
+      { label: "MonthWise Sales", href: "/admin/reports/month-wise-sales" },
+      { label: "ServerWise Sales", href: "/admin/reports/server-wise-sales" },
+      { label: "ResellerWise Sales", href: "/admin/reports/reseller-wise-sales" },
+      { label: "Recharge History", href: "/admin/reports/recharge-history" },
+      { label: "SMS History", href: "/admin/reports/sms-history" },
+      { label: "Monthly Active User", href: "/admin/reports/monthly-active-user" },
     ],
   },
   {
-    key: "analytics", label: "Signal Intelligence", icon: BarChart3, basePath: "/admin/analytics",
+    key: "analytics", label: "Analytics", icon: BarChart3, basePath: "/admin/analytics",
     color: "text-violet-400", colorBg: "bg-violet-500/15",
     items: [
-      { label: "Bandwidth Peaks", href: "/admin/analytics/high-traffic-usages" },
-      { label: "Broadband Insights", href: "/admin/analytics/pppoe-analytics" },
-      { label: "Optical Analytics", href: "/admin/analytics/laser-analytics" },
-      { label: "Revenue Signals", href: "/admin/analytics/sales-analytics" },
+      { label: "High Traffic Usages", href: "/admin/analytics/high-traffic-usages" },
+      { label: "PPPoE Analytics", href: "/admin/analytics/pppoe-analytics" },
+      { label: "Laser Analytics", href: "/admin/analytics/laser-analytics" },
+      { label: "Sales Analytics", href: "/admin/analytics/sales-analytics" },
     ],
   },
   {
-    key: "clients", label: "Subscriber Hub", icon: UserCircle, basePath: "/clients",
+    key: "clients", label: "Clients", icon: UserCircle, basePath: "/clients",
     color: "text-pink-400", colorBg: "bg-pink-500/15",
     items: [
-      { label: "Add New Subscriber", href: "/admin/clients/create" },
-      { label: "Standard Renewal", href: "/admin/clients/general-renew" },
-      { label: "Client Information", href: "/admin/clients/view-information" },
-      { label: "Find Subscriber", href: "/admin/clients/client-search" },
-      { label: "Plan Switch", href: "/admin/clients/plan-migration" },
-      { label: "Custom Renewal", href: "/admin/clients/special-renew" },
-      { label: "Extend Validity", href: "/admin/clients/client-date-extend" },
-      { label: "Remote Renewal", href: "/admin/clients/online-renew" },
+      { label: "Create New", href: "/admin/clients/create" },
+      { label: "General Renew", href: "/admin/clients/general-renew" },
+      { label: "View Information", href: "/admin/clients/view-information" },
+      { label: "Client Search", href: "/admin/clients/client-search" },
+      { label: "Plan Migration", href: "/admin/clients/plan-migration" },
+      { label: "Special Renew", href: "/admin/clients/special-renew" },
+      { label: "Client Date Extend", href: "/admin/clients/client-date-extend" },
+      { label: "Online Renew", href: "/admin/clients/online-renew" },
     ],
   },
   {
-    key: "pppoe", label: "Broadband Core", icon: Radar, basePath: "/pppoe",
+    key: "pppoe", label: "PPPoE", icon: Radar, basePath: "/pppoe",
     color: "text-emerald-400", colorBg: "bg-emerald-500/15",
     items: [
-      { label: "Broadband Directory", href: "/admin/pppoe/all-users" },
-      { label: "Real-Time Flow", href: "/admin/pppoe/user-traffic" },
-      { label: "Live Connections", href: "/admin/pppoe/online-users" },
-      { label: "Active Sessions", href: "/admin/pppoe/active-users" },
-      { label: "Disconnected", href: "/admin/pppoe/offline-users" },
-      { label: "Shared Bandwidth", href: "/admin/pppoe/sharing-users" },
+      { label: "All Users", href: "/admin/pppoe/all-users" },
+      { label: "User Traffic", href: "/admin/pppoe/user-traffic" },
+      { label: "Online Users", href: "/admin/pppoe/online-users" },
+      { label: "Active Users", href: "/admin/pppoe/active-users" },
+      { label: "Offline Users", href: "/admin/pppoe/offline-users" },
+      { label: "Sharing Users", href: "/admin/pppoe/sharing-users" },
     ],
   },
   {
-    key: "hotspot", label: "Wi-Fi Zone", icon: Wifi, basePath: "/hotspot",
+    key: "hotspot", label: "Hotspot", icon: Wifi, basePath: "/hotspot",
     color: "text-amber-400", colorBg: "bg-amber-500/15",
     items: [
-      { label: "Wi-Fi Directory", href: "/admin/hotspot/all-users" },
-      { label: "Disconnected", href: "/admin/hotspot/offline-users" },
-      { label: "Live Wi-Fi", href: "/admin/hotspot/online-users" },
-      { label: "Active Wi-Fi", href: "/admin/hotspot/active-users" },
-      { label: "Device Traces", href: "/admin/hotspot/mac-log" },
-      { label: "Session Traces", href: "/admin/hotspot/log" },
+      { label: "All Users", href: "/admin/hotspot/all-users" },
+      { label: "Offline Users", href: "/admin/hotspot/offline-users" },
+      { label: "Online Users", href: "/admin/hotspot/online-users" },
+      { label: "Active Users", href: "/admin/hotspot/active-users" },
+      { label: "Mac Log", href: "/admin/hotspot/mac-log" },
+      { label: "Log", href: "/admin/hotspot/log" },
     ],
   },
   {
-    key: "cards", label: "Voucher Studio", icon: CreditCard, basePath: "/cards",
+    key: "cards", label: "Cards", icon: CreditCard, basePath: "/cards",
     color: "text-orange-400", colorBg: "bg-orange-500/15",
     items: [
-      { label: "Voucher Directory", href: "/admin/cards/list" },
-      { label: "Find Voucher", href: "/admin/cards/search" },
-      { label: "Voucher Maker", href: "/admin/cards/generator" },
-      { label: "Bulk Voucher Maker", href: "/admin/cards/generate-excel" },
-      { label: "Voucher Print", href: "/admin/cards/print" },
-      { label: "Voucher Chronicles", href: "/admin/cards/report" },
-      { label: "Voucher By Date", href: "/admin/cards/report-by-date" },
+      { label: "Card List", href: "/admin/cards/list" },
+      { label: "Card Search", href: "/admin/cards/search" },
+      { label: "Card Generator", href: "/admin/cards/generator" },
+      { label: "Card Generate Excel", href: "/admin/cards/generate-excel" },
+      { label: "Card Print", href: "/admin/cards/print" },
+      { label: "Card Report All", href: "/admin/cards/report" },
+      { label: "Card Report By Date", href: "/admin/cards/report-by-date" },
     ],
   },
   {
-    key: "sms", label: "Message Center", icon: Mail, basePath: "/sms",
+    key: "sms", label: "SMS", icon: Mail, basePath: "/sms",
     color: "text-sky-400", colorBg: "bg-sky-500/15",
     items: [
-      { label: "Credit Purchase", href: "/admin/sms/buy" },
-      { label: "Gateway Setup", href: "/admin/sms/settings" },
+      { label: "Buy SMS", href: "/admin/sms/buy" },
+      { label: "SMS Settings", href: "/admin/sms/settings" },
     ],
   },
   {
-    key: "accounts", label: "Finance Ledger", icon: Landmark, basePath: "/accounts",
+    key: "accounts", label: "Accounts", icon: Landmark, basePath: "/accounts",
     color: "text-teal-400", colorBg: "bg-teal-500/15",
     items: [
-      { label: "Finance Panel", href: "/admin/accounts/accounts" },
-      { label: "Earnings", href: "/admin/accounts/income" },
-      { label: "Spendings", href: "/admin/accounts/expense" },
-      { label: "Fund Shuffle", href: "/admin/accounts/fund-transfer" },
-      { label: "Bank Vault", href: "/admin/accounts/bank-account" },
-      { label: "Voucher Maker", href: "/admin/accounts/voucher-entry" },
-      { label: "Invoice Entry", href: "/admin/accounts/bill-entry" },
-      { label: "Account Tree", href: "/admin/accounts/chart-of-account" },
-      { label: "Cash Stream", href: "/admin/accounts/cash-flow" },
-      { label: "Gain & Loss", href: "/admin/accounts/profit-loss" },
-      { label: "Cash Stream Details", href: "/admin/accounts/cash-flow-details" },
+      { label: "Accounts Panel", href: "/admin/accounts/accounts" },
+      { label: "Income", href: "/admin/accounts/income" },
+      { label: "Expense", href: "/admin/accounts/expense" },
+      { label: "Fund Transfer", href: "/admin/accounts/fund-transfer" },
+      { label: "Bank Account", href: "/admin/accounts/bank-account" },
+      { label: "Voucher Entry", href: "/admin/accounts/voucher-entry" },
+      { label: "Bill Entry", href: "/admin/accounts/bill-entry" },
+      { label: "Chart Of Amount", href: "/admin/accounts/chart-of-account" },
+      { label: "Cash Flow", href: "/admin/accounts/cash-flow" },
+      { label: "Profit & Loss", href: "/admin/accounts/profit-loss" },
+      { label: "Cash Flow Details", href: "/admin/accounts/cash-flow-details" },
     ],
   },
   {
-    key: "config", label: "System Console", icon: Settings, basePath: "/config",
+    key: "config", label: "Config", icon: Settings, basePath: "/config",
     color: "text-slate-400", colorBg: "bg-slate-500/15",
     items: [
-      { label: "Service Catalog", href: "/admin/config/package-plan" },
-      { label: "Catalog & Rates", href: "/admin/config/packages-rates" },
-      { label: "Server Links", href: "/admin/config/server-bind" },
-      { label: "Bulk Subscribers", href: "/admin/config/import-client" },
-      { label: "Billing Cycle", href: "/admin/config/bill-cycle-list" },
-      { label: "Router Bridge", href: "/admin/config/mikrotik" },
-      { label: "System Setup", href: "/admin/config/setup-settings" },
+      { label: "Package Plan", href: "/admin/config/package-plan" },
+      { label: "Packages & Rates", href: "/admin/config/packages-rates" },
+      { label: "Server Bind", href: "/admin/config/server-bind" },
+      { label: "Import Client", href: "/admin/config/import-client" },
+      { label: "Bill Cycle List", href: "/admin/config/bill-cycle-list" },
+      { label: "Mikrotik", href: "/admin/config/mikrotik" },
+      { label: "Setup Settings", href: "/admin/config/setup-settings" },
     ],
   },
   {
-    key: "package-rate", label: "Plan & Pricing", icon: BadgeDollarSign, basePath: "/package-rate",
+    key: "package-rate", label: "Package & Rate", icon: BadgeDollarSign, basePath: "/package-rate",
     color: "text-fuchsia-400", colorBg: "bg-fuchsia-500/15",
     items: [
-      { label: "Balance Top-Up", href: "/admin/package-rate/balance-add" },
-      { label: "Billing Cycle", href: "/admin/package-rate/bill-cycle" },
-      { label: "Pricing & Splits", href: "/admin/package-rate/sharing-pct" },
-      { label: "Price Book", href: "/admin/package-rate/rate-list" },
-      { label: "Subscriber Prices", href: "/admin/package-rate/customer-rates" },
+      { label: "Balance add", href: "/admin/package-rate/balance-add" },
+      { label: "Bill Cycle", href: "/admin/package-rate/bill-cycle" },
+      { label: "Rate List & Sharing PCT", href: "/admin/package-rate/sharing-pct" },
+      { label: "Rate List", href: "/admin/package-rate/rate-list" },
+      { label: "Customer Rates", href: "/admin/package-rate/customer-rates" },
     ],
   },
 ];
@@ -239,6 +240,7 @@ function PinStar({ pinned, onToggle }: { pinned: boolean; onToggle: () => void }
   );
 }
 
+// 🎯 Live Clock
 function LiveClock() {
   const [time, setTime] = useState("");
   useEffect(() => {
@@ -268,6 +270,7 @@ export function DashboardSidebar() {
   const [activeTab, setActiveTab] = useState<"nav" | "pinned" | "recent">("nav");
   const [recent, setRecent] = useState<{ label: string; href: string }[]>([]);
 
+  // Restore persisted state
   useLayoutEffect(() => {
     const savedOpen = readJSON<Record<string, boolean>>(OPEN_GROUPS_KEY, {});
     const activeGroup = groups.find((g) => pathname?.startsWith(g.basePath));
@@ -280,6 +283,7 @@ export function DashboardSidebar() {
     setHydrated(true);
   }, [pathname]);
 
+  // Track recent visits
   useEffect(() => {
     if (!hydrated || !pathname) return;
     const entry = searchIndex.find((e) => e.href === pathname);
@@ -292,6 +296,7 @@ export function DashboardSidebar() {
     });
   }, [pathname, hydrated]);
 
+  // Scroll active link into view
   useLayoutEffect(() => {
     if (!hydrated || !scrollRef.current) return;
     const savedScroll = readJSON<number>(SCROLL_KEY, 0);
@@ -310,6 +315,7 @@ export function DashboardSidebar() {
     });
   }, [hydrated]);
 
+  // Save scroll position
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -322,6 +328,7 @@ export function DashboardSidebar() {
     return () => el.removeEventListener("scroll", onScroll);
   }, [hydrated]);
 
+  // Keyboard shortcut: Ctrl+K → focus search
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
@@ -392,6 +399,7 @@ export function DashboardSidebar() {
             : "text-slate-400 hover:text-white hover:bg-white/5 hover:pl-5"
         )}
       >
+        {/* Active Indicator Bar */}
         {active && (
           <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-signal" />
         )}
@@ -415,10 +423,10 @@ export function DashboardSidebar() {
           collapsed ? "w-[76px]" : "w-64"
         )}
       >
-        {/* HEADER */}
+        {/* ============ HEADER ============ */}
         <div className="flex items-center justify-between px-3.5 pt-4 pb-3 shrink-0 border-b border-white/5">
           <div className={cn("flex items-center gap-2.5 min-w-0", collapsed && "justify-center w-full")}>
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-signal to-signal-light flex items-center justify-center shrink-0 shadow-lg shadow-signal/30">
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-signal to-violet-accent flex items-center justify-center shrink-0 shadow-lg shadow-signal/30">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M12 3C7 3 3 6.5 3 11c0 3 2 5.5 4.5 6.8L12 21l4.5-3.2C19 16.5 21 14 21 11c0-4.5-4-8-9-8z" stroke="white" strokeWidth="1.6" />
                 <circle cx="12" cy="10" r="2.2" fill="white" />
@@ -446,12 +454,12 @@ export function DashboardSidebar() {
           </button>
         </div>
 
-        {/* USER PROFILE */}
+        {/* ============ USER PROFILE (only when expanded) ============ */}
         {!collapsed && (
           <div className="px-3.5 py-3 shrink-0 border-b border-white/5">
             <div className="flex items-center gap-2.5 p-2 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/5 hover:border-signal/30 transition-all cursor-pointer group">
               <div className="relative">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-signal to-signal-light flex items-center justify-center text-white font-bold text-xs shadow-md">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-accent to-signal flex items-center justify-center text-white font-bold text-xs shadow-md">
                   RB
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0f1523]" />
@@ -467,7 +475,7 @@ export function DashboardSidebar() {
           </div>
         )}
 
-        {/* SEARCH */}
+        {/* ============ SEARCH ============ */}
         {!collapsed && (
           <div className="px-3.5 pt-3 pb-2 shrink-0 relative">
             <div className="relative group">
@@ -507,7 +515,7 @@ export function DashboardSidebar() {
           </div>
         )}
 
-        {/* QUICK TABS */}
+        {/* ============ QUICK TABS ============ */}
         {!collapsed && (
           <div className="px-3.5 pb-3 shrink-0">
             <div className="flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/5">
@@ -525,7 +533,7 @@ export function DashboardSidebar() {
                     className={cn(
                       "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold transition-all",
                       isActive
-                        ? "bg-gradient-to-r from-signal to-signal-light text-white shadow-md"
+                        ? "bg-gradient-to-r from-signal to-violet-accent text-white shadow-md"
                         : "text-slate-500 hover:text-white hover:bg-white/5"
                     )}
                   >
@@ -546,8 +554,10 @@ export function DashboardSidebar() {
           </div>
         )}
 
-        {/* NAV BODY */}
+        {/* ============ NAV BODY ============ */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 pb-3 sidebar-scroll">
+          
+          {/* TAB: PINNED */}
           {!collapsed && activeTab === "pinned" && (
             <div className="space-y-0.5">
               {pinnedEntries.length > 0 ? (
@@ -577,6 +587,7 @@ export function DashboardSidebar() {
             </div>
           )}
 
+          {/* TAB: RECENT */}
           {!collapsed && activeTab === "recent" && (
             <div className="space-y-0.5">
               {recent.length > 0 ? (
@@ -604,8 +615,10 @@ export function DashboardSidebar() {
             </div>
           )}
 
+          {/* TAB: NAV (Main navigation) */}
           {activeTab === "nav" && (
             <>
+              {/* Single links (top 2) */}
               <div className="mb-2">
                 {singleLinks.slice(0, 2).map((item) => {
                   const active = pathname === item.href;
@@ -619,7 +632,7 @@ export function DashboardSidebar() {
                         "relative flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all mb-0.5",
                         collapsed && "justify-center",
                         active
-                          ? "bg-gradient-to-r from-signal to-signal-light text-white font-semibold shadow-md shadow-signal/20"
+                          ? "bg-gradient-to-r from-signal to-violet-accent text-white font-semibold shadow-md shadow-signal/20"
                           : "text-slate-300/80 hover:bg-white/5 hover:text-white"
                       )}
                     >
@@ -630,6 +643,7 @@ export function DashboardSidebar() {
                 })}
               </div>
 
+              {/* Divider */}
               {!collapsed && (
                 <div className="flex items-center gap-2 px-2.5 py-2">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -638,6 +652,7 @@ export function DashboardSidebar() {
                 </div>
               )}
 
+              {/* Grouped sections */}
               {groups.map((g) => {
                 const isActiveSection = pathname?.startsWith(g.basePath);
                 const isOpen = collapsed ? isActiveSection : !!openGroups[g.key];
@@ -698,6 +713,7 @@ export function DashboardSidebar() {
                 );
               })}
 
+              {/* Remaining single links */}
               <div className="mt-2 pt-2 border-t border-white/5">
                 {singleLinks.slice(2).map((item) => {
                   const active = pathname === item.href;
@@ -711,7 +727,7 @@ export function DashboardSidebar() {
                         "relative flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all mb-0.5",
                         collapsed && "justify-center",
                         active
-                          ? "bg-gradient-to-r from-signal to-signal-light text-white font-semibold shadow-md shadow-signal/20"
+                          ? "bg-gradient-to-r from-signal to-violet-accent text-white font-semibold shadow-md shadow-signal/20"
                           : "text-slate-300/80 hover:bg-white/5 hover:text-white"
                       )}
                     >
@@ -725,31 +741,11 @@ export function DashboardSidebar() {
           )}
         </div>
 
-        {/* FOOTER */}
+        {/* ============ FOOTER ============ */}
         <div className="shrink-0 border-t border-white/5 p-2.5 space-y-1">
-          {!collapsed && (
-            <Link
-              href="/admin/notifications"
-              className={cn(
-                "w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-[12.5px] font-semibold transition-colors",
-                pathname === "/admin/notifications"
-                  ? "bg-signal/15 text-signal"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <span className="flex items-center gap-2.5">
-                <div className="relative">
-                  <Bell className="h-4 w-4 shrink-0" />
-                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                </div>
-                <span>Notifications</span>
-              </span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-500/20 text-red-400">
-                3
-              </span>
-            </Link>
-          )}
+          
 
+          {/* Collapse toggle */}
           <button
             onClick={toggleCollapsed}
             className={cn(
@@ -761,6 +757,7 @@ export function DashboardSidebar() {
             {!collapsed && <span>Collapse Sidebar</span>}
           </button>
 
+          {/* Version */}
           {!collapsed && (
             <div className="px-2.5 pt-2 pb-1 text-center">
               <div className="flex items-center justify-center gap-1.5 text-[9px] text-slate-600">
@@ -772,6 +769,7 @@ export function DashboardSidebar() {
         </div>
       </aside>
 
+      {/* Custom Scrollbar Styles */}
       <style jsx global>{`
         .sidebar-scroll::-webkit-scrollbar {
           width: 4px;

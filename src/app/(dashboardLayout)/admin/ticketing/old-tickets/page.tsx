@@ -24,11 +24,12 @@ const initialTickets = [
   { id: "TKT-0940", subject: "Router replacement delivered", customer: "Anwar Hossain", priority: "High", status: "Closed", date: "90 days ago", daysAgo: 90, resolvedBy: "Support B", resolutionTime: "2d 4h", messages: 18 },
 ];
 
+// 🎯 থিম-ভিত্তিক Priority Badge
 const priorityColors: Record<string, string> = {
-  Critical: "bg-red-500/10 text-red-600 border-red-500/20",
-  High: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-  Medium: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  Low: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  Critical: "bg-destructive/10 text-destructive border-destructive/30",
+  High: "bg-caution-tint text-caution border-caution/30",
+  Medium: "bg-warning-tint text-warning border-warning/30",
+  Low: "bg-signal-tint text-signal border-signal/30",
 };
 
 const dateRanges = [
@@ -61,7 +62,6 @@ export default function OldTicketsPage() {
     };
   }, [tickets]);
 
-  // ফিল্টার + সার্চ
   const filteredTickets = useMemo(() => {
     const activeRange = dateRanges.find((r) => r.id === dateRange) || dateRanges[0];
 
@@ -87,12 +87,10 @@ export default function OldTicketsPage() {
     return filtered;
   }, [tickets, searchTerm, priorityFilter, dateRange, sortKey, sortOrder]);
 
-  // পেজিনেশন
   const totalPages = Math.ceil(filteredTickets.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedTickets = filteredTickets.slice(startIndex, startIndex + rowsPerPage);
 
-  // সিলেক্ট
   const allSelected =
     paginatedTickets.length > 0 && paginatedTickets.every((t) => selectedTickets.includes(t.id));
   const toggleSelectAll = () => {
@@ -113,7 +111,6 @@ export default function OldTicketsPage() {
     else { setSortKey(key); setSortOrder("asc"); }
   };
 
-  // Reopen Ticket
   const handleReopen = (id: string) => {
     if (confirm(`Reopen ticket ${id}? It will move back to Open Tickets.`)) {
       setTickets((prev) => prev.filter((t) => t.id !== id));
@@ -123,7 +120,6 @@ export default function OldTicketsPage() {
     }
   };
 
-  // Delete Ticket
   const handleDelete = (id: string) => {
     if (confirm(`Permanently delete ticket ${id}? This action cannot be undone.`)) {
       setTickets((prev) => prev.filter((t) => t.id !== id));
@@ -133,7 +129,6 @@ export default function OldTicketsPage() {
     }
   };
 
-  // Bulk Restore
   const handleBulkRestore = () => {
     if (selectedTickets.length === 0) {
       alert("Please select at least one ticket.");
@@ -146,7 +141,6 @@ export default function OldTicketsPage() {
     }
   };
 
-  // Bulk Delete
   const handleBulkDelete = () => {
     if (selectedTickets.length === 0) {
       alert("Please select at least one ticket.");
@@ -159,7 +153,6 @@ export default function OldTicketsPage() {
     }
   };
 
-  // Export CSV
   const handleExport = () => {
     const dataToExport = selectedTickets.length > 0
       ? tickets.filter((t) => selectedTickets.includes(t.id))
@@ -188,7 +181,7 @@ export default function OldTicketsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
 
       <div className="flex-1 min-w-0">
@@ -199,87 +192,87 @@ export default function OldTicketsPage() {
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div>
-              <p className="text-xs font-semibold tracking-widest uppercase text-orange-500 mb-1">
+              <p className="text-xs font-semibold tracking-widest uppercase text-signal mb-1">
                 Archive
               </p>
-              <h1 className="font-heading text-[28px] font-bold tracking-tight bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+              <h1 className="font-heading text-[28px] font-bold tracking-tight text-signal">
                 Old Tickets
               </h1>
             </div>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-orange-500/30 text-orange-600 hover:bg-orange-500/5 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-signal/30 text-signal hover:bg-signal-tint transition-all"
             >
               <Download className="h-4 w-4" /> Export Archive
             </button>
           </div>
 
           {/* Info Banner */}
-          <div className="bg-slate-500/10 border border-slate-500/20 rounded-2xl p-4 mb-5 flex items-center gap-3">
+          <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 mb-5 flex items-center gap-3">
             <Archive className="h-5 w-5 text-slate-600 shrink-0" />
             <p className="text-sm font-semibold text-slate-700">
               These tickets are closed and archived. You can view their history or reopen them if needed.
             </p>
           </div>
 
-          {/* 🎯 Compact Stat Cards - এক লাইনে */}
+          {/* Compact Stat Cards — Theme Connected */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center shrink-0">
-                <Archive className="w-4 h-4 text-white" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
+                <Archive className="w-4 h-4 text-signal" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">Total</p>
-                <p className="text-lg font-heading font-bold">{stats.total}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">Total</p>
+                <p className="text-lg font-heading font-bold text-signal">{stats.total}</p>
               </div>
             </div>
 
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4 text-white" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center shrink-0">
+                <Clock className="w-4 h-4 text-warning" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">This Week</p>
-                <p className="text-lg font-heading font-bold text-orange-600">{stats.thisWeek}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">This Week</p>
+                <p className="text-lg font-heading font-bold text-warning">{stats.thisWeek}</p>
               </div>
             </div>
 
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-4 h-4 text-white" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-success-tint flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-4 h-4 text-success" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">30 Days</p>
-                <p className="text-lg font-heading font-bold text-emerald-600">{stats.thisMonth}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">30 Days</p>
+                <p className="text-lg font-heading font-bold text-success">{stats.thisMonth}</p>
               </div>
             </div>
 
-            <div className="bg-card rounded-xl border p-3 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-4 h-4 text-white" />
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-4 h-4 text-destructive" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase whitespace-nowrap">High</p>
-                <p className="text-lg font-heading font-bold text-red-600">{stats.highValue}</p>
+                <p className="text-[11px] text-slate-500 font-semibold uppercase whitespace-nowrap">High</p>
+                <p className="text-lg font-heading font-bold text-destructive">{stats.highValue}</p>
               </div>
             </div>
           </div>
 
           {/* Filters Bar */}
-          <div className="bg-card rounded-2xl border p-4 mb-5 flex flex-wrap items-center gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-5 flex flex-wrap items-center gap-3 shadow-sm">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 placeholder="Search archived tickets…"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-orange-500/30"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-signal/30"
               />
             </div>
             <select
               value={priorityFilter}
               onChange={(e) => { setPriorityFilter(e.target.value); setCurrentPage(1); }}
-              className="px-3 py-2.5 rounded-xl border bg-background text-sm focus:ring-2 focus:ring-orange-500/30 outline-none font-semibold"
+              className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-signal focus:ring-2 focus:ring-signal/30 outline-none"
             >
               <option>All Priority</option>
               <option>Critical</option>
@@ -287,7 +280,7 @@ export default function OldTicketsPage() {
               <option>Medium</option>
               <option>Low</option>
             </select>
-            <div className="flex items-center bg-muted/50 rounded-xl p-1 border">
+            <div className="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
               {dateRanges.map((range) => (
                 <button
                   key={range.id}
@@ -295,8 +288,8 @@ export default function OldTicketsPage() {
                   className={cn(
                     "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap",
                     dateRange === range.id
-                      ? "bg-orange-500 text-white shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-signal text-white shadow-sm"
+                      : "text-slate-500 hover:text-signal"
                   )}
                 >
                   {range.label}
@@ -305,7 +298,7 @@ export default function OldTicketsPage() {
             </div>
             <button
               onClick={handleResetFilters}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border bg-background text-muted-foreground text-sm font-semibold hover:bg-muted transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-500 text-sm font-semibold hover:bg-slate-50 transition-all"
             >
               <RefreshCw className="h-3.5 w-3.5" /> Reset
             </button>
@@ -313,27 +306,27 @@ export default function OldTicketsPage() {
 
           {/* Bulk Actions Toolbar */}
           {selectedTickets.length > 0 && (
-            <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-orange-700 flex items-center gap-2">
+            <div className="bg-signal-tint border border-signal/20 rounded-2xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-signal flex items-center gap-2">
                 <CheckSquare className="w-4 h-4" />
                 {selectedTickets.length} ticket{selectedTickets.length !== 1 ? "s" : ""} selected
               </p>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleBulkRestore}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-success text-white text-sm font-semibold hover:bg-success/90 transition-all"
                 >
                   <RotateCcw className="h-3.5 w-3.5" /> Reopen Selected
                 </button>
                 <button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-destructive text-white text-sm font-semibold hover:bg-destructive/90 transition-all"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </button>
                 <button
                   onClick={() => setSelectedTickets([])}
-                  className="p-2 rounded-lg border bg-background text-muted-foreground hover:bg-muted"
+                  className="p-2 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -343,12 +336,12 @@ export default function OldTicketsPage() {
 
           {/* Sort Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
               <span>Show</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border rounded-lg px-2 py-1 bg-background text-xs"
+                className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -362,7 +355,7 @@ export default function OldTicketsPage() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground font-semibold">Sort:</span>
+              <span className="text-xs text-slate-500 font-semibold">Sort:</span>
               {[
                 { key: "daysAgo", label: "Date" },
                 { key: "priority", label: "Priority" },
@@ -374,8 +367,8 @@ export default function OldTicketsPage() {
                   className={cn(
                     "px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1",
                     sortKey === s.key
-                      ? "bg-orange-500 text-white border-orange-500"
-                      : "bg-background text-muted-foreground border-border hover:border-orange-500/50"
+                      ? "bg-signal text-white border-signal"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-signal/50"
                   )}
                 >
                   {s.label}
@@ -385,14 +378,13 @@ export default function OldTicketsPage() {
             </div>
           </div>
 
-          {/* Select All */}
           {paginatedTickets.length > 0 && (
-            <div className="flex items-center gap-3 px-4 py-2 mb-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-3 px-4 py-2 mb-2 text-xs text-slate-500">
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={toggleSelectAll}
-                className="rounded cursor-pointer"
+                className="rounded cursor-pointer accent-signal"
               />
               <span className="font-semibold">Select All on this page</span>
             </div>
@@ -407,8 +399,8 @@ export default function OldTicketsPage() {
                   <div
                     key={ticket.id}
                     className={cn(
-                      "group bg-card rounded-2xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all duration-300 relative",
-                      isSelected ? "border-orange-500/50 bg-orange-500/5" : "opacity-90 hover:opacity-100 hover:border-orange-500/30"
+                      "group bg-white rounded-2xl border border-slate-200 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all duration-300 relative",
+                      isSelected ? "border-signal/50 bg-signal-tint" : "hover:border-signal/30"
                     )}
                   >
                     <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -416,35 +408,35 @@ export default function OldTicketsPage() {
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelect(ticket.id)}
-                        className="rounded cursor-pointer mt-1"
+                        className="rounded cursor-pointer mt-1 accent-signal"
                       />
-                      <div className="w-10 h-10 rounded-xl bg-slate-500/10 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
                         <CheckCircle2 className="h-5 w-5 text-slate-500" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-xs font-mono font-bold text-muted-foreground">{ticket.id}</span>
+                          <span className="text-xs font-mono font-bold text-slate-500">{ticket.id}</span>
                           <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-md border", priorityColors[ticket.priority])}>
                             {ticket.priority}
                           </span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-500/10 text-slate-600 border border-slate-500/20">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                             {ticket.status}
                           </span>
                         </div>
-                        <h3 className="font-bold text-sm truncate text-muted-foreground">{ticket.subject}</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          By <span className="font-semibold">{ticket.customer}</span>
+                        <h3 className="font-bold text-sm truncate text-slate-500">{ticket.subject}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          By <span className="font-semibold text-signal">{ticket.customer}</span>
                           <span className="mx-2">·</span>
-                          Resolved by <span className="font-semibold">{ticket.resolvedBy}</span>
+                          Resolved by <span className="font-semibold text-signal">{ticket.resolvedBy}</span>
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4 text-xs">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold bg-slate-500/10 text-slate-600 border border-slate-500/20 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap">
                         ⏱ {ticket.resolutionTime}
                       </span>
-                      <div className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                      <div className="flex items-center gap-1.5 text-slate-500 whitespace-nowrap">
                         <Calendar className="h-3.5 w-3.5" />
                         {ticket.date}
                       </div>
@@ -453,34 +445,34 @@ export default function OldTicketsPage() {
                     <div className="flex items-center gap-2 shrink-0 relative">
                       <button
                         onClick={() => setViewModal(ticket)}
-                        className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-orange-500 transition-colors"
+                        className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-signal transition-colors"
                         title="View Ticket"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setActionsMenu(actionsMenu === ticket.id ? null : ticket.id)}
-                        className="p-2 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
+                        className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
                         title="More Actions"
                       >
                         <MoreVertical className="h-4 w-4" />
                       </button>
 
                       {actionsMenu === ticket.id && (
-                        <div className="absolute right-0 top-full mt-2 w-56 bg-card border rounded-xl shadow-xl z-30 overflow-hidden">
+                        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-30 overflow-hidden">
                           <button
                             onClick={() => { setViewModal(ticket); setActionsMenu(null); }}
-                            className="w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors flex items-center gap-2"
+                            className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center gap-2"
                           >
                             <Eye className="w-3 h-3" /> View Details
                           </button>
                           <button
                             onClick={() => handleReopen(ticket.id)}
-                            className="w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors flex items-center gap-2 text-emerald-600"
+                            className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center gap-2 text-success"
                           >
                             <RotateCcw className="w-3 h-3" /> Reopen Ticket
                           </button>
-                          <div className="border-t my-1" />
+                          <div className="border-t border-slate-100 my-1" />
                           <button
                             onClick={() => handleDelete(ticket.id)}
                             className="w-full text-left px-3 py-2 text-xs text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
@@ -494,19 +486,19 @@ export default function OldTicketsPage() {
                 );
               })
             ) : (
-              <div className="bg-card rounded-2xl border border-dashed p-16 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center mb-4">
-                  <Archive className="h-8 w-8 text-orange-500" />
+              <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-16 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 rounded-full bg-signal-tint flex items-center justify-center mb-4">
+                  <Archive className="h-8 w-8 text-signal" />
                 </div>
-                <h3 className="font-heading text-lg font-bold mb-1">No archived tickets</h3>
-                <p className="text-sm text-muted-foreground max-w-sm mb-4">
+                <h3 className="font-heading text-lg font-bold mb-1 text-signal">No archived tickets</h3>
+                <p className="text-sm text-slate-500 max-w-sm mb-4">
                   {searchTerm || priorityFilter !== "All Priority" || dateRange !== "all"
                     ? "Try adjusting your search or filters."
                     : "Closed tickets will appear here once resolved."}
                 </p>
                 <a
                   href="/admin/ticketing"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 hover:scale-105 transition-all"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-signal text-white shadow-md hover:bg-signal-hover hover:scale-105 transition-all"
                 >
                   <Zap className="h-4 w-4" /> View All Tickets
                 </a>
@@ -516,17 +508,17 @@ export default function OldTicketsPage() {
 
           {/* Pagination */}
           {filteredTickets.length > 0 && (
-            <div className="flex flex-wrap items-center justify-between gap-4 mt-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-4 mt-6 text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <span>Page</span>
-                <span className="font-semibold text-foreground">{currentPage}</span>
+                <span className="font-semibold text-signal">{currentPage}</span>
                 <span>of {totalPages}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" /> Previous
                 </button>
@@ -539,8 +531,8 @@ export default function OldTicketsPage() {
                       className={cn(
                         "w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition-all",
                         currentPage === page
-                          ? "bg-orange-500 text-white shadow-md"
-                          : "border bg-card hover:bg-muted"
+                          ? "bg-signal text-white shadow-md"
+                          : "border border-slate-200 bg-white hover:bg-slate-50 text-signal"
                       )}
                     >
                       {page}
@@ -550,7 +542,7 @@ export default function OldTicketsPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 rounded-lg border bg-card hover:bg-muted transition-colors disabled:opacity-50 flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-1"
                 >
                   Next <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -560,67 +552,67 @@ export default function OldTicketsPage() {
         </div>
       </div>
 
-      {/* 🎯 View Ticket Modal */}
+      {/* View Ticket Modal */}
       {viewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]" onClick={() => setViewModal(null)} />
-          <div className="relative bg-card w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" onClick={() => setViewModal(null)} />
+          <div className="relative bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between mb-5">
               <div>
-                <p className="text-[10px] font-mono font-bold text-muted-foreground">{viewModal.id}</p>
-                <h3 className="font-heading text-xl font-bold mt-1">{viewModal.subject}</h3>
+                <p className="text-[10px] font-mono font-bold text-slate-500">{viewModal.id}</p>
+                <h3 className="font-heading text-xl font-bold mt-1 text-signal">{viewModal.subject}</h3>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-md border", priorityColors[viewModal.priority])}>
                     {viewModal.priority}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-500/10 text-slate-600 border border-slate-500/20">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                     {viewModal.status}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setViewModal(null)}
-                className="w-8 h-8 rounded-full border flex items-center justify-center text-muted-foreground hover:bg-muted"
+                className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/30 rounded-2xl">
+            <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-slate-50 rounded-2xl">
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1">Customer</p>
-                <p className="text-sm font-bold flex items-center gap-2">
-                  <User className="w-3.5 h-3.5 text-muted-foreground" /> {viewModal.customer}
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Customer</p>
+                <p className="text-sm font-bold flex items-center gap-2 text-signal">
+                  <User className="w-3.5 h-3.5 text-slate-500" /> {viewModal.customer}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1">Closed Date</p>
-                <p className="text-sm font-bold flex items-center gap-2">
-                  <Calendar className="w-3.5 h-3.5 text-muted-foreground" /> {viewModal.date}
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Closed Date</p>
+                <p className="text-sm font-bold flex items-center gap-2 text-signal">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" /> {viewModal.date}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1">Resolved By</p>
-                <p className="text-sm font-bold">{viewModal.resolvedBy}</p>
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Resolved By</p>
+                <p className="text-sm font-bold text-signal">{viewModal.resolvedBy}</p>
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1">Resolution Time</p>
-                <p className="text-sm font-bold text-emerald-600">{viewModal.resolutionTime}</p>
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Resolution Time</p>
+                <p className="text-sm font-bold text-success">{viewModal.resolutionTime}</p>
               </div>
             </div>
 
             <div className="mb-6">
-              <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Messages ({viewModal.messages})</p>
-              <div className="bg-muted/30 rounded-2xl p-4 max-h-60 overflow-y-auto space-y-3">
-                <div className="bg-card rounded-xl p-3 border">
-                  <p className="text-[10px] font-bold text-muted-foreground mb-1">{viewModal.customer}</p>
-                  <p className="text-sm">{viewModal.subject}</p>
+              <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Messages ({viewModal.messages})</p>
+              <div className="bg-slate-50 rounded-2xl p-4 max-h-60 overflow-y-auto space-y-3">
+                <div className="bg-white rounded-xl p-3 border border-slate-200">
+                  <p className="text-[10px] font-bold text-slate-500 mb-1">{viewModal.customer}</p>
+                  <p className="text-sm text-signal">{viewModal.subject}</p>
                 </div>
-                <div className="bg-signal/10 rounded-xl p-3 border border-signal/20 ml-8">
+                <div className="bg-signal-tint rounded-xl p-3 border border-signal/20 ml-8">
                   <p className="text-[10px] font-bold text-signal mb-1">{viewModal.resolvedBy}</p>
-                  <p className="text-sm">We've resolved your issue. Please let us know if you need anything else.</p>
+                  <p className="text-sm text-signal">We've resolved your issue. Please let us know if you need anything else.</p>
                 </div>
-                <p className="text-xs text-muted-foreground text-center italic pt-2">
+                <p className="text-xs text-slate-500 text-center italic pt-2">
                   — This ticket was closed and archived —
                 </p>
               </div>
@@ -629,13 +621,13 @@ export default function OldTicketsPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setViewModal(null)}
-                className="flex-1 rounded-xl font-semibold h-12 border border-border hover:bg-muted transition-colors"
+                className="flex-1 rounded-xl font-semibold h-12 border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600"
               >
                 Close
               </button>
               <button
                 onClick={() => { handleReopen(viewModal.id); setViewModal(null); }}
-                className="flex-1 rounded-xl font-semibold h-12 bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                className="flex-1 rounded-xl font-semibold h-12 bg-signal text-white border-0 shadow-md hover:bg-signal-hover transition-all flex items-center justify-center gap-2"
               >
                 <RotateCcw className="w-4 h-4" /> Reopen Ticket
               </button>

@@ -38,6 +38,7 @@ export function AllAccountsTopbar() {
       <div className="px-4 sm:px-8 py-3 flex items-center gap-2 overflow-x-auto scrollbar-none">
         {quickActions.map((action) => {
           const isActive = pathname === action.href;
+          const Icon = action.icon;
           return (
             <Link
               key={action.href}
@@ -45,14 +46,26 @@ export function AllAccountsTopbar() {
               className={cn(
                 "group relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap overflow-hidden shrink-0 border",
                 isActive
-                  ? "bg-signal text-signal-foreground border-signal shadow-md scale-105"
+                  ? "bg-signal text-white border-signal shadow-md scale-105"
                   : "bg-white text-slate-500 border-slate-200 hover:text-signal hover:bg-signal-tint hover:border-signal/30"
               )}
             >
+              {/* Hover Tint (only when not active) */}
               {!isActive && (
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-signal-tint pointer-events-none" />
               )}
-              <action.icon className="h-4 w-4 relative z-10" />
+
+              {/* Active Indicator Bar (bottom) */}
+              {isActive && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-white/60" />
+              )}
+
+              <Icon
+                className={cn(
+                  "h-4 w-4 relative z-10",
+                  isActive ? "text-white" : "text-signal"
+                )}
+              />
               <span className="relative z-10">{action.label}</span>
             </Link>
           );

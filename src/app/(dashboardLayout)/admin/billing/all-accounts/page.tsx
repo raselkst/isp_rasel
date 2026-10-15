@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardTopbar } from "@/components/dashboard/dashboard-topbar";
 import { AllAccountsTopbar } from "@/components/dashboard/all-accounts-topbar";
@@ -18,7 +19,7 @@ import {
   Filter, CheckSquare, MessageSquare, UserX, UserCheck, ArrowLeftRight,
   Server, Repeat, ChevronDown, Search, Download, MoreVertical, Link2,
   Calendar, FileDown, CalendarCog, Trash2, X, Users, Clock,
-  AlertTriangle, DollarSign, LayoutGrid, List, Zap,
+  AlertTriangle, DollarSign, Wallet, Eye, Copy, RefreshCw, Send, Pencil,
 } from "lucide-react";
 
 interface ClientData {
@@ -71,7 +72,6 @@ const moreMenuItems = [
   { label: "Client Delete", icon: Trash2 },
 ];
 
-// 🎯 Theme-connected pill tones
 const pillTone: Record<string, string> = {
   success: "border-success/30 text-success bg-success-tint",
   warning: "border-warning/30 text-warning bg-warning-tint",
@@ -105,12 +105,21 @@ const getAvatarColor = (name: string) => {
   return colors[name.charCodeAt(0) % colors.length];
 };
 
-// 🎯 Theme-connected status config
 const statusConfig = {
   Active: { bg: "bg-success-tint", color: "text-success", dot: "bg-success" },
   Expired: { bg: "bg-destructive/10", color: "text-destructive", dot: "bg-destructive" },
   Suspended: { bg: "bg-warning-tint", color: "text-warning", dot: "bg-warning" },
 };
+
+// 🎯 Three Dot Menu Actions
+const threeDotActions = [
+  { label: "Recharge Balance", icon: Wallet },
+  { label: "Renew", icon: RefreshCw },
+  { label: "Show Password", icon: Eye },
+  { label: "Send Info", icon: Send },
+  { label: "Edit", icon: Pencil },
+  { label: "Copy Payment Link", icon: Copy },
+];
 
 function formatNumber(num: number): string {
   if (num === null || num === undefined || isNaN(num)) return "0";
@@ -124,6 +133,9 @@ export default function AllAccountsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [rows] = useState<ClientData[]>(mockRows);
+
+  // 🎯 Three-dot dropdown state
+  const [threeDotOpen, setThreeDotOpen] = useState<string | null>(null);
 
   const stats = useMemo(() => {
     const total = rows.length;
@@ -158,6 +170,10 @@ export default function AllAccountsPage() {
     }
   };
 
+  const handleThreeDotClick = (id: string) => {
+    setThreeDotOpen(threeDotOpen === id ? null : id);
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar />
@@ -183,7 +199,7 @@ export default function AllAccountsPage() {
             </button>
           </div>
 
-          {/* 🎯 Compact Stat Cards - Theme Connected */}
+          {/* Compact Stat Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center gap-3 hover:shadow-md transition-all">
               <div className="w-9 h-9 rounded-lg bg-signal-tint flex items-center justify-center shrink-0">
@@ -226,7 +242,7 @@ export default function AllAccountsPage() {
             </div>
           </div>
 
-          {/* 🎯 Action Pills */}
+          {/* Action Pills */}
           <div className="flex flex-wrap gap-2.5 mb-4">
             {actionPills.map(({ label, icon: Icon, tone }) => (
               <button
@@ -247,7 +263,7 @@ export default function AllAccountsPage() {
             </button>
           </div>
 
-          {/* 🎯 More Menu Items */}
+          {/* More Menu Items */}
           <div className="flex flex-wrap gap-2.5 mb-6">
             {moreMenuItems.map(({ label, icon: Icon }) => (
               <button
@@ -261,7 +277,7 @@ export default function AllAccountsPage() {
             ))}
           </div>
 
-          {/* 🎯 Collapsible Filter Panel */}
+          {/* Collapsible Filter Panel */}
           <div className="bg-white rounded-2xl border border-slate-200 mb-6 overflow-hidden shadow-sm">
             <button
               onClick={() => setShowFilters(!showFilters)}
@@ -321,7 +337,7 @@ export default function AllAccountsPage() {
             )}
           </div>
 
-          {/* 🎯 Search Bar */}
+          {/* Search Bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -339,7 +355,7 @@ export default function AllAccountsPage() {
             </div>
           </div>
 
-          {/* 🎯 Table */}
+          {/* Table */}
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden overflow-x-auto shadow-sm">
             <table className="w-full text-sm min-w-[1300px]">
               <thead>
@@ -388,12 +404,18 @@ export default function AllAccountsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-2.5">
+                        {/* 🎯 Name → View Information Page */}
+                        <Link
+                          href={`/admin/clients/view-information?clientId=${r.cid}`}
+                          className="flex items-center gap-2.5 group text-left"
+                        >
                           <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-[10px] shadow-sm", getAvatarColor(r.name))}>
                             {initials}
                           </div>
-                          <span className="font-semibold text-xs text-signal">{r.name}</span>
-                        </div>
+                          <span className="font-semibold text-xs text-signal group-hover:underline">
+                            {r.name}
+                          </span>
+                        </Link>
                       </td>
                       <td className="px-4 py-3.5 font-mono text-xs text-slate-600">{r.mobile}</td>
                       <td className="px-4 py-3.5">
@@ -429,9 +451,43 @@ export default function AllAccountsPage() {
                           >
                             Renew
                           </button>
-                          <button className="w-7 h-7 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">
-                            <MoreVertical className="h-3.5 w-3.5" />
-                          </button>
+                          {/* 🎯 Three Dot Menu */}
+                          <div className="relative">
+                            <button
+                              onClick={() => handleThreeDotClick(r.id)}
+                              className="w-7 h-7 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
+                            >
+                              <MoreVertical className="h-3.5 w-3.5" />
+                            </button>
+                            {threeDotOpen === r.id && (
+                              <>
+                                {/* Backdrop */}
+                                <div
+                                  className="fixed inset-0 z-30"
+                                  onClick={() => setThreeDotOpen(null)}
+                                />
+                                {/* Dropdown */}
+                                <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-slate-200 rounded-xl shadow-xl z-40 overflow-hidden">
+                                  {threeDotActions.map((action) => {
+                                    const Icon = action.icon;
+                                    return (
+                                      <button
+                                        key={action.label}
+                                        onClick={() => {
+                                          alert(`${action.label} for ${r.name}`);
+                                          setThreeDotOpen(null);
+                                        }}
+                                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-signal transition-colors text-left"
+                                      >
+                                        <Icon className="h-3.5 w-3.5" />
+                                        {action.label}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -461,7 +517,7 @@ export default function AllAccountsPage() {
         </div>
       </div>
 
-      {/* 🎯 Floating Bulk Action Bar */}
+      {/* Floating Bulk Action Bar */}
       {selectedIds.length > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom-4 fade-in duration-300">
           <div className="flex items-center gap-3 bg-white border-2 border-signal/30 rounded-2xl shadow-2xl px-4 py-3 backdrop-blur-xl">
@@ -505,7 +561,7 @@ export default function AllAccountsPage() {
         </div>
       )}
 
-      {/* 🎯 Modals */}
+      {/* Modals (unchanged) */}
       <SidePanelModal open={openModal === "Bulk Renew"} onClose={() => setOpenModal(null)} title="Bulk Renew">
         <div className="space-y-1.5">
           <label className="text-sm font-semibold text-signal">Renewal</label>
